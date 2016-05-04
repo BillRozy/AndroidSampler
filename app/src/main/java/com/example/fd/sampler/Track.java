@@ -1,6 +1,7 @@
 package com.example.fd.sampler;
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.media.AudioManager;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
  * Created by FD on 28.04.2016.
  */
 //CLASS track, keeper of HITS, and performer of hits running
-class Track implements Runnable {
+class Track{
     //METHODS
     //test
     public Instrument getConnectedInstrument(){
@@ -17,9 +18,8 @@ class Track implements Runnable {
     }
     //end test
     public Track(String n){
-        t = new Thread(this);
         name = n;
-        System.out.println("Новый поток: " + t) ;
+        System.out.println("Новый трек: " + name) ;
         this.makeHits();
         //t.start();
     }
@@ -39,8 +39,8 @@ class Track implements Runnable {
     public ArrayList<Hit> getHits(){
         return hitsArray;
     }
-    public void connectInstrument(Context myContext , String URL){
-        this.connectedInstrument = new Instrument(myContext ,URL);
+    public void connectInstrument(String URL){
+        this.connectedInstrument = new Instrument(1, AudioManager.STREAM_MUSIC,0,URL);
         Log.d("Wav","Was connected");
     }
     public void makeHits(){
@@ -79,9 +79,9 @@ class Track implements Runnable {
         try {
             while (keepRunning) {
                 if (isPaused) {
-                    synchronized (this){
+                    synchronized (connectedInstrument){
                         // System.out.println("Поступил запрос на стоп");
-                        wait();
+                        connectedInstrument.wait();
                         isPaused = false;
                     }
                 }
@@ -125,7 +125,7 @@ class Metronome extends Track{
     public Metronome(Context myContext){
         super("Metronome");
         this.makeAllHitsActive();
-        this.connectInstrument(myContext,"Metronome.wav");
+        this.connectInstrument("Metronome.wav");
     }
     public void performSound(int step){
         System.out.println("Вызван performSound!");
