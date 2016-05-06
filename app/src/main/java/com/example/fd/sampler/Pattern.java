@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.provider.MediaStore;
 
 import java.util.ArrayList;
 
@@ -17,18 +18,18 @@ class Pattern {
     public ArrayList<Track> getTracksArray(){
         return tracksArray;
     }
+    public SoundPool getSoundPool(){return this.sPool;}
     //end test
 
     //CONSTUCTOR
-    public Pattern(Context myContext){
-        this.myContext = myContext;
-        this.addMetronome(myContext);
+    public Pattern(Context mCont){
+        this.addMetronome(mCont);
     }
     public Track getTrack(int number) {
         return tracksArray.get(number);
     }
     public void addTrack(String name) {
-        Track track = new Track(name);
+        Track track = new Track(name,this);
         tracksArray.add(track);
         Thread thread = track.getTrackThread();
         thread.setName("Track-" + trackCounter + track.getTrackThreadName());
@@ -36,8 +37,8 @@ class Pattern {
         trackCounter++;
     }
 
-    public void addMetronome(Context myContext){
-        Track metronome = new Metronome(myContext);
+    public void addMetronome(Context mCont){
+        Track metronome = new Metronome(mCont,this);
         tracksArray.add(metronome);
         Thread thread = metronome.getTrackThread();
         thread.setName("Metronome");
@@ -67,5 +68,5 @@ class Pattern {
     //PROPERTIES
     private ArrayList<Track> tracksArray = new ArrayList<>(10);
     private int trackCounter = 0;
-    private Context myContext;
+    private SoundPool sPool = new SoundPool(9, AudioManager.STREAM_MUSIC,0);
 }

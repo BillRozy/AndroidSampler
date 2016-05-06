@@ -15,10 +15,11 @@ import android.util.Log;
 import java.io.IOException;
 
 // CLASS Instrument keeper of wav sound, and have method to play it
-class Instrument extends SoundPool{
+class Instrument{
 
-    public Instrument(int maxStreams, int streamType, int srcQuality, String Path) {
-        super(maxStreams,streamType,srcQuality);
+    public Instrument(Context mCont,SoundPool pool, String Path) {
+        assets = mCont.getAssets();
+        this.pool = pool;
         this.id = loadSound(Path);
     }
 
@@ -27,9 +28,9 @@ class Instrument extends SoundPool{
     {
         try{
             long begin = System.currentTimeMillis();
-            this.play(id,1,1,1,0,1); //Поехали!!!
+            this.pool.play(id,1,1,1,0,1); //Поехали!!!
             Thread.sleep(Sampler.getSampler().getDelay()-1);
-            this.stop(id);
+            this.pool.stop(id);
             long end = System.currentTimeMillis();
             Log.d(Thread.currentThread().getName() + " Time delayed: ","" + (end-begin));
         }  catch (InterruptedException exc) {Thread.currentThread().interrupt();}
@@ -45,11 +46,12 @@ class Instrument extends SoundPool{
             Log.e("FILE","Cant open file");
             return -1;
         }
-        return load(afd, 1);
+        return pool.load(afd, 1);
     }
 
 
     //PROPERTIES
     private int id;
     AssetManager assets;
+    private SoundPool pool;
 }

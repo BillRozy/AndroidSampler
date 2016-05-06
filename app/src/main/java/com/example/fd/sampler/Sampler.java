@@ -1,5 +1,7 @@
 package com.example.fd.sampler;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 
 /**
@@ -62,6 +64,7 @@ class Sampler {
         return (int) delay;
 
     }
+
 
     public void setReplays(int q){
         replays = q;

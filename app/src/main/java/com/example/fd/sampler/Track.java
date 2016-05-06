@@ -10,17 +10,19 @@ import java.util.ArrayList;
  * Created by FD on 28.04.2016.
  */
 //CLASS track, keeper of HITS, and performer of hits running
-class Track{
+class Track implements Runnable {
     //METHODS
     //test
     public Instrument getConnectedInstrument(){
         return connectedInstrument;
     }
     //end test
-    public Track(String n){
+    public Track(String n, Pattern parent){
+        t = new Thread(this);
         name = n;
-        System.out.println("Новый трек: " + name) ;
+        System.out.println("Новый поток: " + t) ;
         this.makeHits();
+        this.parentPatt = parent;
         //t.start();
     }
     public Thread getTrackThread(){
@@ -39,9 +41,8 @@ class Track{
     public ArrayList<Hit> getHits(){
         return hitsArray;
     }
-    public void connectInstrument(String URL){
-        this.connectedInstrument = new Instrument(1, AudioManager.STREAM_MUSIC,0,URL);
-        Log.d("Wav","Was connected");
+    public void connectInstrument(Context mCont, String URL){
+        this.connectedInstrument = new Instrument(mCont,parentPatt.getSoundPool(),URL);
     }
     public void makeHits(){
         for(int i=0;i<Sampler.getSampler().getSteps();i++)
@@ -79,17 +80,13 @@ class Track{
         try {
             while (keepRunning) {
                 if (isPaused) {
-                    synchronized (connectedInstrument){
+                    synchronized (this){
                         // System.out.println("Поступил запрос на стоп");
-                        connectedInstrument.wait();
+                        wait();
                         isPaused = false;
                     }
                 }
-
-                else { long begin = System.currentTimeMillis();
-                    performSound(Sampler.getSampler().getCurrentStep());
-                    long after = System.currentTimeMillis();
-                System.out.println(Thread.currentThread().getName() + " played " + (after-begin));}
+                else performSound(Sampler.getSampler().getCurrentStep());
             }
         } catch (Exception e) {
             System.out.println(name + " прерван.");}
@@ -99,10 +96,11 @@ class Track{
     //PROPERTIES
     private String name;
     private Thread t;
+    private Pattern parentPatt;
     protected boolean isPaused = false;
     protected boolean keepRunning = false;
     protected ArrayList<Hit> hitsArray = new ArrayList<>();
-    protected Instrument connectedInstrument;
+    protected Instrument connectedInstrument;// = new Instrument("H2Sv4 - THHL - HiHat(0009).wav");
     //INNER CLASS
     public class Hit
     {
@@ -122,10 +120,10 @@ class Track{
 }
 
 class Metronome extends Track{
-    public Metronome(Context myContext){
-        super("Metronome");
+    public Metronome(Context mCont,Pattern parent){
+        super("Metronome",parent);
         this.makeAllHitsActive();
-        this.connectInstrument("Metronome.wav");
+        this.connectInstrument(mCont,"Metronome.wav");
     }
     public void performSound(int step){
         System.out.println("Вызван performSound!");
