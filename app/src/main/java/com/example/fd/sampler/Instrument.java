@@ -29,8 +29,8 @@ class Instrument{
         try{
             long begin = System.currentTimeMillis();
             this.pool.play(id,1,1,1,0,1); //Поехали!!!
-            Thread.sleep(Sampler.getSampler().getDelay()-1);
-            this.pool.stop(id);
+            Thread.sleep(Sampler.getSampler().getDelay());
+            //this.pool.stop(id);
             long end = System.currentTimeMillis();
             Log.d(Thread.currentThread().getName() + " Time delayed: ","" + (end-begin));
         }  catch (InterruptedException exc) {Thread.currentThread().interrupt();}

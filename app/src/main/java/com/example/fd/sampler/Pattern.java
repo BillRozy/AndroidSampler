@@ -2,6 +2,7 @@ package com.example.fd.sampler;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.provider.MediaStore;
@@ -68,5 +69,11 @@ class Pattern {
     //PROPERTIES
     private ArrayList<Track> tracksArray = new ArrayList<>(10);
     private int trackCounter = 0;
-    private SoundPool sPool = new SoundPool(9, AudioManager.STREAM_MUSIC,0);
+   // private SoundPool sPool = new SoundPool(9, AudioManager.STREAM_MUSIC,0);
+   AudioAttributes attributes = new AudioAttributes.Builder()
+           .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+           .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
+           .setUsage(AudioAttributes.USAGE_GAME)
+           .build();
+    SoundPool sPool = new SoundPool.Builder().setAudioAttributes(attributes).setMaxStreams(9).build();
 }
