@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -72,13 +73,13 @@ public class MainActivity extends AppCompatActivity {
         RadioButton setSecondPatt = (RadioButton) this.findViewById(R.id.secondPattRadioButton);
         setSecondPatt.setOnClickListener(new setPatternActiveHandler(secondPattern));
 
-       EditText bpmEdit = (EditText) this.findViewById(R.id.bpmEditText);
+        NumberPicker bpmPicker = (NumberPicker) this.findViewById(R.id.numberPicker);
+        bpmPicker.setMaxValue(300);
+        bpmPicker.setMinValue(60);
+        bpmPicker.setValue(Sampler.getSampler().getBPM());
 
-        TextView bpmText = (TextView) this.findViewById(R.id.statusTextView);
-        bpmText.setText(String.valueOf(Sampler.getSampler().getBPM()));
+        bpmPicker.setOnValueChangedListener(new bpmPickerHandler());
 
-       Button setBPMButton = (Button) this.findViewById(R.id.setBPMBbutton);
-        setBPMButton.setOnClickListener(new setBPMHandler(bpmEdit));
 
 /*
         myApp.play();
@@ -125,5 +126,12 @@ class setBPMHandler implements View.OnClickListener{
     public void onClick(View v){
 
             setBPM(bpmView);
+    }
+}
+
+class bpmPickerHandler implements  NumberPicker.OnValueChangeListener{
+    @Override
+    public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+        Sampler.getSampler().setBPM(newVal);
     }
 }

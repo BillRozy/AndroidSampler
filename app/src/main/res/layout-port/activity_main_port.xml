@@ -42,10 +42,10 @@
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_toLeftOf="@+id/stopButton"
-        android:layout_alignLeft="@+id/pauseButton"
-        android:layout_alignStart="@+id/pauseButton"
-        android:gravity="top|center_vertical">
+        android:gravity="top|center_vertical"
+        android:layout_above="@+id/pauseButton"
+        android:layout_toEndOf="@+id/pauseButton"
+        android:layout_marginBottom="46dp">
 
         <RadioButton
             android:layout_width="210dp"
@@ -68,38 +68,9 @@
             android:checked="false" />
     </RadioGroup>
 
-    <TextView
+    <NumberPicker
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Status"
-        android:id="@+id/statusTextView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="21dp"
-        android:layout_marginStart="21dp"
-        android:layout_alignRight="@+id/playButton"
-        android:layout_alignEnd="@+id/playButton"
-        android:layout_alignParentTop="true" />
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SET BPM"
-        android:id="@+id/setBPMBbutton"
-        android:layout_centerVertical="true"
-        android:layout_alignLeft="@+id/statusTextView"
-        android:layout_alignStart="@+id/statusTextView" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/bpmEditText"
-        android:layout_above="@+id/setBPMBbutton"
-        android:layout_alignLeft="@+id/setBPMBbutton"
-        android:layout_alignStart="@+id/setBPMBbutton"
-        android:text="enter BPM here"
-        android:enabled="true"
-        android:inputType="number" />
+        android:id="@+id/numberPicker"
+        android:layout_centerVertical="true" />
 </RelativeLayout>

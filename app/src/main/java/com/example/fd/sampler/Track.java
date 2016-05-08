@@ -130,16 +130,15 @@ class Metronome extends Track{
         for (int i=(step-1);i<hitsArray.size();i++) {
             //System.out.println("Проверяю играет ли сэмплер");
             if(!isPaused) {
+                    System.out.println("Current step is: " + (i+1));
+                    this.connectedInstrument.playSound();
+
                 if (i == (Sampler.getSampler().getSteps()-1)) {
                     System.out.println("Метроном сбросил шаг на 1");
                     Sampler.getSampler().setCurrentStep(1);}
                 else {
-                    Sampler.getSampler().setCurrentStep(i+1);
+                    Sampler.getSampler().setCurrentStep(i+2);
                     System.out.println("Метроном поставил шаг на " + Sampler.getSampler().getCurrentStep());
-                }
-                if (hitsArray.get(i).getActive()) {
-                    System.out.println("Current step is: " + Sampler.getSampler().getCurrentStep());
-                    this.connectedInstrument.playSound();
                 }
             }
         }
