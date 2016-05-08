@@ -13,6 +13,7 @@ import android.util.Log;
 
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 // CLASS Instrument keeper of wav sound, and have method to play it
 class Instrument{
@@ -26,14 +27,14 @@ class Instrument{
 
     public void playSound()
     {
-        try{
+     //  try{
             long begin = System.currentTimeMillis();
             this.pool.play(id,1,1,1,0,1); //Поехали!!!
-            Thread.sleep(Sampler.getSampler().getDelay());
-            this.pool.pause(id);
+          // TimeUnit.MILLISECONDS.sleep(Sampler.getSampler().getDelay());
+            //this.pool.pause(id);
             long end = System.currentTimeMillis();
-            //Log.d(Thread.currentThread().getName() + " Time delayed: ","" + (end-begin));
-        }  catch (InterruptedException exc) {}
+            Log.d(Thread.currentThread().getName() + " Time delayed: ","" + (end-begin));
+     //  }  catch (InterruptedException exc) {}
     }
 
 

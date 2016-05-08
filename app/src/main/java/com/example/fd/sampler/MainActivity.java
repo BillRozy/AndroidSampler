@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -77,8 +78,11 @@ public class MainActivity extends AppCompatActivity {
         bpmPicker.setMaxValue(300);
         bpmPicker.setMinValue(60);
         bpmPicker.setValue(Sampler.getSampler().getBPM());
-
         bpmPicker.setOnValueChangedListener(new bpmPickerHandler());
+
+        Sampler.getSampler().stepsBar = (ProgressBar) this.findViewById(R.id.progressBar);
+        Sampler.getSampler().stepsBar.setMax(16);
+        Sampler.getSampler().stepsBar.setProgress(0);
 
 
 /*

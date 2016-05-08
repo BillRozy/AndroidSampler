@@ -1,6 +1,7 @@
 package com.example.fd.sampler;
 
 import android.content.Context;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 
@@ -32,19 +33,26 @@ class Sampler {
         isPlaying = false;
     }
 
-    public void play(){
+    public void play() {
         System.out.println("Начинаю воспроизведение...");
-        activePattern.playPattern();}
+        if (activePattern.getState() == Thread.State.NEW) {
+            activePattern.start();
+        }
+        else
+        {
+            activePattern.requestResume();
+        }
+    }
 
     public void stop(){
         System.out.println("Trying to stop sampler!");
-        activePattern.stopPattern();
+        activePattern.pause();
         currentStep=1;
         System.out.println("After stop step is: " + currentStep);
     }
     public void pause(){
         System.out.println("Paused sampler!");
-        activePattern.stopPattern();
+        activePattern.pause();
     }
     public void addPattern(Pattern patt){
         patterns.add(patt);
@@ -104,5 +112,6 @@ class Sampler {
     private int steps = 16;
     private int replays = 1;
     private boolean isPlaying = false;
+    public ProgressBar stepsBar;
 
 }

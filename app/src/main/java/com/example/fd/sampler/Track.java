@@ -5,6 +5,7 @@ import android.media.AudioManager;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by FD on 28.04.2016.
@@ -60,21 +61,11 @@ class Track implements Runnable {
             hit.setActive();
         }
     }
-    public void performSound(int step){
-        for (int i=(step-1);i<hitsArray.size();i++) {
-            //System.out.println("Проверяю играет ли сэмплер");
-            if(!isPaused) {
-                if (hitsArray.get(i).getActive()) {
+    public void performSound(){
+
                     this.connectedInstrument.playSound();
                     // System.out.println("Active hit, step number " + hitsArray.indexOf(hit));
-                } else {
-                    try {
-                        Thread.sleep(Sampler.getSampler().getDelay());
-                    } catch (InterruptedException exc) {}
-                }
-            }
         }
-    }
     public void run() {
         keepRunning = true;
         try {
@@ -86,7 +77,7 @@ class Track implements Runnable {
                         isPaused = false;
                     }
                 }
-                else performSound(Sampler.getSampler().getCurrentStep());
+                else performSound();
             }
         } catch (Exception e) {
             System.out.println(name + " прерван.");}
