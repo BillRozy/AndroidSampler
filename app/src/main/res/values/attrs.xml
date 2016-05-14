@@ -1,0 +1,9 @@
+<resources>
+    <declare-styleable name="TrackView">
+        <attr name="countsSteps" format="integer" />
+        <attr name="labelPosition" format="enum">
+            <enum name="left" value="0"/>
+            <enum name="right" value="1"/>
+        </attr>
+    </declare-styleable>
+</resources>
