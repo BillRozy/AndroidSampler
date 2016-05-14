@@ -12,6 +12,7 @@ import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_port);
-        Context mCont = this.getApplicationContext();
+        final Context mCont = this.getApplicationContext();
         Sampler myApp = Sampler.getSampler();
         Pattern firstPattern = new Pattern(mCont);
         Pattern secondPattern = new Pattern(mCont);
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(mCont, "Нажата кнопка Play", Toast.LENGTH_LONG).show();
                 Sampler.getSampler().play();
             }
         });
@@ -121,17 +123,6 @@ class setPatternActiveHandler implements View.OnClickListener{
     }
 }
 
-class setBPMHandler implements View.OnClickListener{
-    private EditText bpmView;
-    public void setBPM(EditText bpmText){
-        Sampler.getSampler().setBPM(Integer.parseInt(bpmText.getText().toString()));
-    }
-    public setBPMHandler(EditText text){bpmView = text;}
-    public void onClick(View v){
-
-            setBPM(bpmView);
-    }
-}
 
 class bpmPickerHandler implements  NumberPicker.OnValueChangeListener{
     @Override

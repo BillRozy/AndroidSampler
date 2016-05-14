@@ -41,8 +41,6 @@ class Pattern extends Thread {
     public void addTrack(String name) {
         Track track = new Track(name,this);
         tracksArray.add(track);
-        Thread thread = track.getTrackThread();
-        thread.setName("Track-" + trackCounter + track.getTrackThreadName());
         // track.getTrackThread().start();
         trackCounter++;
     }
@@ -50,8 +48,6 @@ class Pattern extends Thread {
     public void addMetronome(Context mCont){
         Track metronome = new Metronome(mCont,this);
         tracksArray.add(metronome);
-        Thread thread = metronome.getTrackThread();
-        thread.setName("Metronome");
         trackCounter++;
     }
 

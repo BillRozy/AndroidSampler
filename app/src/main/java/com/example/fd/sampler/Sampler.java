@@ -53,6 +53,7 @@ class Sampler {
     public void pause(){
         System.out.println("Paused sampler!");
         activePattern.pause();
+        currentStep+=1;
     }
     public void addPattern(Pattern patt){
         patterns.add(patt);
