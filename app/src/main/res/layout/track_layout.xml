@@ -5,45 +5,110 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <ImageButton
+        android:layout_width="50dip"
+        android:layout_height="50dip"
+        android:id="@+id/connectInstrumentButton"
+        android:longClickable="true"
+        android:src="@drawable/ic_input_add"
+        android:layout_marginRight="10dip" />
+
     <com.example.fd.sampler.HitView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/app_list_row_size"
+        android:layout_height="@dimen/hit_height"
+        android:layout_marginRight="@dimen/hit_right_margin"
         app:isActive="false"
         android:id="@+id/hit1"/>
     <com.example.fd.sampler.HitView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/app_list_row_size"
+        android:layout_height="@dimen/hit_height"
+        android:layout_marginRight="@dimen/hit_right_margin"
         app:isActive="false"
         android:id="@+id/hit2"/>
     <com.example.fd.sampler.HitView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/app_list_row_size"
+        android:layout_height="@dimen/hit_height"
+        android:layout_marginRight="@dimen/hit_right_margin"
         app:isActive="false"
         android:id="@+id/hit3"/>
     <com.example.fd.sampler.HitView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/app_list_row_size"
+        android:layout_height="@dimen/hit_height"
+        android:layout_marginRight="@dimen/hit_right_margin"
         app:isActive="false"
         android:id="@+id/hit4"/>
     <com.example.fd.sampler.HitView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/app_list_row_size"
+        android:layout_height="@dimen/hit_height"
+        android:layout_marginRight="@dimen/hit_right_margin"
         app:isActive="false"
         android:id="@+id/hit5"/>
     <com.example.fd.sampler.HitView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/app_list_row_size"
+        android:layout_height="@dimen/hit_height"
+        android:layout_marginRight="@dimen/hit_right_margin"
         app:isActive="false"
         android:id="@+id/hit6"/>
     <com.example.fd.sampler.HitView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/app_list_row_size"
+        android:layout_height="@dimen/hit_height"
+        android:layout_marginRight="@dimen/hit_right_margin"
         app:isActive="false"
         android:id="@+id/hit7"/>
     <com.example.fd.sampler.HitView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/app_list_row_size"
+        android:layout_height="@dimen/hit_height"
+        android:layout_marginRight="@dimen/hit_right_margin"
         app:isActive="false"
         android:id="@+id/hit8"/>
+    <com.example.fd.sampler.HitView
+        android:layout_width="@dimen/app_list_row_size"
+        android:layout_height="@dimen/hit_height"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        app:isActive="false"
+        android:id="@+id/hit9"/>
+    <com.example.fd.sampler.HitView
+        android:layout_width="@dimen/app_list_row_size"
+        android:layout_height="@dimen/hit_height"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        app:isActive="false"
+        android:id="@+id/hit10"/>
+    <com.example.fd.sampler.HitView
+        android:layout_width="@dimen/app_list_row_size"
+        android:layout_height="@dimen/hit_height"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        app:isActive="false"
+        android:id="@+id/hit11"/>
+    <com.example.fd.sampler.HitView
+        android:layout_width="@dimen/app_list_row_size"
+        android:layout_height="@dimen/hit_height"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        app:isActive="false"
+        android:id="@+id/hit12"/>
+    <com.example.fd.sampler.HitView
+        android:layout_width="@dimen/app_list_row_size"
+        android:layout_height="@dimen/hit_height"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        app:isActive="false"
+        android:id="@+id/hit13"/>
+    <com.example.fd.sampler.HitView
+        android:layout_width="@dimen/app_list_row_size"
+        android:layout_height="@dimen/hit_height"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        app:isActive="false"
+        android:id="@+id/hit14"/>
+    <com.example.fd.sampler.HitView
+        android:layout_width="@dimen/app_list_row_size"
+        android:layout_height="@dimen/hit_height"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        app:isActive="false"
+        android:id="@+id/hit15"/>
+    <com.example.fd.sampler.HitView
+        android:layout_width="@dimen/app_list_row_size"
+        android:layout_height="@dimen/hit_height"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        app:isActive="false"
+        android:id="@+id/hit16"/>
 
 </LinearLayout>

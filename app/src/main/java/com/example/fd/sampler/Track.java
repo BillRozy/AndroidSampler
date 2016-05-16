@@ -1,11 +1,7 @@
 package com.example.fd.sampler;
 import android.content.Context;
-import android.content.res.AssetManager;
-import android.media.AudioManager;
-import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by FD on 28.04.2016.
@@ -42,12 +38,12 @@ class Track{
     }
     public void makeHitActive(int... n){
         for(int i : n)
-            hitsArray.get(i-1).setActive();
+            hitsArray.get(i-1).toggleActive();
     }
 
     public void makeAllHitsActive() {
         for (Hit hit : hitsArray) {
-            hit.setActive();
+            hit.toggleActive();
         }
     }
     public void performSound(){
@@ -68,8 +64,8 @@ class Track{
         public Hit(boolean act){
             this.isActive = act;
         }
-        public void setActive(){
-            this.isActive = true;
+        public void toggleActive(){
+            isActive = !isActive;
         }
         public boolean getActive(){
             return isActive;

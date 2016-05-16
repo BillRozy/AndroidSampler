@@ -1,6 +1,5 @@
 package com.example.fd.sampler;
 
-import android.content.Context;
 import android.widget.ProgressBar;
 
 import java.util.ArrayList;
@@ -35,8 +34,8 @@ class Sampler {
 
     public void play() {
         System.out.println("Начинаю воспроизведение...");
-        if (activePattern.getState() == Thread.State.NEW) {
-            activePattern.start();
+        if (activePattern.getMusicThread().getState() == Thread.State.NEW) {
+            activePattern.getMusicThread().start();
         }
         else
         {
@@ -69,7 +68,7 @@ class Sampler {
 
     public int getDelay(){
         double dblBPM = (double) BPM;
-        double delay =  120.0/dblBPM * 500.0;
+        double delay =  120.0/dblBPM * 250.0;
         return (int) delay;
 
     }
@@ -109,7 +108,7 @@ class Sampler {
     private ArrayList<Pattern> patterns = new ArrayList<>();
     private Pattern activePattern;
     private int currentStep = 1;
-    private int BPM = 200;
+    private int BPM = 120;
     private int steps = 16;
     private int replays = 1;
     private boolean isPlaying = false;

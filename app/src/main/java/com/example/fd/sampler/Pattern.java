@@ -9,13 +9,14 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Observable;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by FD on 28.04.2016.
  */
 //CLASS Pattern, keeper of tracks
-class Pattern extends Thread {
+class Pattern extends Observable implements Runnable{
     //METHODS
     //test
     public ArrayList<Track> getTracksArray(){
@@ -26,7 +27,10 @@ class Pattern extends Thread {
 
     //CONSTUCTOR
     public Pattern(Context mCont){
+        tracksArray = new ArrayList<>(6);
         this.addMetronome(mCont);
+        this.musicThread = new Thread(this);
+
     }
     public Track getTrack(int number) {
         return tracksArray.get(number);
@@ -38,11 +42,22 @@ class Pattern extends Thread {
     public synchronized void requestResume(){
         this.notify();
     }
-    public void addTrack(String name) {
+    public Track addTrack(String name) {
         Track track = new Track(name,this);
         tracksArray.add(track);
         // track.getTrackThread().start();
         trackCounter++;
+        setChanged();
+        notifyObservers();
+        return track;
+    }
+
+    public Thread getMusicThread(){
+        return musicThread;
+    }
+
+    public int getTrackCounter(){
+        return trackCounter;
     }
 
     public void addMetronome(Context mCont){
@@ -98,8 +113,9 @@ class Pattern extends Thread {
 
 
     //PROPERTIES
-    private ArrayList<Track> tracksArray = new ArrayList<>(10);
+    private ArrayList<Track> tracksArray;
     private int trackCounter = 0;
+    private Thread musicThread;
     protected boolean isPaused = false;
     protected boolean keepRunning = false;
    // private SoundPool sPool = new SoundPool(9, AudioManager.STREAM_MUSIC,0);

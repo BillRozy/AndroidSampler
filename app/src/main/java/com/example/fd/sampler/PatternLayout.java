@@ -28,12 +28,22 @@ public class PatternLayout extends LinearLayout {
         super(context);
         this.setOrientation(LinearLayout.VERTICAL);
         tracksArray = new ArrayList<>();
+        this.setVerticalScrollBarEnabled(true);
     }
     public PatternLayout(Context context, AttributeSet attrs){
         super(context,attrs);
         this.setOrientation(LinearLayout.VERTICAL);
         tracksArray = new ArrayList<>();
+        this.setVerticalScrollBarEnabled(true);
 
+    }
+
+    public ArrayList<TrackLayout> getTracksLayoutsArray(){
+        return tracksArray;
+    }
+
+    public TrackLayout getTrackLayout(int the_index){
+        return tracksArray.get(the_index);
     }
 
     public void addTrackLayout(TrackLayout tl){

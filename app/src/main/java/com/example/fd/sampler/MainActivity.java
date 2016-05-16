@@ -1,69 +1,80 @@
 package com.example.fd.sampler;
 
-import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.os.Handler;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
+
+public class MainActivity extends Activity implements Observer {
+
+    private PatternLayout mPatternLayout;
+    private Sampler myApp;
+    private Pattern firstPattern;
+    private Button addTrack;
+    private Button stop;
+    private Button play;
+    private Button pause;
+    private AlertDialog.Builder ad;
+    private AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_port);
+        setContentView(R.layout.activity_main);
         LinearLayout mainFrame = (LinearLayout) findViewById(R.id.main_frame);
-        PatternLayout pl = new PatternLayout(getApplicationContext());
-        pl.addTrackLayout(new TrackLayout(getApplicationContext()));
-        mainFrame.addView(pl);
-        pl.addTrackLayout(new TrackLayout(getApplicationContext()));
-        pl.addTrackLayout(new TrackLayout(getApplicationContext()));
-        pl.addTrackLayout(new TrackLayout(getApplicationContext()));
-        final Context mCont = this.getApplicationContext();
-        Sampler myApp = Sampler.getSampler();
-        Pattern firstPattern = new Pattern(mCont);
-        Pattern secondPattern = new Pattern(mCont);
+        mPatternLayout = (PatternLayout) this.findViewById(R.id.patternView);
+        addTrack = (Button) this.findViewById(R.id.addTrackButton);
+        stop = (Button) this.findViewById(R.id.stopButton);
+        pause = (Button) this.findViewById(R.id.pauseButton);
+        play = (Button) this.findViewById(R.id.playButton);
+        myApp = Sampler.getSampler();
+        firstPattern = new Pattern(getApplicationContext());
+        firstPattern.addObserver(this);
         myApp.addPattern(firstPattern);
-        myApp.addPattern(secondPattern);
         myApp.setPatternActive(firstPattern);
-        myApp.getActivePattern().addTrack("kick");
-        myApp.getActivePattern().addTrack("snare");
-        myApp.getActivePattern().addTrack("hh");
-        myApp.getPattern(1).getTrack(1).makeHitActive(1,2,5,6,9,10,13);
-        myApp.getPattern(1).getTrack(2).makeHitActive(3,7,11,15,16);
-        myApp.getPattern(1).getTrack(3).makeHitActive(1,3,5,7,9,10,11,13,15);
-        myApp.getActivePattern().getTrack(1).connectInstrument(mCont,"H2Sv2 - THKL - Kick(0004).wav");
-        myApp.getActivePattern().getTrack(2).connectInstrument(mCont,"snare.wav");
-        myApp.getActivePattern().getTrack(3).connectInstrument(mCont,"H2Sv4 - THHL - HiHat(0006).wav");
-        myApp.setPatternActive(secondPattern);
-        myApp.getActivePattern().addTrack("kick");
-        myApp.getActivePattern().addTrack("snare");
-        myApp.getActivePattern().getTrack(1).connectInstrument(mCont,"H2Sv2 - THKL - Kick(0004).wav");
-        myApp.getActivePattern().getTrack(2).connectInstrument(mCont,"H2Sv3 - THSL - Snare(0003).wav");
-        myApp.getPattern(2).getTrack(1).makeHitActive(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16);
-        myApp.getPattern(2).getTrack(2).makeHitActive(3,7,11,15);
-        myApp.setPatternActive(firstPattern);
+        //myApp.getPattern(1).getTrack(1).makeHitActive(1,2,5,6);
+        //myApp.getPattern(1).getTrack(2).makeHitActive(3,7);
+        //myApp.getPattern(1).getTrack(3).makeHitActive(1,3,5,7);
+        //myApp.getActivePattern().getTrack(1).connectInstrument(getApplicationContext(),"H2Sv2 - THKL - Kick(0004).wav");
+        //myApp.getActivePattern().getTrack(2).connectInstrument(getApplicationContext(),"snare.wav");
+        //myApp.getActivePattern().getTrack(3).connectInstrument(getApplicationContext(),"H2Sv4 - THHL - HiHat(0006).wav");
 
-        Button play = (Button) this.findViewById(R.id.playButton);
+
+        addTrack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mPatternLayout.addTrackLayout(new TrackLayout(getApplicationContext()));
+                Track curTr = myApp.getActivePattern().addTrack("Track: " + myApp.getActivePattern().getTrackCounter());
+                curTr.connectInstrument(getApplicationContext(), "H2Sv2 - THKL - Kick(0004).wav");
+                Toast.makeText(getApplicationContext(), "Добавлен трек " + (myApp.getActivePattern().getTrackCounter() - 1), Toast.LENGTH_SHORT).show();
+                remakeTracks();
+            }
+        });
+
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mCont, "Нажата кнопка Play", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Нажата кнопка Play", Toast.LENGTH_SHORT).show();
                 Sampler.getSampler().play();
             }
         });
 
-        Button stop = (Button) this.findViewById(R.id.stopButton);
+
         stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button pause = (Button) this.findViewById(R.id.pauseButton);
+
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,14 +90,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        RadioButton setFirstPatt = (RadioButton) this.findViewById(R.id.firstPattRadio);
-        setFirstPatt.setOnClickListener(new setPatternActiveHandler(firstPattern));
-
-        RadioButton setSecondPatt = (RadioButton) this.findViewById(R.id.secondPattRadioButton);
-        setSecondPatt.setOnClickListener(new setPatternActiveHandler(secondPattern));
 
         NumberPicker bpmPicker = (NumberPicker) this.findViewById(R.id.numberPicker);
-        bpmPicker.setMaxValue(300);
+        bpmPicker.setMaxValue(400);
         bpmPicker.setMinValue(60);
         bpmPicker.setValue(Sampler.getSampler().getBPM());
         bpmPicker.setOnValueChangedListener(new bpmPickerHandler());
@@ -96,46 +102,76 @@ public class MainActivity extends AppCompatActivity {
         Sampler.getSampler().stepsBar.setProgress(0);
 
 
-/*
-        myApp.play();
-        try{Thread.sleep(8000);
-        }catch(InterruptedException exc){}
-        myApp.pause();
-        try{Thread.sleep(4000);
-        }catch(InterruptedException exc){}
-        myApp.play();
-        try{Thread.sleep(4000);
-        }catch(InterruptedException exc){}
-        myApp.stop();
-        myApp.setPatternActive(secondPattern);
-        try{Thread.sleep(4000);
-        }catch(InterruptedException exc){}
-        myApp.setBPM(140);
-        myApp.play();
-        try{Thread.sleep(4000);
-        }catch(InterruptedException exc){}
-        myApp.stop();
-        myApp.setPatternActive(firstPattern);
-        myApp.play();
-        try{Thread.sleep(4000);
-        }catch(InterruptedException exc){}
-        myApp.stop();*/
     }
-}
 
-class setPatternActiveHandler implements View.OnClickListener{
-    private Pattern pattern;
-    public setPatternActiveHandler(Pattern pattern){this.pattern = pattern;}
     @Override
-    public void onClick(View v) {
-        Sampler.getSampler().setPatternActive(pattern);
+    public void update(Observable observable, Object data) {
+
     }
-}
+
+    public void remakeTracks() {
+        for (final TrackLayout tl : mPatternLayout.getTracksLayoutsArray()) {
+            tl.getConnectInstrumentBtn().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final String[] mSamplesName = {"Kick", "Snare", "Hat"};
+                    AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
+                    ad.setTitle("Connecting Sample")  // заголовок
+                    //.setMessage("Type url to sample:") // сообщение
+                   .setItems(mSamplesName, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int item) {
+                            switch (item) {
+                            case 0:
+                                myApp.getActivePattern().getTrack(mPatternLayout.getTracksLayoutsArray().indexOf(tl) + 1).connectInstrument(getApplicationContext(), "H2Sv2 - THKL - Kick(0004).wav");
+                                break;
+                            case 1:
+                                myApp.getActivePattern().getTrack(mPatternLayout.getTracksLayoutsArray().indexOf(tl) + 1).connectInstrument(getApplicationContext(), "snare.wav");
+                                break;
+                            case 2:
+                                myApp.getActivePattern().getTrack(mPatternLayout.getTracksLayoutsArray().indexOf(tl) + 1).connectInstrument(getApplicationContext(), "H2Sv4 - THHL - HiHat(0006).wav");
+                                break;
+                        }
+                            tl.getConnectInstrumentBtn().setImageResource(R.drawable.ic_delete);
+                            Toast.makeText(getApplicationContext(), "Connected",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setCancelable(true)
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        public void onCancel(DialogInterface dialog) {
+                            Toast.makeText(getApplicationContext(), "Вы ничего не выбрали",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    alertDialog = ad.show();
+                }
+            });
+            final ArrayList<HitView> hitsArrayOfCurrentTrack = tl.getHitsArray();
+            for (final HitView hv : hitsArrayOfCurrentTrack) {
+                hv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        hv.toggleState();
+                        Log.d("CLICKED FROM MAIN LIST", "BUTTON " + (hitsArrayOfCurrentTrack.indexOf(hv) + 1) + " of track " + mPatternLayout.getTracksLayoutsArray().indexOf(tl) + " Pressed");
+                        if (hv.getState()) {
+                            myApp.getActivePattern().getTrack(mPatternLayout.getTracksLayoutsArray().indexOf(tl) + 1).makeHitActive(hitsArrayOfCurrentTrack.indexOf(hv) + 1);
+                            hv.setImageResource(R.drawable.btn_media_player_selected);
+                        } else {
+                            myApp.getActivePattern().getTrack(mPatternLayout.getTracksLayoutsArray().indexOf(tl) + 1).makeHitActive(hitsArrayOfCurrentTrack.indexOf(hv) + 1);
+                            hv.setImageResource(R.drawable.btn_media_player_disabled_selected);
+                        }
+                    }
+                });
+            }
+        }
+    }
 
 
-class bpmPickerHandler implements  NumberPicker.OnValueChangeListener{
-    @Override
-    public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-        Sampler.getSampler().setBPM(newVal);
+    class bpmPickerHandler implements NumberPicker.OnValueChangeListener {
+        @Override
+        public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+            Sampler.getSampler().setBPM(newVal);
+        }
     }
 }

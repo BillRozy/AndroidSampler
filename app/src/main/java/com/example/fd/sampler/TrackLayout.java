@@ -5,9 +5,11 @@ package com.example.fd.sampler;
  */
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 
@@ -16,7 +18,7 @@ import java.util.ArrayList;
 
 public class TrackLayout extends LinearLayout {
     private ArrayList<HitView> mHitsArray = null;
-    private boolean isWannaWatch = false;
+    private ImageButton connectInstrumentBtn;
 
 
     public TrackLayout(Context context) {
@@ -26,6 +28,14 @@ public class TrackLayout extends LinearLayout {
     public TrackLayout(Context context, AttributeSet attrs){
         super(context,attrs);
         initComponent();
+    }
+
+    public ArrayList<HitView> getHitsArray(){
+        return mHitsArray;
+    }
+
+    public ImageButton getConnectInstrumentBtn() {
+        return connectInstrumentBtn;
     }
 
     private void initComponent() {
@@ -40,12 +50,17 @@ public class TrackLayout extends LinearLayout {
         mHitsArray.add((HitView) findViewById(R.id.hit6));
         mHitsArray.add((HitView) findViewById(R.id.hit7));
         mHitsArray.add((HitView) findViewById(R.id.hit8));
-        updateFields();
+        mHitsArray.add((HitView) findViewById(R.id.hit9));
+        mHitsArray.add((HitView) findViewById(R.id.hit10));
+        mHitsArray.add((HitView) findViewById(R.id.hit11));
+        mHitsArray.add((HitView) findViewById(R.id.hit12));
+        mHitsArray.add((HitView) findViewById(R.id.hit13));
+        mHitsArray.add((HitView) findViewById(R.id.hit14));
+        mHitsArray.add((HitView) findViewById(R.id.hit15));
+        mHitsArray.add((HitView) findViewById(R.id.hit16));
+        connectInstrumentBtn = (ImageButton) findViewById(R.id.connectInstrumentButton);
     }
 
-    private void updateFields() {
-
-    }
 
     public void setChannelName(String name) {
     }
@@ -66,12 +81,6 @@ public class TrackLayout extends LinearLayout {
     public void setProgramDescription(String name) {
     }
 
-    private final OnClickListener buttonListener = new OnClickListener() {
-        public void onClick(View view) {
-            isWannaWatch = !isWannaWatch;
-            updateFields();
-        }
-    };
 
 
 

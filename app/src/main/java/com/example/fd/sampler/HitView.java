@@ -19,10 +19,9 @@ import android.widget.ToggleButton;
 /**
  * Created by FD on 12.05.2016.
  */
-public class HitView extends ImageButton implements View.OnClickListener {
+public class HitView extends ImageButton {
     public HitView(Context context, boolean isActive){
         super(context);
-        setOnClickListener(this);
         this.isActive = isActive;
         int row_height = getResources().getDimensionPixelOffset(R.dimen.app_list_row_size);
         this.setMaxHeight(row_height*2);
@@ -31,12 +30,11 @@ public class HitView extends ImageButton implements View.OnClickListener {
         //this.setMinimumWidth(40);
         this.setPadding(0,0,5,5);
         this.setImageResource(R.drawable.selector);
-        this.setScaleType(ScaleType.FIT_CENTER);
+        this.setScaleType(ScaleType.CENTER_CROP);
         this.setBackgroundColor(Color.TRANSPARENT);
     }
     public HitView(Context context, AttributeSet attrs){
         super(context,attrs);
-        setOnClickListener(this);
         TypedArray attributes = context.obtainStyledAttributes(attrs,R.styleable.HitView);
         isActive = attributes.getBoolean(R.styleable.HitView_isActive,false);
         int row_height = getResources().getDimensionPixelOffset(R.dimen.app_list_row_size);
@@ -46,9 +44,17 @@ public class HitView extends ImageButton implements View.OnClickListener {
         //this.setMinimumWidth(40);
         this.setPadding(0,0,5,5);
         this.setImageResource(R.drawable.selector);
-        this.setScaleType(ScaleType.FIT_CENTER);
+        this.setScaleType(ScaleType.CENTER_CROP);
         this.setBackgroundColor(Color.TRANSPARENT);
         attributes.recycle();
+    }
+
+    public void toggleState(){
+        isActive = !isActive;
+    }
+
+    public boolean getState(){
+        return isActive;
     }
 
     @Override
@@ -58,15 +64,6 @@ public class HitView extends ImageButton implements View.OnClickListener {
 
     }
 
-    @Override
-    public void onClick(View v) {
-        isActive = !isActive;
-        Log.d("CLICKED","BUTTON");
-        if(isActive)
-            this.setImageResource(R.drawable.btn_toggle_on_normal_holo_dark);
-        else this.setImageResource(R.drawable.btn_toggle_off_normal_holo_dark);
-
-    }
 
     private boolean isActive;
 
