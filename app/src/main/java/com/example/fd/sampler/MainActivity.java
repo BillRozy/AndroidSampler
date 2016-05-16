@@ -8,9 +8,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +22,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_port);
+        LinearLayout mainFrame = (LinearLayout) findViewById(R.id.main_frame);
+        PatternLayout pl = new PatternLayout(getApplicationContext());
+        pl.addTrackLayout(new TrackLayout(getApplicationContext()));
+        mainFrame.addView(pl);
+        pl.addTrackLayout(new TrackLayout(getApplicationContext()));
+        pl.addTrackLayout(new TrackLayout(getApplicationContext()));
+        pl.addTrackLayout(new TrackLayout(getApplicationContext()));
         final Context mCont = this.getApplicationContext();
         Sampler myApp = Sampler.getSampler();
         Pattern firstPattern = new Pattern(mCont);

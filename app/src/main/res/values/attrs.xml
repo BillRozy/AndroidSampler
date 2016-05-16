@@ -1,9 +1,15 @@
 <resources>
-    <declare-styleable name="TrackView">
-        <attr name="countsSteps" format="integer" />
-        <attr name="labelPosition" format="enum">
-            <enum name="left" value="0"/>
-            <enum name="right" value="1"/>
+    <dimen name="app_list_row_size">120dip</dimen>
+    <declare-styleable name="HitView">
+        <attr name="isActive" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="TrackLayout">
+        <attr name="android:layout_gravity" />
+        <attr name="layout_position">
+            <enum name="middle" value="0" />
+            <enum name="left" value="1" />
+            <enum name="right" value="2" />
         </attr>
     </declare-styleable>
 </resources>
