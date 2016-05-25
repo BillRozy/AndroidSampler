@@ -2,9 +2,12 @@ package com.example.fd.sampler;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,7 +15,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
-import android.widget.RadioButton;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -22,14 +24,16 @@ import java.util.Observer;
 public class MainActivity extends Activity implements Observer {
 
     private PatternLayout mPatternLayout;
+    private ArrayList<SoundSample> tempSongList;
     private Sampler myApp;
     private Pattern firstPattern;
     private Button addTrack;
     private Button stop;
     private Button play;
     private Button pause;
-    private AlertDialog.Builder ad;
-    private AlertDialog alertDialog;
+    static final private int CHOOSE_SAMPLE = 0;
+    private String chosenPath;
+    private int chosenNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,13 +50,6 @@ public class MainActivity extends Activity implements Observer {
         firstPattern.addObserver(this);
         myApp.addPattern(firstPattern);
         myApp.setPatternActive(firstPattern);
-        //myApp.getPattern(1).getTrack(1).makeHitActive(1,2,5,6);
-        //myApp.getPattern(1).getTrack(2).makeHitActive(3,7);
-        //myApp.getPattern(1).getTrack(3).makeHitActive(1,3,5,7);
-        //myApp.getActivePattern().getTrack(1).connectInstrument(getApplicationContext(),"H2Sv2 - THKL - Kick(0004).wav");
-        //myApp.getActivePattern().getTrack(2).connectInstrument(getApplicationContext(),"snare.wav");
-        //myApp.getActivePattern().getTrack(3).connectInstrument(getApplicationContext(),"H2Sv4 - THHL - HiHat(0006).wav");
-
 
         addTrack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,6 +102,18 @@ public class MainActivity extends Activity implements Observer {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == CHOOSE_SAMPLE) {
+            if (resultCode == RESULT_OK) {
+                chosenPath = data.getStringExtra(SampleListActivity.mSelectedSamplePath);
+                myApp.getActivePattern().getTrack(chosenNumber).connectInstrument(getApplicationContext(), chosenPath);
+            }
+        }
+    }
+
+    @Override
     public void update(Observable observable, Object data) {
 
     }
@@ -114,10 +123,12 @@ public class MainActivity extends Activity implements Observer {
             tl.getConnectInstrumentBtn().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final String[] mSamplesName = {"Kick", "Snare", "Hat"};
+                    Intent intent = new Intent(MainActivity.this, SampleListActivity.class);
+                    chosenNumber = mPatternLayout.getTracksLayoutsArray().indexOf(tl) + 1;
+                    startActivityForResult(intent, CHOOSE_SAMPLE);
+                   /* final String[] mSamplesName = {"Kick", "Snare", "Hat","From File System"};
                     AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
                     ad.setTitle("Connecting Sample")  // заголовок
-                    //.setMessage("Type url to sample:") // сообщение
                    .setItems(mSamplesName, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int item) {
@@ -131,6 +142,9 @@ public class MainActivity extends Activity implements Observer {
                             case 2:
                                 myApp.getActivePattern().getTrack(mPatternLayout.getTracksLayoutsArray().indexOf(tl) + 1).connectInstrument(getApplicationContext(), "H2Sv4 - THHL - HiHat(0006).wav");
                                 break;
+                                case 3:
+                                  break;
+
                         }
                             tl.getConnectInstrumentBtn().setImageResource(R.drawable.ic_delete);
                             Toast.makeText(getApplicationContext(), "Connected",
@@ -144,9 +158,10 @@ public class MainActivity extends Activity implements Observer {
                                     Toast.LENGTH_LONG).show();
                         }
                     });
-                    alertDialog = ad.show();
+                    alertDialog = ad.show();*/
                 }
             });
+
             final ArrayList<HitView> hitsArrayOfCurrentTrack = tl.getHitsArray();
             for (final HitView hv : hitsArrayOfCurrentTrack) {
                 hv.setOnClickListener(new View.OnClickListener() {

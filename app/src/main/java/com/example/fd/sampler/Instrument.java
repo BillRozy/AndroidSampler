@@ -6,14 +6,11 @@ package com.example.fd.sampler;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
-import android.media.AudioAttributes;
-import android.media.AudioManager;
 import android.media.SoundPool;
 import android.util.Log;
 
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 // CLASS Instrument keeper of wav sound, and have method to play it
 class Instrument{
@@ -44,11 +41,13 @@ class Instrument{
             afd = assets.openFd(fileName);
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e("FILE","Cant open file");
-            return -1;
+            Log.e("FILE","Cant open file from assets");
+            int id = pool.load(fileName,1);
+            return id;
         }
         return pool.load(afd, 1);
     }
+
 
 
     //PROPERTIES
