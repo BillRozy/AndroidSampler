@@ -25,15 +25,8 @@ public class PatternFragment extends Fragment {
     private LinearLayout verticalLayer;
     private int mChosenTrack;
     private String chosenPath;
-    private int chosenNumber;
-    private float mVolumeBeforeMute;
     static final private int CHOOSE_SAMPLE = 0;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        tracksArray = new ArrayList<>(8);
-    }
 
     public ArrayList<TrackLayout> getTracksLayoutsArray(){
         return tracksArray;
@@ -79,10 +72,9 @@ public class PatternFragment extends Fragment {
             tl.getMuteBtn().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if(isChecked){
-                        mVolumeBeforeMute =  Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl) + 1).getTrackVolume();
                         Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl) + 1).setTrackVolume(0F);}
                     else {
-                        Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl) + 1).setTrackVolume(mVolumeBeforeMute);}
+                        Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl) + 1).setTrackVolume((float) tl.getVolumeSlider().getProgress()/100);}
 
                 }
             });
@@ -123,6 +115,7 @@ public class PatternFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        tracksArray = new ArrayList<>(8);
         verticalLayer = (LinearLayout) inflater.inflate(R.layout.fragment_pattern, container, false);
         return verticalLayer;
     }

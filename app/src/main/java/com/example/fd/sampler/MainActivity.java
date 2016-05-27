@@ -34,7 +34,7 @@ public class MainActivity extends Activity implements Observer {
     private Pattern firstPattern;
     private Button addTrack;
     private Button stop;
-    private ToggleButton play;
+    private Button play;
     private Button pause;
     static final private int CHOOSE_SAMPLE = 0;
     private String chosenPath;
@@ -48,11 +48,11 @@ public class MainActivity extends Activity implements Observer {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
         mPatternFragment = new PatternFragment();
-        getFragmentManager().beginTransaction().add(R.id.fragment,mPatternFragment).commit();
+        getFragmentManager().beginTransaction().replace(R.id.fragment,mPatternFragment).commit();
         addTrack = (Button) this.findViewById(R.id.addTrackButton);
         stop = (Button) this.findViewById(R.id.stopButton);
         pause = (Button) this.findViewById(R.id.pauseButton);
-        play = (ToggleButton) this.findViewById(R.id.playButton);
+        play = (Button) this.findViewById(R.id.playButton);
         myApp = Sampler.getSampler();
         firstPattern = new Pattern(getApplicationContext());
         firstPattern.addObserver(this);
@@ -70,13 +70,14 @@ public class MainActivity extends Activity implements Observer {
             }
         });
 
-        play.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        play.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onClick(View v) {
                     Sampler.getSampler().play();
                     for (TrackLayout tl : mPatternFragment.getTracksLayoutsArray()) {
                         tl.getDeleteBtn().setEnabled(false);
                     }
+                play.setBackgroundResource(R.drawable.play_white);
                 }
         });
 
@@ -89,7 +90,7 @@ public class MainActivity extends Activity implements Observer {
                 for(TrackLayout tl : mPatternFragment.getTracksLayoutsArray()){
                     tl.getDeleteBtn().setEnabled(true);
                 }
-                play.setChecked(false);
+                play.setBackgroundResource(R.drawable.play);
             }
         });
 
@@ -101,7 +102,7 @@ public class MainActivity extends Activity implements Observer {
                 for(TrackLayout tl : mPatternFragment.getTracksLayoutsArray()){
                     tl.getDeleteBtn().setEnabled(true);
                 }
-                play.setChecked(false);
+                play.setBackgroundResource(R.drawable.play);
             }
         });
 
