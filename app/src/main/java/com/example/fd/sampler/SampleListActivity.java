@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,10 +25,10 @@ public class SampleListActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sample_list);
         getSongList();
-        Log.d("Contetnt: ",tempSongList.size()+"");
+        Log.d("Content found: ",tempSongList.size()+"");
         String[] names = new String[tempSongList.size()];
         for(int i = 0; i < tempSongList.size();i++){
-            names[i] = tempSongList.get(i).getTitle();
+            names[i] = tempSongList.get(i).getTitle() + "     " + tempSongList.get(i).getSize();
         }
         ListView lvMain = (ListView) findViewById(R.id.lvMain);
 
@@ -54,6 +55,12 @@ public class SampleListActivity extends Activity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.choose_sample_menu, menu);
+        return true;
+    }
+
     public void getSongList() {
         //retrieve song info
         tempSongList = new ArrayList<>();
@@ -73,6 +80,8 @@ public class SampleListActivity extends Activity {
                     (MediaStore.Audio.Media.ALBUM_ID);
             int data= musicCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
             int albumkey=musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_KEY);
+            int size = musicCursor.getColumnIndex(MediaStore.Audio.Media.SIZE);
+            int type = musicCursor.getColumnIndex(MediaStore.Audio.Media.MIME_TYPE);
             //add songs to list
             do {
                 long thisId = musicCursor.getLong(idColumn);
@@ -81,7 +90,11 @@ public class SampleListActivity extends Activity {
                 long thisalbumId = musicCursor.getLong(albumId);
                 String thisdata= musicCursor.getString(data);
                 String AlbumKey = musicCursor.getString(albumkey);
-                tempSongList.add(new SoundSample(thisId, thisTitle, thisArtist, thisalbumId, thisdata, AlbumKey));
+                long fileSize = musicCursor.getLong(size);
+                String mime_type = musicCursor.getString(type);
+
+                if(fileSize < 1000000 && mime_type.equals("audio/x-wav")){
+                tempSongList.add(new SoundSample(thisId, thisTitle, thisArtist, thisalbumId, thisdata, AlbumKey,fileSize));}
 
             }
             while (musicCursor.moveToNext());

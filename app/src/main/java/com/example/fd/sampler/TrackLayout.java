@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.ToggleButton;
 
 
 import java.util.ArrayList;
@@ -19,6 +21,10 @@ import java.util.ArrayList;
 public class TrackLayout extends LinearLayout {
     private ArrayList<HitView> mHitsArray = null;
     private ImageButton connectInstrumentBtn;
+    private SeekBar mVolumeSlider;
+    private ToggleButton mMuteBtn;
+    private ImageButton mDeleteBtn;
+
 
 
     public TrackLayout(Context context) {
@@ -37,6 +43,14 @@ public class TrackLayout extends LinearLayout {
     public ImageButton getConnectInstrumentBtn() {
         return connectInstrumentBtn;
     }
+
+    public SeekBar getVolumeSlider(){
+        return mVolumeSlider;
+    }
+
+    public ToggleButton getMuteBtn(){return mMuteBtn;}
+
+    public ImageButton getDeleteBtn(){return mDeleteBtn;}
 
     private void initComponent() {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -59,6 +73,10 @@ public class TrackLayout extends LinearLayout {
         mHitsArray.add((HitView) findViewById(R.id.hit15));
         mHitsArray.add((HitView) findViewById(R.id.hit16));
         connectInstrumentBtn = (ImageButton) findViewById(R.id.connectInstrumentButton);
+        mVolumeSlider = (SeekBar) findViewById(R.id.volumeSlider);
+        mVolumeSlider.setProgress(100);
+        mMuteBtn = (ToggleButton) findViewById(R.id.mute);
+        mDeleteBtn = (ImageButton) findViewById(R.id.delete);
     }
 
 

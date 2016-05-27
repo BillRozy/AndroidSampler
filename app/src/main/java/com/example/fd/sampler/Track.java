@@ -30,6 +30,16 @@ class Track{
     public void connectInstrument(Context mCont, String URL){
         this.connectedInstrument = new Instrument(mCont,parentPatt.getSoundPool(),URL);
     }
+
+    public void setTrackVolume(float level){
+        if(connectedInstrument != null){
+        connectedInstrument.setVolume(level);}
+    }
+
+    public float getTrackVolume(){
+        return connectedInstrument.getVolume();
+    }
+
     public void makeHits(){
         for(int i=0;i<Sampler.getSampler().getSteps();i++)
         {
@@ -80,5 +90,6 @@ class Metronome extends Track{
         super("Metronome",parent);
         this.makeAllHitsActive();
         this.connectInstrument(mCont,"Metronome.wav");
+        this.connectedInstrument.setVolume(0F);
     }
 }

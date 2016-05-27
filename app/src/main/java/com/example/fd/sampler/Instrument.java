@@ -15,10 +15,19 @@ import java.io.IOException;
 // CLASS Instrument keeper of wav sound, and have method to play it
 class Instrument{
 
+    private float mVolume = 1F;
     public Instrument(Context mCont,SoundPool pool, String Path) {
         assets = mCont.getAssets();
         this.pool = pool;
         this.id = loadSound(Path);
+    }
+
+    public void setVolume(float level){
+        mVolume = level;
+    }
+
+    public float getVolume(){
+        return mVolume;
     }
 
 
@@ -26,7 +35,7 @@ class Instrument{
     {
      //  try{
             long begin = System.currentTimeMillis();
-            this.pool.play(id,1,1,1,0,1); //Поехали!!!
+            this.pool.play(id,mVolume,mVolume,1,0,1); //Поехали!!!
           // TimeUnit.MILLISECONDS.sleep(Sampler.getSampler().getDelay());
             //this.pool.pause(id);
             long end = System.currentTimeMillis();

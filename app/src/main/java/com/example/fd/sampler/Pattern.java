@@ -52,6 +52,11 @@ class Pattern extends Observable implements Runnable{
         return track;
     }
 
+    public void removeTrack(Track track){
+        tracksArray.remove(track);
+        trackCounter--;
+    }
+
     public Thread getMusicThread(){
         return musicThread;
     }
@@ -107,18 +112,12 @@ class Pattern extends Observable implements Runnable{
     }
 
 
-   /* public void run(){
-        playPattern();
-    }*/
-
-
     //PROPERTIES
     private ArrayList<Track> tracksArray;
     private int trackCounter = 0;
     private Thread musicThread;
     protected boolean isPaused = false;
     protected boolean keepRunning = false;
-   // private SoundPool sPool = new SoundPool(9, AudioManager.STREAM_MUSIC,0);
    AudioAttributes attributes = new AudioAttributes.Builder()
            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
            .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)

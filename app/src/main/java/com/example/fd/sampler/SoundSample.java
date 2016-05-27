@@ -6,19 +6,22 @@ package com.example.fd.sampler;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.DecimalFormat;
+
 public class SoundSample  implements Parcelable {
     private long id;
     private String title;
-    private String artist, data, albumkey;
+    private String artist, data, albumkey,size;
     private long alid;
 
-    public SoundSample(long songID, String songTitle, String songArtist, long albumID, String thisdata, String AlbumKey) {
+    public SoundSample(long songID, String songTitle, String songArtist, long albumID, String thisdata, String AlbumKey, long songSize) {
         id=songID;
         title=songTitle;
         artist=songArtist;
         alid=albumID;
         data=thisdata;
         albumkey=AlbumKey;
+        size = ( new DecimalFormat("#0.00").format((double)songSize/1024.0/1024.0)) + " mb";
 
     }
     public SoundSample(){
@@ -30,6 +33,7 @@ public class SoundSample  implements Parcelable {
     public long getAlbumID(){return alid;}
     public String getPath(){return data;}
     public String getAlbumKey(){return albumkey;}
+    public String getSize(){return size;}
 
     @Override
     public int describeContents() {
@@ -44,6 +48,7 @@ public class SoundSample  implements Parcelable {
         dest.writeLong(id);
         dest.writeString(data);
         dest.writeString(albumkey);
+        dest.writeString(size);
     }
     public static final Parcelable.Creator<SoundSample> CREATOR = new Parcelable.Creator<SoundSample>() {
         public SoundSample createFromParcel(Parcel in) {
@@ -54,6 +59,7 @@ public class SoundSample  implements Parcelable {
             song.id = in.readLong();
             song.data= in.readString();
             song.albumkey=in.readString();
+            song.size = in.readString();
             return song;
         }
 
