@@ -27,6 +27,9 @@ public class PatternFragment extends Fragment {
     private String chosenPath;
     static final private int CHOOSE_SAMPLE = 0;
 
+    public PatternFragment(){
+        tracksArray = new ArrayList<>(8);
+    }
 
     public ArrayList<TrackLayout> getTracksLayoutsArray(){
         return tracksArray;
@@ -41,13 +44,20 @@ public class PatternFragment extends Fragment {
         verticalLayer.addView(tl);
     }
 
+    public void makeTracks(){
+        while(Sampler.getSampler().getActivePattern().getTracksArray().size()-1>tracksArray.size())
+        {
+            addTrackLayout(new TrackLayout(getActivity().getApplicationContext()));
+        }
+    }
+
     public void remakeTracks() {
-        for (final TrackLayout tl : this.getTracksLayoutsArray()) {
+        for (final TrackLayout tl : tracksArray) {
             tl.getConnectInstrumentBtn().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(PatternFragment.this.getActivity(), SampleListActivity.class);
-                    mChosenTrack = getTracksLayoutsArray().indexOf(tl) + 1;
+                    mChosenTrack = tracksArray.indexOf(tl) + 1;
                     startActivityForResult(intent, CHOOSE_SAMPLE);
 
                 }
@@ -82,9 +92,11 @@ public class PatternFragment extends Fragment {
             tl.getDeleteBtn().setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
-                    tracksArray.remove(tl);
-                    verticalLayer.removeView(tl);
-                    Sampler.getSampler().getActivePattern().removeTrack(Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl) + 1));
+
+                    Sampler.getSampler().getActivePattern().removeTrack(Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl)+1));
+                    Log.d("DELETED:",Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl)+1).getTrackName()+"");
+                    deleteTrackLayout(tl);
+
                 }
             });
 
@@ -108,14 +120,13 @@ public class PatternFragment extends Fragment {
         }
     }
 
-    public void deleteTrackLayout(int num){
-        tracksArray.remove(num);
-        verticalLayer.removeViewAt(num);
+    public void deleteTrackLayout(TrackLayout trackLayout){
+        tracksArray.remove(trackLayout);
+        verticalLayer.removeView(trackLayout);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        tracksArray = new ArrayList<>(8);
         verticalLayer = (LinearLayout) inflater.inflate(R.layout.fragment_pattern, container, false);
         return verticalLayer;
     }

@@ -7,6 +7,7 @@ import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -29,17 +30,17 @@ import java.util.Observer;
 
 public class MainActivity extends Activity implements Observer {
 
-   // private PatternLayout mPatternLayout;
     private Sampler myApp;
     private Pattern firstPattern;
     private Button addTrack;
     private Button stop;
     private Button play;
     private Button pause;
-    static final private int CHOOSE_SAMPLE = 0;
     private String chosenPath;
     private int chosenNumber;
     private PatternFragment mPatternFragment;
+    private SharedPreferences sp;
+    public static final String APP_PREFERENCES = "mysettings";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +56,9 @@ public class MainActivity extends Activity implements Observer {
         play = (Button) this.findViewById(R.id.playButton);
         myApp = Sampler.getSampler();
         firstPattern = new Pattern(getApplicationContext());
+        firstPattern.addTrack("Track-1");
+        firstPattern.addTrack("Track-2");
+        firstPattern.addTrack("Track-3");
         firstPattern.addObserver(this);
         myApp.addPattern(firstPattern);
         myApp.setPatternActive(firstPattern);
@@ -120,6 +124,12 @@ public class MainActivity extends Activity implements Observer {
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mPatternFragment.makeTracks();
+        mPatternFragment.remakeTracks();
+    }
 
     @Override
     public void update(Observable observable, Object data) {
