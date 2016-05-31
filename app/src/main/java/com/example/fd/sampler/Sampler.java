@@ -29,6 +29,7 @@ class Sampler {
 
     // Methods
 
+
     public void offSampler(){
         isPlaying = false;
     }

@@ -58,6 +58,10 @@ public class PatternFragment extends Fragment {
         Sampler.getSampler().setPatternActive(mConnectedPattern);
     }
 
+    public void connectPattern(Pattern patt){
+        mConnectedPattern = patt;
+    }
+
     public ArrayList<TrackLayout> getTracksLayoutsArray(){
         return tracksArray;
     }
@@ -80,16 +84,6 @@ public class PatternFragment extends Fragment {
         }
     }
 
-    public void makeTracksViews(){
-        for (TrackLayout tl : tracksArray){
-            verticalLayer.addView(tl);
-        }
-    }
-
-    public void makeFragmentLayout(){
-        verticalLayer = new LinearLayout(connectedActivity);
-        verticalLayer.setOrientation(LinearLayout.VERTICAL);
-    }
 
     public void addViewToFragment(TrackLayout tl){
         verticalLayer.addView(tl);
@@ -146,18 +140,16 @@ public class PatternFragment extends Fragment {
 
             final ArrayList<HitView> hitsArrayOfCurrentTrack = tl.getHitsArray();
             for (final HitView hv : hitsArrayOfCurrentTrack) {
+                if (Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl) + 1).getHitState(hitsArrayOfCurrentTrack.indexOf(hv))) {
+                    hv.setActive();
+                    hv.setImageResource(R.drawable.btn_media_player_selected);
+                }
                 hv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         hv.toggleState();
                         Log.d("CLICKED FROM MAIN LIST", "BUTTON " + (hitsArrayOfCurrentTrack.indexOf(hv) + 1) + " of track " + getTracksLayoutsArray().indexOf(tl) + " Pressed");
-                        if (hv.getState()) {
-                            Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl) + 1).makeHitActive(hitsArrayOfCurrentTrack.indexOf(hv) + 1);
-                            hv.setImageResource(R.drawable.btn_media_player_selected);
-                        } else {
-                            Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl) + 1).makeHitActive(hitsArrayOfCurrentTrack.indexOf(hv) + 1);
-                            hv.setImageResource(R.drawable.btn_media_player_disabled_selected);
-                        }
+                        hitsStateMaker(tl,hv,hitsArrayOfCurrentTrack);
                     }
                 });
             }
@@ -171,26 +163,23 @@ public class PatternFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-       // verticalLayer = new LinearLayout(getActivity());
-       // verticalLayer.setOrientation(LinearLayout.VERTICAL);
         if(verticalLayer == null){
        verticalLayer = (LinearLayout) inflater.inflate(R.layout.fragment_pattern, container, false);}
         Log.d("OnCreateView", "WORKED");
         if(tracksArray.size() == 0) {
             makeTracks(connectedActivity);
+            remakeTracks();
             for (TrackLayout tl : tracksArray) {
                     verticalLayer.addView(tl);
             }
-            //remakeTracks();
         }
-
         return verticalLayer;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        makeTracks(connectedActivity);
+       // makeTracks(connectedActivity);
         remakeTracks();
     }
 
@@ -221,5 +210,15 @@ public class PatternFragment extends Fragment {
 
     public interface PatternInterface{
 
+    }
+
+    public void hitsStateMaker(TrackLayout tl, HitView hv,ArrayList<HitView> hitsAr){
+        if (hv.getState()) {
+            Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl) + 1).makeHitActive(hitsAr.indexOf(hv) + 1);
+            hv.setImageResource(R.drawable.btn_media_player_selected);
+        } else {
+            Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl) + 1).makeHitActive(hitsAr.indexOf(hv) + 1);
+            hv.setImageResource(R.drawable.btn_media_player_disabled_selected);
+        }
     }
 }

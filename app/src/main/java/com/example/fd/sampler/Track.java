@@ -31,6 +31,10 @@ class Track{
         this.connectedInstrument = new Instrument(mCont,parentPatt.getSoundPool(),URL);
     }
 
+    public boolean getHitState(int num){
+        return hitsArray.get(num).getState();
+    }
+
     public void setTrackVolume(float level){
         if(connectedInstrument != null){
         connectedInstrument.setVolume(level);}
@@ -77,7 +81,7 @@ class Track{
         public void toggleActive(){
             isActive = !isActive;
         }
-        public boolean getActive(){
+        public boolean getState(){
             return isActive;
         }
         //PROPERTIES
@@ -92,4 +96,5 @@ class Metronome extends Track{
         this.connectInstrument(mCont,"Metronome.wav");
         this.connectedInstrument.setVolume(0F);
     }
+
 }

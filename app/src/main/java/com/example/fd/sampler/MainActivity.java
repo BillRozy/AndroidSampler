@@ -27,13 +27,10 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
     private Button nextPattern;
     private Button prevPattern;
     private TextView patternNumber;
-    private String chosenPath;
     private ArrayList<PatternFragment> mPatternFragmentsArray = null;
-    private PatternFragment mPatternFragment;
     private SharedPreferences sp;
     private int mChosenPatternFragmentNumber = 0;
     public static final String APP_PREFERENCES = "mysettings";
-    private double currentBillTotal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,16 +38,11 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+        myApp = Sampler.getSampler();
        if ( mPatternFragmentsArray == null ) {
            mPatternFragmentsArray = new ArrayList<>();
-           mPatternFragmentsArray.add(new PatternFragment());
-           mPatternFragmentsArray.get(mChosenPatternFragmentNumber).makePatternForFragment(this.getApplicationContext());
-           getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
        }
-       else
-       {
-           currentBillTotal = savedInstanceState.getDouble(BILL_TOTAL);
-       }
+        initOnCreate();
            addTrack = (Button) this.findViewById(R.id.addTrackButton);
            stop = (Button) this.findViewById(R.id.stopButton);
            pause = (Button) this.findViewById(R.id.pauseButton);
@@ -59,7 +51,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
            prevPattern = (Button) this.findViewById(R.id.prevPattern);
             patternNumber = (TextView) this.findViewById(R.id.numPattern);
             patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
-           myApp = Sampler.getSampler();
+
            Log.d("OnCreate", "WOrked");
 
            addTrack.setOnClickListener(new View.OnClickListener() {
@@ -118,12 +110,10 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
                        addPattern();
                    } else {
                        mChosenPatternFragmentNumber++;
+                       myApp.setPatternActive(myApp.getPattern(mChosenPatternFragmentNumber+1));
                        getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
 
                    }
-  //                 mPatternFragmentsArray.get(mChosenPatternFragmentNumber).makeTracks(getApplicationContext());
-//                   mPatternFragmentsArray.get(mChosenPatternFragmentNumber).makeFragmentLayout();
-    //               mPatternFragmentsArray.get(mChosenPatternFragmentNumber).makeTracksViews();
                    patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
                }
            });
@@ -133,6 +123,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
                public void onClick(View v) {
                    if (mChosenPatternFragmentNumber != 0) {
                        mChosenPatternFragmentNumber--;
+                       myApp.setPatternActive(myApp.getPattern(mChosenPatternFragmentNumber+1));
                        getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
                    }
                    patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
@@ -154,11 +145,6 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
 
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putDouble(BILL_TOTAL, currentBillTotal);
-    }
 
     @Override
     protected void onStart() {
@@ -176,11 +162,32 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
         Log.d("NEW FRAGMENT", pf.isAdded()+"");
     }
 
+    private void initOnCreate(){
+        mChosenPatternFragmentNumber = myApp.getPatternsList().indexOf(myApp.getActivePattern());
+        for(Pattern patt : Sampler.getSampler().getPatternsList()){
+            PatternFragment pf = new PatternFragment();
+            pf.connectPattern(patt);
+           // pf.makeTracks(this);
+           // pf.remakeTracks();
+            mPatternFragmentsArray.add(pf);
+            if(mPatternFragmentsArray.indexOf(pf) == mChosenPatternFragmentNumber){
+                getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
+            }
+
+        }
+    }
+
 
     class bpmPickerHandler implements NumberPicker.OnValueChangeListener {
         @Override
         public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
             Sampler.getSampler().setBPM(newVal);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
     }
 }

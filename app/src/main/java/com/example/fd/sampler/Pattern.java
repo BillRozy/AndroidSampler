@@ -1,11 +1,8 @@
 package com.example.fd.sampler;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.media.AudioAttributes;
-import android.media.AudioManager;
 import android.media.SoundPool;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -16,7 +13,7 @@ import java.util.concurrent.TimeUnit;
  * Created by FD on 28.04.2016.
  */
 //CLASS Pattern, keeper of tracks
-class Pattern extends Observable implements Runnable{
+class Pattern implements Runnable{
     //METHODS
     //test
     public ArrayList<Track> getTracksArray(){
@@ -46,8 +43,6 @@ class Pattern extends Observable implements Runnable{
         Track track = new Track(name,this);
         tracksArray.add(track);
         trackCounter++;
-        setChanged();
-        notifyObservers();
         return track;
     }
 
@@ -77,7 +72,7 @@ class Pattern extends Observable implements Runnable{
                     Sampler.getSampler().stepsBar.setProgress(i+1);
                     Log.d("Current step is ",Sampler.getSampler().getCurrentStep()+"");
                     for (Track track : tracksArray) {
-                        if (track.hitsArray.get(i).getActive()) {
+                        if (track.hitsArray.get(i).getState()) {
                             track.performSound();
                         }
                     }
@@ -107,7 +102,7 @@ class Pattern extends Observable implements Runnable{
                 else playPattern(Sampler.getSampler().getCurrentStep());
             }
         } catch (Exception e) {
-            System.out.println(this + " прерван.");}
+            System.out.println(this + " прерван." + e);}
     }
 
 

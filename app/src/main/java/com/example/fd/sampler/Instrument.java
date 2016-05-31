@@ -15,6 +15,11 @@ import java.io.IOException;
 // CLASS Instrument keeper of wav sound, and have method to play it
 class Instrument{
     private float mVolume = 1F;
+
+    public Instrument(){
+
+    }
+
     public Instrument(Context mCont,SoundPool pool, String Path) {
         assets = mCont.getAssets();
         this.pool = pool;

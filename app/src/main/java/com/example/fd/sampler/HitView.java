@@ -53,6 +53,10 @@ public class HitView extends ImageButton {
         isActive = !isActive;
     }
 
+    public void setActive(){
+        isActive = true;
+    }
+
     public boolean getState(){
         return isActive;
     }
