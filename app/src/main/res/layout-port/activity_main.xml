@@ -10,6 +10,49 @@
     android:weightSum="1"
     android:background="#303030">
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:id="@+id/menuLayout">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="40dip"
+            android:text="Load Preset"
+            android:id="@+id/button"
+            android:layout_marginLeft="20dip" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Preset1"
+            android:id="@+id/presetName"
+            android:layout_marginRight="50dip" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Prev"
+            android:id="@+id/prevPattern" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="1"
+            android:id="@+id/numPattern" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Next"
+            android:id="@+id/nextPatt" />
+    </LinearLayout>
+
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/fragment"
         android:layout_width="match_parent"

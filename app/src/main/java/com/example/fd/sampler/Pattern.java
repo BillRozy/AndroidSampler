@@ -45,7 +45,6 @@ class Pattern extends Observable implements Runnable{
     public Track addTrack(String name) {
         Track track = new Track(name,this);
         tracksArray.add(track);
-        // track.getTrackThread().start();
         trackCounter++;
         setChanged();
         notifyObservers();
@@ -121,7 +120,7 @@ class Pattern extends Observable implements Runnable{
    AudioAttributes attributes = new AudioAttributes.Builder()
            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
            .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
-           .setUsage(AudioAttributes.USAGE_GAME)
+           .setUsage(AudioAttributes.USAGE_MEDIA)
            .build();
     SoundPool sPool = new SoundPool.Builder().setAudioAttributes(attributes).setMaxStreams(9).build();
 }

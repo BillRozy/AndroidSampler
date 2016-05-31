@@ -1,8 +1,10 @@
 package com.example.fd.sampler;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -26,9 +28,34 @@ public class PatternFragment extends Fragment {
     private int mChosenTrack;
     private String chosenPath;
     static final private int CHOOSE_SAMPLE = 0;
+    private Pattern mConnectedPattern;
+    private Activity connectedActivity;
 
     public PatternFragment(){
+
         tracksArray = new ArrayList<>(8);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d("onCreate Fragment", "WORKED");
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d("onStart Fragment", "WORKED");
+    }
+
+    public void makePatternForFragment(Context mCont){
+        mConnectedPattern = new Pattern(mCont);
+        mConnectedPattern.addTrack("Track-1");
+        mConnectedPattern.addTrack("Track-2");
+        mConnectedPattern.addTrack("Track-3");
+        Sampler.getSampler().addPattern(mConnectedPattern);
+        Sampler.getSampler().setPatternActive(mConnectedPattern);
     }
 
     public ArrayList<TrackLayout> getTracksLayoutsArray(){
@@ -41,14 +68,31 @@ public class PatternFragment extends Fragment {
 
     public void addTrackLayout(TrackLayout tl){
         tracksArray.add(tl);
-        verticalLayer.addView(tl);
+      //  if (verticalLayer != null){
+       // verticalLayer.addView(tl);}
     }
 
-    public void makeTracks(){
+    public void makeTracks(Context context ){
         while(Sampler.getSampler().getActivePattern().getTracksArray().size()-1>tracksArray.size())
         {
-            addTrackLayout(new TrackLayout(getActivity().getApplicationContext()));
+            TrackLayout tl = new TrackLayout(context);
+            addTrackLayout(tl);
         }
+    }
+
+    public void makeTracksViews(){
+        for (TrackLayout tl : tracksArray){
+            verticalLayer.addView(tl);
+        }
+    }
+
+    public void makeFragmentLayout(){
+        verticalLayer = new LinearLayout(connectedActivity);
+        verticalLayer.setOrientation(LinearLayout.VERTICAL);
+    }
+
+    public void addViewToFragment(TrackLayout tl){
+        verticalLayer.addView(tl);
     }
 
     public void remakeTracks() {
@@ -94,7 +138,7 @@ public class PatternFragment extends Fragment {
                 public void onClick(View v) {
 
                     Sampler.getSampler().getActivePattern().removeTrack(Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl)+1));
-                    Log.d("DELETED:",Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl)+1).getTrackName()+"");
+                   // Log.d("DELETED:",Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl)+1).getTrackName()+"");
                     deleteTrackLayout(tl);
 
                 }
@@ -127,9 +171,29 @@ public class PatternFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        verticalLayer = (LinearLayout) inflater.inflate(R.layout.fragment_pattern, container, false);
+       // verticalLayer = new LinearLayout(getActivity());
+       // verticalLayer.setOrientation(LinearLayout.VERTICAL);
+        if(verticalLayer == null){
+       verticalLayer = (LinearLayout) inflater.inflate(R.layout.fragment_pattern, container, false);}
+        Log.d("OnCreateView", "WORKED");
+        if(tracksArray.size() == 0) {
+            makeTracks(connectedActivity);
+            for (TrackLayout tl : tracksArray) {
+                    verticalLayer.addView(tl);
+            }
+            //remakeTracks();
+        }
+
         return verticalLayer;
     }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        makeTracks(connectedActivity);
+        remakeTracks();
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -140,5 +204,22 @@ public class PatternFragment extends Fragment {
                 getTracksLayoutsArray().get(mChosenTrack-1).getConnectInstrumentBtn().setImageResource(R.drawable.mixer);
             }
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+            connectedActivity = activity;
+        Log.d("onAttach Fragment", "WORKED");
+    }
+
+    public interface PatternInterface{
+
     }
 }

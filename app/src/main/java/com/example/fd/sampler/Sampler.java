@@ -1,5 +1,6 @@
 package com.example.fd.sampler;
 
+import android.util.Log;
 import android.widget.ProgressBar;
 
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ class Sampler {
         System.out.println("Начинаю воспроизведение...");
         if (activePattern.getMusicThread().getState() == Thread.State.NEW) {
             activePattern.getMusicThread().start();
+            Log.d("Thread started","SUCESS");
         }
         else
         {
@@ -102,6 +104,9 @@ class Sampler {
     }
     public void setCurrentStep(int step){
         currentStep = step;
+    }
+    public ArrayList<Pattern>  getPatternsList(){
+        return patterns;
     }
 
     //PROPERTIES
