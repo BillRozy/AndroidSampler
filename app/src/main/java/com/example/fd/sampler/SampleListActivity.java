@@ -20,6 +20,7 @@ public class SampleListActivity extends Activity {
 
     private ArrayList<SoundSample> tempSongList;
     public final static String mSelectedSamplePath = "com.example.fd.sampler.mSelectedSamplePath";
+    public final static String mSelectedSampleName = "com.example.fd.sampler.mSelectedSampleName";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,10 +45,12 @@ public class SampleListActivity extends Activity {
                 Log.d("LOG", "itemClick: position = " + position + ", id = "
                         + id);
                 String path = tempSongList.get(position).getPath();
+                String name = tempSongList.get(position).getTitle();
                 Intent intent = new Intent(SampleListActivity.this, MainActivity.class);
 
                 // в ключ username пихаем текст из первого текстового поля
                 intent.putExtra(mSelectedSamplePath, path);
+                intent.putExtra(mSelectedSampleName, name);
                 setResult(RESULT_OK, intent);
                 finish();
 

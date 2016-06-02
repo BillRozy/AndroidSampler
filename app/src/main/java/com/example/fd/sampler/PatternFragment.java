@@ -201,8 +201,11 @@ public class PatternFragment extends Fragment {
         if (requestCode == CHOOSE_SAMPLE) {
             if (resultCode == -1) {
                 chosenPath = data.getStringExtra(SampleListActivity.mSelectedSamplePath);
+                String chosenName = data.getStringExtra(SampleListActivity.mSelectedSampleName);
                 Sampler.getSampler().getActivePattern().getTrack(mChosenTrack).connectInstrument(getActivity().getApplicationContext(), chosenPath);
-                getTracksLayoutsArray().get(mChosenTrack-1).getConnectInstrumentBtn().setImageResource(R.drawable.mixer);
+                Sampler.getSampler().getActivePattern().getTrack(mChosenTrack).setTrackName(chosenName);
+                tracksArray.get(mChosenTrack-1).getTrackName().setText(chosenName);
+                tracksArray.get(mChosenTrack-1).getConnectInstrumentBtn().setImageResource(R.drawable.mixer);
             }
         }
     }

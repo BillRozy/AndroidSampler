@@ -24,6 +24,7 @@ class Track{
     public String getTrackName(){
         return this.mTrackName;
     }
+    public void setTrackName(String s){mTrackName = s;}
     public ArrayList<Hit> getHits(){
         return hitsArray;
     }
