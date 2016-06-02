@@ -1,7 +1,7 @@
 <resources>
-    <dimen name="app_list_row_size">20dip</dimen>
-    <dimen name="hit_height">40dip</dimen>
-    <dimen name="hit_right_margin">4dip</dimen>
+    <dimen name="app_list_row_size">16dip</dimen>
+    <dimen name="hit_height">35dip</dimen>
+    <dimen name="hit_right_margin">3dip</dimen>
     <declare-styleable name="HitView">
         <attr name="isActive" format="boolean" />
     </declare-styleable>

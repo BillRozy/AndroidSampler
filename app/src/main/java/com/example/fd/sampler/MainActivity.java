@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.NumberPicker;
@@ -57,10 +58,11 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
            addTrack.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View v) {
+                   Track curTr = myApp.getActivePattern().addTrack("Track: " + myApp.getActivePattern().getTrackCounter());
                    TrackLayout tl = new TrackLayout(getApplicationContext());
+                   tl.getTrackName().setText(curTr.getTrackName());
                    mPatternFragmentsArray.get(mChosenPatternFragmentNumber).addTrackLayout(tl);
                    mPatternFragmentsArray.get(mChosenPatternFragmentNumber).addViewToFragment(tl);
-                   Track curTr = myApp.getActivePattern().addTrack("Track: " + myApp.getActivePattern().getTrackCounter());
                    Toast.makeText(getApplicationContext(), "Добавлен трек " + (myApp.getActivePattern().getTrackCounter() - 1), Toast.LENGTH_SHORT).show();
                    mPatternFragmentsArray.get(mChosenPatternFragmentNumber).remakeTracks();
                }
@@ -132,6 +134,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
 
 
            NumberPicker bpmPicker = (NumberPicker) this.findViewById(R.id.numberPicker);
+        bpmPicker.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
            bpmPicker.setMaxValue(400);
            bpmPicker.setMinValue(60);
            bpmPicker.setValue(Sampler.getSampler().getBPM());

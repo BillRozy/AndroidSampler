@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 
@@ -24,6 +25,7 @@ public class TrackLayout extends LinearLayout {
     private SeekBar mVolumeSlider;
     private ToggleButton mMuteBtn;
     private ImageButton mDeleteBtn;
+    private TextView mTrackName;
 
 
 
@@ -52,6 +54,8 @@ public class TrackLayout extends LinearLayout {
 
     public ImageButton getDeleteBtn(){return mDeleteBtn;}
 
+    public TextView getTrackName(){return  mTrackName;}
+
     private void initComponent() {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.track_layout, this);
@@ -77,6 +81,7 @@ public class TrackLayout extends LinearLayout {
         mVolumeSlider.setProgress(100);
         mMuteBtn = (ToggleButton) findViewById(R.id.mute);
         mDeleteBtn = (ImageButton) findViewById(R.id.delete);
+        mTrackName = (TextView) findViewById(R.id.trackNameView);
     }
 
 

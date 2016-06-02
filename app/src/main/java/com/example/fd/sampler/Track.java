@@ -15,14 +15,14 @@ class Track{
     }
     //end test
     public Track(String n, Pattern parent){
-        name = n;
-        System.out.println("Новый поток: " + name) ;
+        mTrackName = n;
+        System.out.println("Новый поток: " + mTrackName) ;
         this.makeHits();
         this.parentPatt = parent;
         //t.start();
     }
     public String getTrackName(){
-        return this.name;
+        return this.mTrackName;
     }
     public ArrayList<Hit> getHits(){
         return hitsArray;
@@ -67,7 +67,7 @@ class Track{
         }
 
     //PROPERTIES
-    private String name;
+    private String mTrackName;
     private Pattern parentPatt;
     protected ArrayList<Hit> hitsArray = new ArrayList<>();
     protected Instrument connectedInstrument;// = new Instrument("H2Sv4 - THHL - HiHat(0009).wav");

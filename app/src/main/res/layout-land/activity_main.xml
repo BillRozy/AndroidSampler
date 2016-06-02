@@ -8,17 +8,19 @@
     android:orientation="vertical"
     tools:context="com.example.fd.sampler.MainActivity"
     android:weightSum="1"
-    android:background="#303030">
+    android:background="@drawable/pattern_background">
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="50dip"
-        android:id="@+id/menuLayout">
+        android:layout_height="wrap_content"
+        android:id="@+id/menuLayout"
+        android:background="@color/bright_foreground_disabled_material_light"
+        android:layout_weight="0.1">
 
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="40dip"
+            android:layout_height="wrap_content"
             android:text="Load Preset"
             android:id="@+id/button"
             android:layout_marginLeft="20dip" />
@@ -55,10 +57,12 @@
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/fragment"
-        android:layout_width="match_parent"
-        android:layout_height="250dip"
-        android:layout_weight="0.7" />
-
+        android:layout_width="570dip"
+        android:layout_height="220dip"
+        android:layout_weight="0.8"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dip"
+        android:layout_marginBottom="5dip" />
     <ProgressBar
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
@@ -69,9 +73,9 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="50dip"
+        android:layout_height="wrap_content"
         android:id="@+id/linearLayout"
-        android:layout_weight="0.3">
+        android:layout_weight="0.1">
 
         <Button
             android:id="@+id/playButton"
@@ -97,9 +101,10 @@
             android:layout_height="50dip"
             android:id="@+id/numberPicker"
             android:minHeight="40dp"
-            android:minWidth="40px"
+            android:minWidth="40dip"
             android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="100dip" />
+            android:layout_marginLeft="100dip"
+            android:background="@android:color/holo_orange_dark" />
 
         <Button
             android:layout_width="wrap_content"

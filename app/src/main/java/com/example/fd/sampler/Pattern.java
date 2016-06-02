@@ -22,13 +22,16 @@ class Pattern implements Runnable{
     public SoundPool getSoundPool(){return this.sPool;}
     //end test
 
-    //CONSTUCTOR
+    //CONSTRUCTOR
     public Pattern(Context mCont){
         tracksArray = new ArrayList<>(6);
         this.addMetronome(mCont);
         this.musicThread = new Thread(this);
+        mPatternCounter++;
 
     }
+    public void setPatternName(String name){mPatternName = name;}
+    public String getPatternName(){return  mPatternName;}
     public Track getTrack(int number) {
         return tracksArray.get(number);
     }
@@ -110,6 +113,7 @@ class Pattern implements Runnable{
     private ArrayList<Track> tracksArray;
     private int trackCounter = 0;
     private Thread musicThread;
+    private String mPatternName;
     protected boolean isPaused = false;
     protected boolean keepRunning = false;
    AudioAttributes attributes = new AudioAttributes.Builder()
@@ -118,4 +122,5 @@ class Pattern implements Runnable{
            .setUsage(AudioAttributes.USAGE_MEDIA)
            .build();
     SoundPool sPool = new SoundPool.Builder().setAudioAttributes(attributes).setMaxStreams(9).build();
+    static private int mPatternCounter = 0;
 }

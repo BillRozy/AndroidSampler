@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 
 
@@ -30,6 +31,8 @@ public class PatternFragment extends Fragment {
     static final private int CHOOSE_SAMPLE = 0;
     private Pattern mConnectedPattern;
     private Activity connectedActivity;
+    private ViewGroup scrollViewFrame;
+
 
     public PatternFragment(){
 
@@ -80,6 +83,7 @@ public class PatternFragment extends Fragment {
         while(Sampler.getSampler().getActivePattern().getTracksArray().size()-1>tracksArray.size())
         {
             TrackLayout tl = new TrackLayout(context);
+            tl.getTrackName().setText(Sampler.getSampler().getActivePattern().getTrack(tracksArray.size()+1).getTrackName());
             addTrackLayout(tl);
         }
     }
@@ -163,8 +167,16 @@ public class PatternFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if(scrollViewFrame == null){
+            scrollViewFrame = (ViewGroup) inflater.inflate(R.layout.fragment_pattern, container, false);
+        }
+      // verticalLayer = (LinearLayout) inflater.inflate(R.layout.fragment_pattern, container, false);}
+        verticalLayer = (LinearLayout) scrollViewFrame.findViewById(R.id.verticalLayer);
         if(verticalLayer == null){
-       verticalLayer = (LinearLayout) inflater.inflate(R.layout.fragment_pattern, container, false);}
+            verticalLayer = new LinearLayout(connectedActivity);
+            verticalLayer.setOrientation(LinearLayout.VERTICAL);
+            verticalLayer.setPadding(8,8,8,8);
+        }
         Log.d("OnCreateView", "WORKED");
         if(tracksArray.size() == 0) {
             makeTracks(connectedActivity);
@@ -173,7 +185,7 @@ public class PatternFragment extends Fragment {
                     verticalLayer.addView(tl);
             }
         }
-        return verticalLayer;
+        return scrollViewFrame;
     }
 
     @Override
