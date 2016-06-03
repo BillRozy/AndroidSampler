@@ -229,7 +229,9 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
                 Pattern patt = myApp.getPattern(pattID);
                     Log.d("FOUNDPATTERN FOR TRACK!", (pattID-1) + "");
                     Track track = patt.addTrack(trackName);
+                if(activeHitsArray[0] != 0) {
                     track.makeHitActive(activeHitsArray);
+                }
                     track.setTrackVolume((float) volume);
             if (path != null) {
                 track.connectInstrument(this, path);
