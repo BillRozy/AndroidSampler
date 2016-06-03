@@ -69,6 +69,10 @@ class Sampler {
         return this.activePattern;
     }
 
+    public void clearPatternsList(){
+        patterns = new ArrayList<>();
+    }
+
     public int getDelay(){
         double dblBPM = (double) BPM;
         double delay =  120.0/dblBPM * 250.0;

@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -44,6 +45,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
         myApp = Sampler.getSampler();
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
        if ( mPatternFragmentsArray == null ) {
            mPatternFragmentsArray = new ArrayList<>();
        }
@@ -164,12 +166,13 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
         mChosenPatternFragmentNumber++;
         PatternFragment pf = new PatternFragment();
         mPatternFragmentsArray.add(pf);
-        mPatternFragmentsArray.get(mChosenPatternFragmentNumber).makePatternForFragment(this.getApplicationContext());
+        mPatternFragmentsArray.get(mChosenPatternFragmentNumber).makePatternForFragment(this);
         getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
         Log.d("NEW FRAGMENT", pf.isAdded()+"");
     }
 
     private void initOnCreate(){
+        myApp.clearPatternsList();
         mDatabaseHelper = new DataBaseHelper(this, "mainbase.db", null, 1);
         SQLiteDatabase sdb;
         sdb = mDatabaseHelper.getReadableDatabase();
@@ -182,7 +185,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
                 null
         );
 
-
+        int pos = 1;
         while (patternCursor.moveToNext()) {
             int id = patternCursor.getInt(patternCursor.getColumnIndex(DataBaseHelper._ID));
             String name = patternCursor.getString(patternCursor
@@ -201,13 +204,12 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
         patternCursor.close();
 
         Cursor trackCursor = sdb.query(mDatabaseHelper.DATABASE_TABLE_TRACKS, new String[]{
-                        DataBaseHelper._ID, DataBaseHelper.TRACK_TITLE_COLUMN, DataBaseHelper.TRACK_HITS_ARRAY_COLUMN
-                        , DataBaseHelper.TRACK_VOLUME_COLUMN, DataBaseHelper.TRACK_MUTE_COLUMN, DataBaseHelper.TRACK_PATH_TO_SAMPLE_COLUMN, DataBaseHelper.TRACK_PATTERN_ID_COLUMN}, null,
-                null,
-                null,
-                null,
-                null
-        );
+                        DataBaseHelper._ID, DataBaseHelper.TRACK_TITLE_COLUMN,
+                        DataBaseHelper.TRACK_HITS_ARRAY_COLUMN, DataBaseHelper.TRACK_VOLUME_COLUMN,
+                        DataBaseHelper.TRACK_MUTE_COLUMN,
+                        DataBaseHelper.TRACK_PATH_TO_SAMPLE_COLUMN,
+                        DataBaseHelper.TRACK_PATTERN_ID_COLUMN}, null, null, null, null, null);
+
         while(trackCursor.moveToNext()){
                 int trackID = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper._ID));
                 int pattID = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_PATTERN_ID_COLUMN));
@@ -222,7 +224,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
                 int volume = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_VOLUME_COLUMN));
                 int mute = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_MUTE_COLUMN));
                 String path = trackCursor.getString(trackCursor.getColumnIndex(DataBaseHelper.TRACK_PATH_TO_SAMPLE_COLUMN));
-                Pattern patt = Sampler.getSampler().getPattern(pattID);
+                Pattern patt = myApp.getPattern(pattID);
                     Log.d("FOUNDPATTERN FOR TRACK!", (pattID-1) + "");
                     Track track = patt.addTrack(trackName);
                     track.makeHitActive(activeHitsArray);
@@ -234,11 +236,9 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
         trackCursor.close();
 
         mChosenPatternFragmentNumber = myApp.getPatternsList().indexOf(myApp.getActivePattern());
-        for(Pattern patt : Sampler.getSampler().getPatternsList()){
+        for(Pattern patt : myApp.getPatternsList()){
             PatternFragment pf = new PatternFragment();
             pf.connectPattern(patt);
-           // pf.makeTracks(this);
-           // pf.remakeTracks();
             mPatternFragmentsArray.add(pf);
             if(mPatternFragmentsArray.indexOf(pf) == mChosenPatternFragmentNumber){
                 getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
@@ -246,13 +246,14 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
 
         }
         sdb.close();
+      //  myApp.clearPatternsList();
     }
 
 
     class bpmPickerHandler implements NumberPicker.OnValueChangeListener {
         @Override
         public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-            Sampler.getSampler().setBPM(newVal);
+            myApp.setBPM(newVal);
         }
     }
 
@@ -266,10 +267,10 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
         int deleted = mSqLiteDatabase.delete(mDatabaseHelper.DATABASE_TABLE_PATTERNS, "1", null);
         Log.d("REMOVED FROM PATTERNS" , deleted+"");
         mSqLiteDatabase.delete(mDatabaseHelper.DATABASE_TABLE_TRACKS, "1", null);
-        for( int i = 0;i < Sampler.getSampler().getPatternsList().size(); i++ ) {
+        for( int i = 0;i < myApp.getPatternsList().size(); i++ ) {
             Pattern patt = myApp.getPattern(i+1);
             ContentValues values = new ContentValues();
-            // Задайте значения для каждого столбца
+
             values.put(DataBaseHelper.PATTERN_NAME_COLUMN, patt.getPatternName());
             values.put(DataBaseHelper.PATTERN_BPM_COLUMN, patt.getPatternBPM());
             values.put(DataBaseHelper.PATTERN_STEP_COLUMN, patt.getPatternSteps());

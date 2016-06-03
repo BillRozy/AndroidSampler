@@ -2,7 +2,9 @@ package com.example.fd.sampler;
 
 import android.content.Context;
 import android.media.AudioAttributes;
+import android.media.AudioManager;
 import android.media.SoundPool;
+import android.os.Build;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -25,10 +27,24 @@ class Pattern implements Runnable{
     //CONSTRUCTOR
     public Pattern(Context mCont){
         tracksArray = new ArrayList<>(6);
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+        if (currentapiVersion < Build.VERSION_CODES.LOLLIPOP) {
+            sPool = new SoundPool(12, AudioManager.STREAM_MUSIC, 1);
+        }
+        else {
+            attributes = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build();
+
+            sPool = new SoundPool.Builder().setAudioAttributes(attributes).setMaxStreams(12).build();
+        }
         this.addMetronome(mCont);
         this.musicThread = new Thread(this);
         mPatternCounter++;
         mPatternName = "Pattern " + mPatternCounter;
+
+
 
     }
     public void setPatternName(String name){mPatternName = name;}
@@ -134,11 +150,7 @@ class Pattern implements Runnable{
     protected boolean keepRunning = false;
     private int mPatternBPM = 120;
     private int mPatternSteps = 16;
-   AudioAttributes attributes = new AudioAttributes.Builder()
-           .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-           .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
-           .setUsage(AudioAttributes.USAGE_MEDIA)
-           .build();
-    SoundPool sPool = new SoundPool.Builder().setAudioAttributes(attributes).setMaxStreams(9).build();
+   AudioAttributes attributes;
+    SoundPool sPool;
     static private int mPatternCounter = 0;
 }
