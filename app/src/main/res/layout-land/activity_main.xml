@@ -53,6 +53,13 @@
             android:layout_height="wrap_content"
             android:text="Next"
             android:id="@+id/nextPatt" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="browse"
+            android:id="@+id/fileBrowseBtn"
+            android:layout_gravity="right" />
     </LinearLayout>
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"

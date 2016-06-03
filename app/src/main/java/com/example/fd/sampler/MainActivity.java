@@ -2,6 +2,7 @@ package com.example.fd.sampler;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -32,6 +33,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
     private Button pause;
     private Button nextPattern;
     private Button prevPattern;
+    private Button fileBrowseBtn;
     private TextView patternNumber;
     private ArrayList<PatternFragment> mPatternFragmentsArray = null;
     private SharedPreferences sp;
@@ -58,6 +60,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
            prevPattern = (Button) this.findViewById(R.id.prevPattern);
             patternNumber = (TextView) this.findViewById(R.id.numPattern);
             patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
+        fileBrowseBtn = (Button) this.findViewById(R.id.fileBrowseBtn);
 
            Log.d("OnCreate", "WOrked");
 
@@ -137,6 +140,14 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
                    patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
                }
            });
+
+        fileBrowseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, FileBrowserActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
            NumberPicker bpmPicker = (NumberPicker) this.findViewById(R.id.numberPicker);

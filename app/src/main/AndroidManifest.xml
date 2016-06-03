@@ -23,6 +23,10 @@
             android:screenOrientation="landscape">
         </activity>
 
+        <activity android:name=".FileBrowserActivity"
+            android:label="File Browse"
+            android:screenOrientation="landscape">
+        </activity>
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
