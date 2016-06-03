@@ -69,7 +69,7 @@ class Track{
     public void performSound(){
 
                     this.connectedInstrument.playSound();
-                    // System.out.println("Active hit, step number " + hitsArray.indexOf(hit));
+
         }
 
     //PROPERTIES

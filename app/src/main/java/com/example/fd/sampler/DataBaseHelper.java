@@ -38,7 +38,7 @@ public class DataBaseHelper extends SQLiteOpenHelper implements BaseColumns {
     private static final String TRACKS_CREATE_SCRIPT = "CREATE TABLE "
             + DATABASE_TABLE_TRACKS + " (" + BaseColumns._ID
             + " integer primary key autoincrement, " + TRACK_TITLE_COLUMN
-            + " text not null, " + TRACK_HITS_ARRAY_COLUMN + " text not null, " + TRACK_VOLUME_COLUMN
+            + " text not null, " + TRACK_HITS_ARRAY_COLUMN + " text, " + TRACK_VOLUME_COLUMN
             + " integer, " + TRACK_MUTE_COLUMN + " numeric, " + TRACK_PATH_TO_SAMPLE_COLUMN + " text, "
             + TRACK_PATTERN_ID_COLUMN + " integer not null);";
     private static final String FIRST_INITIALIZATION_OF_PATTERNS = "INSERT INTO " + DATABASE_TABLE_PATTERNS

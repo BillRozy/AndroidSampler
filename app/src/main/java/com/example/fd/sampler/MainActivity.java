@@ -218,7 +218,9 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
                 String[] hitsString = trackCursor.getString(trackCursor.getColumnIndex(DataBaseHelper.TRACK_HITS_ARRAY_COLUMN)).split(" ");
                 int activeHitsArray[] = new int[hitsString.length];
                 for (int i = 0; i < hitsString.length; i++) {
-                        activeHitsArray[i] = Integer.parseInt(hitsString[i]);
+                        if(!hitsString[i].equals("")) {
+                            activeHitsArray[i] = Integer.parseInt(hitsString[i]);
+                        }
                     // System.out.println(numArr[i]);
                 }
                 int volume = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_VOLUME_COLUMN));

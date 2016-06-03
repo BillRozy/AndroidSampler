@@ -53,7 +53,6 @@ public class SampleListActivity extends Activity {
                 intent.putExtra(mSelectedSampleName, name);
                 setResult(RESULT_OK, intent);
                 finish();
-
             }
         });
     }
@@ -101,7 +100,6 @@ public class SampleListActivity extends Activity {
 
             }
             while (musicCursor.moveToNext());
-
         }
     }
 }

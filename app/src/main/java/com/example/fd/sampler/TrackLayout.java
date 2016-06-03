@@ -9,6 +9,7 @@ import android.media.Image;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -25,7 +26,7 @@ public class TrackLayout extends LinearLayout {
     private SeekBar mVolumeSlider;
     private ToggleButton mMuteBtn;
     private ImageButton mDeleteBtn;
-    private TextView mTrackName;
+    private Button mTrackName;
 
 
 
@@ -54,7 +55,7 @@ public class TrackLayout extends LinearLayout {
 
     public ImageButton getDeleteBtn(){return mDeleteBtn;}
 
-    public TextView getTrackName(){return  mTrackName;}
+    public Button getTrackName(){return  mTrackName;}
 
     private void initComponent() {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -81,33 +82,7 @@ public class TrackLayout extends LinearLayout {
         mVolumeSlider.setProgress(100);
         mMuteBtn = (ToggleButton) findViewById(R.id.mute);
         mDeleteBtn = (ImageButton) findViewById(R.id.delete);
-        mTrackName = (TextView) findViewById(R.id.trackNameView);
+        mTrackName = (Button) findViewById(R.id.trackNameView);
     }
 
-
-    public void setChannelName(String name) {
-    }
-
-    public void setChannelLogo(int resourceId) {
-    }
-
-    public void setChannelLogo(Bitmap image) {
-    }
-
-    public void setProgramTime(String time) {
-    }
-
-    public void setProgramName(String name) {
-
-    }
-
-    public void setProgramDescription(String name) {
-    }
-
-
-
-
-    private void updateFieldsByParent() {
-
-    }
 }

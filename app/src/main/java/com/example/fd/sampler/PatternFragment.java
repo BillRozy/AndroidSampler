@@ -1,8 +1,10 @@
 package com.example.fd.sampler;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,9 +14,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 
 import java.util.ArrayList;
@@ -131,6 +135,45 @@ public class PatternFragment extends Fragment {
                 }
             });
 
+            tl.getTrackName().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(connectedActivity);
+                    alertDialog.setTitle("Track Name");
+                    alertDialog.setMessage("Enter New Name");
+
+                    final EditText input = new EditText(connectedActivity);
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.MATCH_PARENT);
+                    input.setLayoutParams(lp);
+                    alertDialog.setView(input);
+                    alertDialog.setIcon(R.drawable.galka);
+
+                    alertDialog.setPositiveButton("YES",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    String title = input.getText().toString();
+                                    if (title.compareTo("") != 0) {
+                                        tl.getTrackName().setText(title);
+                                        Sampler.getSampler().getActivePattern().getTrack(tracksArray.indexOf(tl) + 1).setTrackName(title);
+
+                                    }
+                                }
+                            });
+
+                    alertDialog.setNegativeButton("NO",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+
+                    alertDialog.show();
+                }
+
+            });
+
             tl.getDeleteBtn().setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
@@ -164,6 +207,7 @@ public class PatternFragment extends Fragment {
         tracksArray.remove(trackLayout);
         verticalLayer.removeView(trackLayout);
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -194,7 +238,6 @@ public class PatternFragment extends Fragment {
        // makeTracks(connectedActivity);
         remakeTracks();
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
