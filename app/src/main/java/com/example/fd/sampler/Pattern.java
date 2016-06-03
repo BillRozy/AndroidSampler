@@ -28,6 +28,7 @@ class Pattern implements Runnable{
         this.addMetronome(mCont);
         this.musicThread = new Thread(this);
         mPatternCounter++;
+        mPatternName = "Pattern " + mPatternCounter;
 
     }
     public void setPatternName(String name){mPatternName = name;}
@@ -44,6 +45,7 @@ class Pattern implements Runnable{
     }
     public Track addTrack(String name) {
         Track track = new Track(name,this);
+        track.setTrackVolume(1F);
         tracksArray.add(track);
         trackCounter++;
         return track;
@@ -60,6 +62,20 @@ class Pattern implements Runnable{
 
     public int getTrackCounter(){
         return trackCounter;
+    }
+
+    public int getPatternBPM(){return mPatternBPM;}
+
+    public void setPatternBPM(int mPatternBPM) {
+        this.mPatternBPM = mPatternBPM;
+    }
+
+    public int getPatternSteps() {
+        return mPatternSteps;
+    }
+
+    public void setPatternSteps(int mPatternSteps) {
+        this.mPatternSteps = mPatternSteps;
     }
 
     public void addMetronome(Context mCont){
@@ -116,6 +132,8 @@ class Pattern implements Runnable{
     private String mPatternName;
     protected boolean isPaused = false;
     protected boolean keepRunning = false;
+    private int mPatternBPM = 120;
+    private int mPatternSteps = 16;
    AudioAttributes attributes = new AudioAttributes.Builder()
            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
            .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)

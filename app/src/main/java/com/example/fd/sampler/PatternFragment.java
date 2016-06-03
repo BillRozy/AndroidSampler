@@ -205,7 +205,7 @@ public class PatternFragment extends Fragment {
                 Sampler.getSampler().getActivePattern().getTrack(mChosenTrack).connectInstrument(getActivity().getApplicationContext(), chosenPath);
                 Sampler.getSampler().getActivePattern().getTrack(mChosenTrack).setTrackName(chosenName);
                 tracksArray.get(mChosenTrack-1).getTrackName().setText(chosenName);
-                tracksArray.get(mChosenTrack-1).getConnectInstrumentBtn().setImageResource(R.drawable.mixer);
+                tracksArray.get(mChosenTrack-1).getConnectInstrumentBtn().setBackgroundResource(R.drawable.galka);
             }
         }
     }

@@ -30,6 +30,7 @@ class Track{
     }
     public void connectInstrument(Context mCont, String URL){
         this.connectedInstrument = new Instrument(mCont,parentPatt.getSoundPool(),URL);
+        mPathToInstrument = URL;
     }
 
     public boolean getHitState(int num){
@@ -43,6 +44,10 @@ class Track{
 
     public float getTrackVolume(){
         return connectedInstrument.getVolume();
+    }
+
+    public String getPathToInstrument() {
+        return mPathToInstrument;
     }
 
     public void makeHits(){
@@ -71,7 +76,8 @@ class Track{
     private String mTrackName;
     private Pattern parentPatt;
     protected ArrayList<Hit> hitsArray = new ArrayList<>();
-    protected Instrument connectedInstrument;// = new Instrument("H2Sv4 - THHL - HiHat(0009).wav");
+    protected Instrument connectedInstrument;
+    public String mPathToInstrument;
     //INNER CLASS
     public class Hit
     {

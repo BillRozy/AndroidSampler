@@ -23,8 +23,7 @@
         android:layout_width="35dip"
         android:layout_height="35dip"
         android:id="@+id/connectInstrumentButton"
-        android:longClickable="true"
-        android:src="@drawable/ic_input_add"
+        android:background="@drawable/ic_input_add"
         android:layout_marginRight="10dip"
         android:layout_gravity="center_vertical" />
 

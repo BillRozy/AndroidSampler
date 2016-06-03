@@ -1,7 +1,10 @@
 package com.example.fd.sampler;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +24,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
 
     private static final String BILL_TOTAL = "sum";
     private Sampler myApp;
+    private DataBaseHelper mDatabaseHelper;
     private Button addTrack;
     private Button stop;
     private Button play;
@@ -166,6 +170,69 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
     }
 
     private void initOnCreate(){
+        mDatabaseHelper = new DataBaseHelper(this, "mainbase.db", null, 1);
+        SQLiteDatabase sdb;
+        sdb = mDatabaseHelper.getReadableDatabase();
+        Cursor patternCursor = sdb.query(mDatabaseHelper.DATABASE_TABLE_PATTERNS, new String[]{
+                        DataBaseHelper._ID, DataBaseHelper.PATTERN_NAME_COLUMN, DataBaseHelper.PATTERN_BPM_COLUMN
+        , DataBaseHelper.PATTERN_STEP_COLUMN}, null,
+                null,
+                null,
+                null,
+                null
+        );
+
+
+        while (patternCursor.moveToNext()) {
+            int id = patternCursor.getInt(patternCursor.getColumnIndex(DataBaseHelper._ID));
+            String name = patternCursor.getString(patternCursor
+                    .getColumnIndex(DataBaseHelper.PATTERN_NAME_COLUMN));
+            int bpm = patternCursor.getInt(patternCursor.getColumnIndex(DataBaseHelper.PATTERN_BPM_COLUMN));
+            int steps = patternCursor.getInt(patternCursor.getColumnIndex(DataBaseHelper.PATTERN_STEP_COLUMN));
+
+            Log.i("LOG_TAG", "ROW " + id + " HAS NAME " + name);
+            Pattern patt = new Pattern(this);
+            patt.setPatternName(name);
+            patt.setPatternBPM(bpm);
+            patt.setPatternSteps(steps);
+            Sampler.getSampler().addPattern(patt);
+            Sampler.getSampler().setPatternActive(patt);
+        }
+        patternCursor.close();
+
+        Cursor trackCursor = sdb.query(mDatabaseHelper.DATABASE_TABLE_TRACKS, new String[]{
+                        DataBaseHelper._ID, DataBaseHelper.TRACK_TITLE_COLUMN, DataBaseHelper.TRACK_HITS_ARRAY_COLUMN
+                        , DataBaseHelper.TRACK_VOLUME_COLUMN, DataBaseHelper.TRACK_MUTE_COLUMN, DataBaseHelper.TRACK_PATH_TO_SAMPLE_COLUMN, DataBaseHelper.TRACK_PATTERN_ID_COLUMN}, null,
+                null,
+                null,
+                null,
+                null
+        );
+        while(trackCursor.moveToNext()){
+                int trackID = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper._ID));
+                int pattID = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_PATTERN_ID_COLUMN));
+                String trackName = trackCursor.getString(trackCursor.getColumnIndex(DataBaseHelper.TRACK_TITLE_COLUMN));
+                Log.i("LOG_TAG", "TRACK " + trackID + " HAS NAME " + trackName);
+                String[] hitsString = trackCursor.getString(trackCursor.getColumnIndex(DataBaseHelper.TRACK_HITS_ARRAY_COLUMN)).split(" ");
+                int activeHitsArray[] = new int[hitsString.length];
+                for (int i = 0; i < hitsString.length; i++) {
+                        activeHitsArray[i] = Integer.parseInt(hitsString[i]);
+                    // System.out.println(numArr[i]);
+                }
+                int volume = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_VOLUME_COLUMN));
+                int mute = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_MUTE_COLUMN));
+                String path = trackCursor.getString(trackCursor.getColumnIndex(DataBaseHelper.TRACK_PATH_TO_SAMPLE_COLUMN));
+                Pattern patt = Sampler.getSampler().getPattern(pattID);
+                    Log.d("FOUNDPATTERN FOR TRACK!", (pattID-1) + "");
+                    Track track = patt.addTrack(trackName);
+                    track.makeHitActive(activeHitsArray);
+                    track.setTrackVolume((float) volume);
+            if (path != null) {
+                track.connectInstrument(this, path);
+            }
+        }
+        trackCursor.close();
+
         mChosenPatternFragmentNumber = myApp.getPatternsList().indexOf(myApp.getActivePattern());
         for(Pattern patt : Sampler.getSampler().getPatternsList()){
             PatternFragment pf = new PatternFragment();
@@ -178,6 +245,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
             }
 
         }
+        sdb.close();
     }
 
 
@@ -190,7 +258,51 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
 
     @Override
     protected void onPause() {
-        super.onPause();
+       super.onPause();
+        Log.d("OnPause", "WORKED");
+        mDatabaseHelper = new DataBaseHelper(this, "mainbase.db", null, 1);
 
+        SQLiteDatabase mSqLiteDatabase = mDatabaseHelper.getWritableDatabase();
+        int deleted = mSqLiteDatabase.delete(mDatabaseHelper.DATABASE_TABLE_PATTERNS, "1", null);
+        Log.d("REMOVED FROM PATTERNS" , deleted+"");
+        mSqLiteDatabase.delete(mDatabaseHelper.DATABASE_TABLE_TRACKS, "1", null);
+        for( int i = 0;i < Sampler.getSampler().getPatternsList().size(); i++ ) {
+            Pattern patt = myApp.getPattern(i+1);
+            ContentValues values = new ContentValues();
+            // Задайте значения для каждого столбца
+            values.put(DataBaseHelper.PATTERN_NAME_COLUMN, patt.getPatternName());
+            values.put(DataBaseHelper.PATTERN_BPM_COLUMN, patt.getPatternBPM());
+            values.put(DataBaseHelper.PATTERN_STEP_COLUMN, patt.getPatternSteps());
+            // Вставляем данные в таблицу
+            //int res = (int) mSqLiteDatabase.insertWithOnConflict(mDatabaseHelper.DATABASE_TABLE_PATTERNS, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+            //if (res == -1) {
+              //  mSqLiteDatabase.update(mDatabaseHelper.DATABASE_TABLE_PATTERNS, values, "_ID=?", new String[] {Integer.toString(i+1)});  // number 1 is the _id here, update to variable for your code
+            //}
+            mSqLiteDatabase.insert(mDatabaseHelper.DATABASE_TABLE_PATTERNS, null, values);
+            for(int j = 1; j < patt.getTracksArray().size();j++){
+                Track track = patt.getTrack(j);
+                ArrayList<Track.Hit> hitsArray = track.getHits();
+                String activeHits = "";
+                for (Track.Hit hit : hitsArray){
+                    if(hit.getState()){
+                        activeHits = activeHits + (hitsArray.indexOf(hit) + 1) + " ";
+                    }
+                }
+                if (activeHits.length() > 2) {
+                    activeHits = activeHits.substring(0, activeHits.length() - 1);
+                }
+                Log.d("active hits: ", activeHits);
+                ContentValues trackData = new ContentValues();
+                trackData.put(DataBaseHelper.TRACK_TITLE_COLUMN,track.getTrackName());
+                trackData.put(DataBaseHelper.TRACK_HITS_ARRAY_COLUMN, activeHits);
+                trackData.put(DataBaseHelper.TRACK_VOLUME_COLUMN,70);
+                trackData.put(DataBaseHelper.TRACK_MUTE_COLUMN, false);
+                trackData.put(DataBaseHelper.TRACK_PATH_TO_SAMPLE_COLUMN, track.getPathToInstrument());
+                trackData.put(DataBaseHelper.TRACK_PATTERN_ID_COLUMN, i+1);
+                mSqLiteDatabase.insert(mDatabaseHelper.DATABASE_TABLE_TRACKS, null, trackData);
+            }
+            Log.d("PATTERN DDED TO BD ", i+"");
+        }
+        mSqLiteDatabase.close();
     }
 }
