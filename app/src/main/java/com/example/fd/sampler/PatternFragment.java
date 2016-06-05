@@ -18,7 +18,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
-import android.widget.Toast;
 
 
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public class PatternFragment extends Fragment {
     private ViewGroup scrollViewFrame;
 
 
-    public PatternFragment(){
+    public PatternFragment() {
 
         tracksArray = new ArrayList<>(8);
     }
@@ -47,7 +46,6 @@ public class PatternFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("onCreate Fragment", "WORKED");
-
     }
 
     @Override
@@ -56,7 +54,7 @@ public class PatternFragment extends Fragment {
         Log.d("onStart Fragment", "WORKED");
     }
 
-    public void makePatternForFragment(Context mCont){
+    public void makePatternForFragment(Context mCont) {
         mConnectedPattern = new Pattern(mCont);
         mConnectedPattern.addTrack("Track-1");
         mConnectedPattern.addTrack("Track-2");
@@ -65,121 +63,49 @@ public class PatternFragment extends Fragment {
         Sampler.getSampler().setPatternActive(mConnectedPattern);
     }
 
-    public void connectPattern(Pattern patt){
+    public void connectPattern(Pattern patt) {
         mConnectedPattern = patt;
     }
 
-    public ArrayList<TrackLayout> getTracksLayoutsArray(){
+    public ArrayList<TrackLayout> getTracksLayoutsArray() {
         return tracksArray;
     }
 
-    public TrackLayout getTrackLayout(int the_index){
+    public TrackLayout getTrackLayout(int the_index) {
         return tracksArray.get(the_index);
     }
 
-    public void addTrackLayout(TrackLayout tl){
+    public void addTrackLayout(TrackLayout tl) {
         tracksArray.add(tl);
-      //  if (verticalLayer != null){
-       // verticalLayer.addView(tl);}
     }
 
-    public void makeTracks(Context context ){
-        while(Sampler.getSampler().getActivePattern().getTracksArray().size()-1>tracksArray.size())
-        {
+    public void makeTracks(Context context) {
+        while (Sampler.getSampler().getActivePattern().getTracksArray().size() - 1 > tracksArray.size()) {
             TrackLayout tl = new TrackLayout(context);
-            tl.getTrackName().setText(Sampler.getSampler().getActivePattern().getTrack(tracksArray.size()+1).getTrackName());
+            tl.getTrackName().setText(Sampler.getSampler().getActivePattern().getTrack(tracksArray.size() + 1).getTrackName());
             addTrackLayout(tl);
         }
     }
 
-
-    public void addViewToFragment(TrackLayout tl){
+    public void addViewToFragment(TrackLayout tl) {
         verticalLayer.addView(tl);
     }
 
     public void remakeTracks() {
         for (final TrackLayout tl : tracksArray) {
-            tl.getConnectInstrumentBtn().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(PatternFragment.this.getActivity(), SampleListActivity.class);
-                    mChosenTrack = tracksArray.indexOf(tl) + 1;
-                    startActivityForResult(intent, CHOOSE_SAMPLE);
+            tl.getConnectInstrumentBtn().setOnClickListener(new InstrumentConnectionListener(tl));
 
-                }
-            });
+            tl.getVolumeSlider().setOnSeekBarChangeListener(new VolumeControllerListener(tl, tracksArray) );
 
-            tl.getVolumeSlider().setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl) + 1).setTrackVolume((float)seekBar.getProgress()/100);
-                }
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {
-                    // TODO Auto-generated method stub
-                }
+            tl.getMuteBtn().setOnCheckedChangeListener(new MuteControllerListener(tl,tracksArray));
 
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
-                    // TODO Auto-generated method stub
-                }
-            });
+            tl.getTrackName().setOnClickListener(new TrackNameControlListener(tl, tracksArray,connectedActivity));
 
-            tl.getMuteBtn().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked){
-                        Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl) + 1).setTrackVolume(0F);}
-                    else {
-                        Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl) + 1).setTrackVolume((float) tl.getVolumeSlider().getProgress()/100);}
-
-                }
-            });
-
-            tl.getTrackName().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(connectedActivity);
-                    alertDialog.setTitle("Track Name");
-                    alertDialog.setMessage("Enter New Name");
-
-                    final EditText input = new EditText(connectedActivity);
-                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.MATCH_PARENT);
-                    input.setLayoutParams(lp);
-                    alertDialog.setView(input);
-                    alertDialog.setIcon(R.drawable.galka);
-
-                    alertDialog.setPositiveButton("YES",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    String title = input.getText().toString();
-                                    if (title.compareTo("") != 0) {
-                                        tl.getTrackName().setText(title);
-                                        Sampler.getSampler().getActivePattern().getTrack(tracksArray.indexOf(tl) + 1).setTrackName(title);
-
-                                    }
-                                }
-                            });
-
-                    alertDialog.setNegativeButton("NO",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            });
-
-                    alertDialog.show();
-                }
-
-            });
-
-            tl.getDeleteBtn().setOnClickListener(new View.OnClickListener(){
+            tl.getDeleteBtn().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    Sampler.getSampler().getActivePattern().removeTrack(Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl)+1));
-                   // Log.d("DELETED:",Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl)+1).getTrackName()+"");
+                    Sampler.getSampler().getActivePattern().removeTrack(Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl) + 1));
                     deleteTrackLayout(tl);
 
                 }
@@ -196,14 +122,14 @@ public class PatternFragment extends Fragment {
                     public void onClick(View v) {
                         hv.toggleState();
                         Log.d("CLICKED FROM MAIN LIST", "BUTTON " + (hitsArrayOfCurrentTrack.indexOf(hv) + 1) + " of track " + getTracksLayoutsArray().indexOf(tl) + " Pressed");
-                        hitsStateMaker(tl,hv,hitsArrayOfCurrentTrack);
+                        hitsStateMaker(tl, hv, hitsArrayOfCurrentTrack);
                     }
                 });
             }
         }
     }
 
-    public void deleteTrackLayout(TrackLayout trackLayout){
+    public void deleteTrackLayout(TrackLayout trackLayout) {
         tracksArray.remove(trackLayout);
         verticalLayer.removeView(trackLayout);
     }
@@ -211,22 +137,22 @@ public class PatternFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if(scrollViewFrame == null){
+        if (scrollViewFrame == null) {
             scrollViewFrame = (ViewGroup) inflater.inflate(R.layout.fragment_pattern, container, false);
         }
-      // verticalLayer = (LinearLayout) inflater.inflate(R.layout.fragment_pattern, container, false);}
+        // verticalLayer = (LinearLayout) inflater.inflate(R.layout.fragment_pattern, container, false);}
         verticalLayer = (LinearLayout) scrollViewFrame.findViewById(R.id.verticalLayer);
-        if(verticalLayer == null){
+        if (verticalLayer == null) {
             verticalLayer = new LinearLayout(connectedActivity);
             verticalLayer.setOrientation(LinearLayout.VERTICAL);
-            verticalLayer.setPadding(8,8,8,8);
+            verticalLayer.setPadding(8, 8, 8, 8);
         }
         Log.d("OnCreateView", "WORKED");
-        if(tracksArray.size() == 0) {
+        if (tracksArray.size() == 0) {
             makeTracks(connectedActivity);
             remakeTracks();
             for (TrackLayout tl : tracksArray) {
-                    verticalLayer.addView(tl);
+                verticalLayer.addView(tl);
             }
         }
         return scrollViewFrame;
@@ -235,7 +161,7 @@ public class PatternFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-       // makeTracks(connectedActivity);
+        // makeTracks(connectedActivity);
         remakeTracks();
     }
 
@@ -247,8 +173,8 @@ public class PatternFragment extends Fragment {
                 String chosenName = data.getStringExtra(SampleListActivity.mSelectedSampleName);
                 Sampler.getSampler().getActivePattern().getTrack(mChosenTrack).connectInstrument(getActivity().getApplicationContext(), chosenPath);
                 Sampler.getSampler().getActivePattern().getTrack(mChosenTrack).setTrackName(chosenName);
-                tracksArray.get(mChosenTrack-1).getTrackName().setText(chosenName);
-                tracksArray.get(mChosenTrack-1).getConnectInstrumentBtn().setBackgroundResource(R.drawable.galka);
+                tracksArray.get(mChosenTrack - 1).getTrackName().setText(chosenName);
+                tracksArray.get(mChosenTrack - 1).getConnectInstrumentBtn().setBackgroundResource(R.drawable.galka);
             }
         }
     }
@@ -262,15 +188,11 @@ public class PatternFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-            connectedActivity = activity;
+        connectedActivity = activity;
         Log.d("onAttach Fragment", "WORKED");
     }
 
-    public interface PatternInterface{
-
-    }
-
-    public void hitsStateMaker(TrackLayout tl, HitView hv,ArrayList<HitView> hitsAr){
+    public void hitsStateMaker(TrackLayout tl, HitView hv, ArrayList<HitView> hitsAr) {
         if (hv.getState()) {
             Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl) + 1).makeHitActive(hitsAr.indexOf(hv) + 1);
             hv.setImageResource(R.drawable.btn_media_player_selected);
@@ -279,4 +201,117 @@ public class PatternFragment extends Fragment {
             hv.setImageResource(R.drawable.btn_media_player_disabled_selected);
         }
     }
+
+
+    class InstrumentConnectionListener implements View.OnClickListener {
+
+        private TrackLayout tl;
+
+        public InstrumentConnectionListener(TrackLayout tl) {
+            this.tl = tl;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(PatternFragment.this.getActivity(), FileBrowserActivity.class);
+            mChosenTrack = tracksArray.indexOf(tl) + 1;
+            startActivityForResult(intent, CHOOSE_SAMPLE);
+        }
+
+    }
+}
+
+class VolumeControllerListener implements SeekBar.OnSeekBarChangeListener{
+
+    private TrackInterface tl;
+    private ArrayList tracksArray;
+
+    public VolumeControllerListener(TrackInterface tl, ArrayList array){
+        this.tl =  tl;
+        tracksArray = array;
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        Sampler.getSampler().getActivePattern().getTrack(tracksArray.indexOf(tl) + 1).setTrackVolume((float) seekBar.getProgress() / 100);
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        // TODO Auto-generated method stub
+    }
+}
+
+class MuteControllerListener implements CompoundButton.OnCheckedChangeListener{
+
+    private TrackInterface tl;
+    private ArrayList tracksArray;
+
+    public MuteControllerListener(TrackInterface tl, ArrayList array){
+        this.tl =  tl;
+        tracksArray = array;
+    }
+
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (isChecked) {
+            Sampler.getSampler().getActivePattern().getTrack(tracksArray.indexOf(tl) + 1).setTrackVolume(0F);
+        } else {
+            Sampler.getSampler().getActivePattern().getTrack(tracksArray.indexOf(tl) + 1).setTrackVolume((float) tl.getVolumeSlider().getProgress() / 100);
+        }
+
+    }
+}
+
+class TrackNameControlListener implements View.OnClickListener{
+    private TrackInterface tl;
+    private ArrayList tracksArray;
+    private Activity act;
+
+    public TrackNameControlListener(TrackInterface tl, ArrayList array,Activity activity){
+        this.tl =  tl;
+        tracksArray = array;
+        act = activity;
+    }
+
+    @Override
+    public void onClick(View v) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(act);
+        alertDialog.setTitle("Track Name");
+        alertDialog.setMessage("Enter New Name");
+
+        final EditText input = new EditText(act);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        input.setLayoutParams(lp);
+        alertDialog.setView(input);
+        alertDialog.setIcon(R.drawable.galka);
+
+        alertDialog.setPositiveButton("YES",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        String title = input.getText().toString();
+                        if (title.compareTo("") != 0) {
+                            tl.getTrackName().setText(title);
+                            Sampler.getSampler().getActivePattern().getTrack(tracksArray.indexOf(tl) + 1).setTrackName(title);
+
+                        }
+                    }
+                });
+
+        alertDialog.setNegativeButton("NO",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        alertDialog.show();
+    }
+
 }

@@ -9,8 +9,8 @@
         android:text="PAth"
         android:id="@+id/pathTextView" />
     <ListView
-        android:layout_width="336dp"
-        android:layout_height="186dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/fileListView"
-        android:background="#d79b9b" />
+        android:background="@color/abc_background_cache_hint_selector_material_dark" />
 </LinearLayout>

@@ -20,7 +20,7 @@ import android.widget.ToggleButton;
 import java.util.ArrayList;
 
 
-public class TrackLayout extends LinearLayout {
+public class TrackLayout extends LinearLayout implements TrackInterface {
     private ArrayList<HitView> mHitsArray = null;
     private ImageButton connectInstrumentBtn;
     private SeekBar mVolumeSlider;

@@ -2,10 +2,14 @@ package com.example.fd.sampler;
 
 import android.app.Activity;
 import android.content.ClipData;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -18,6 +22,8 @@ import java.util.List;
  */
 public class FileBrowserActivity extends Activity {
 
+    public final static String mSelectedSamplePath = "com.example.fd.sampler.mSelectedSamplePath";
+    public final static String mSelectedSampleName = "com.example.fd.sampler.mSelectedSampleName";
     static final String FILES_DIRECTORY = android.os.Environment.getExternalStorageDirectory()
             .getAbsolutePath() + "/SampleSounds/";
     private List<File> fileList = new ArrayList<File>();
@@ -25,7 +31,9 @@ public class FileBrowserActivity extends Activity {
     ListView fileListView;
     TextView pathTextView;
     String[] fileArray;
+    File[] files;
     File selected;
+    String pathToChosenFile;
 
 
 
@@ -46,7 +54,8 @@ public class FileBrowserActivity extends Activity {
             }
         }
         if(selected.isDirectory()){
-            File[] files = selected.listFiles();
+            files = new File[selected.listFiles().length];
+            files = selected.listFiles();
             fileArray = new String[files.length];
             for(int i = 0; i < files.length; i++){
                 fileArray[i] = files[i].getName();
@@ -57,6 +66,39 @@ public class FileBrowserActivity extends Activity {
         Log.d("FOUND FILES:", fileArray.toString());
 
         fileListView.setAdapter(adapter);
+
+        fileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(files[position].isFile()){
+                    pathToChosenFile = files[position].getAbsolutePath();
+                    String name = files[position].getName();
+                    Intent intent = new Intent(FileBrowserActivity.this, MainActivity.class);
+
+                    // в ключ username пихаем текст из первого текстового поля
+                    intent.putExtra(mSelectedSamplePath, pathToChosenFile);
+                    intent.putExtra(mSelectedSampleName, name);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
+
+                else{
+                    selected = new File(files[position].getAbsolutePath());
+                    files = new File[selected.listFiles().length];
+                    files = selected.listFiles();
+                    String[] titles = new String[files.length];
+                    for(int i = 0; i < files.length; i++){
+                        titles[i] = files[i].getName();
+                    }
+                    ArrayAdapter<String> secAdapter = new ArrayAdapter<String>(FileBrowserActivity.this,
+                            android.R.layout.simple_list_item_1, titles);
+                    fileListView.setAdapter(secAdapter);
+                    Log.d("ENDED LISTENER"," pos");
+                }
+
+            }
+        });
+
 
 
 

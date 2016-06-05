@@ -1,6 +1,7 @@
 package com.example.fd.sampler;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-public class MainActivity extends Activity implements PatternFragment.PatternInterface{
+public class MainActivity extends Activity {
 
     private static final String BILL_TOTAL = "sum";
     private Sampler myApp;
@@ -34,6 +35,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
     private Button nextPattern;
     private Button prevPattern;
     private Button fileBrowseBtn;
+    private Button mixerButton;
     private TextView patternNumber;
     private ArrayList<PatternFragment> mPatternFragmentsArray = null;
     private SharedPreferences sp;
@@ -61,6 +63,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
             patternNumber = (TextView) this.findViewById(R.id.numPattern);
             patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
         fileBrowseBtn = (Button) this.findViewById(R.id.fileBrowseBtn);
+        mixerButton = (Button) this.findViewById(R.id.mixerButton);
 
            Log.d("OnCreate", "WOrked");
 
@@ -146,6 +149,14 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, FileBrowserActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        mixerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MixerFragment mf = new MixerFragment();
+                getFragmentManager().beginTransaction().replace(R.id.fragment, mf).commit();
             }
         });
 
@@ -261,6 +272,9 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
 
         }
         sdb.close();
+       // if(myApp.getLastActivePattern() != null) {
+         //   myApp.setPatternActive(myApp.getLastActivePattern());
+        //}
       //  myApp.clearPatternsList();
     }
 
@@ -276,6 +290,8 @@ public class MainActivity extends Activity implements PatternFragment.PatternInt
     protected void onPause() {
        super.onPause();
         Log.d("OnPause", "WORKED");
+        myApp.stop();
+        myApp.setLastPatternActive(myApp.getActivePattern());
         mDatabaseHelper = new DataBaseHelper(this, "mainbase.db", null, 1);
 
         SQLiteDatabase mSqLiteDatabase = mDatabaseHelper.getWritableDatabase();
