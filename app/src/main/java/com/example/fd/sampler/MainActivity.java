@@ -14,10 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.Observable;
@@ -34,7 +36,7 @@ public class MainActivity extends Activity {
     private Button pause;
     private Button nextPattern;
     private Button prevPattern;
-    private Button mixerButton;
+    private ToggleButton mixerButton;
     private TextView patternNumber;
     private ArrayList<PatternFragment> mPatternFragmentsArray = null;
     private SharedPreferences sp;
@@ -61,7 +63,7 @@ public class MainActivity extends Activity {
            prevPattern = (Button) this.findViewById(R.id.prevPattern);
             patternNumber = (TextView) this.findViewById(R.id.numPattern);
             patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
-        mixerButton = (Button) this.findViewById(R.id.mixerButton);
+        mixerButton = (ToggleButton) this.findViewById(R.id.mixerButton);
 
            Log.d("OnCreate", "WOrked");
 
@@ -136,6 +138,7 @@ public class MainActivity extends Activity {
                        myApp.play();
                        play.setBackgroundResource(R.drawable.play_white);
                    }
+                   mixerButton.setChecked(false);
                }
            });
 
@@ -158,15 +161,20 @@ public class MainActivity extends Activity {
                        myApp.play();
                        play.setBackgroundResource(R.drawable.play_white);
                    }
-
+                   mixerButton.setChecked(false);
                }
            });
 
-        mixerButton.setOnClickListener(new View.OnClickListener() {
+        mixerButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                MixerFragment mf = new MixerFragment();
-                getFragmentManager().beginTransaction().replace(R.id.fragment, mf).commit();
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    MixerFragment mf = new MixerFragment();
+                    getFragmentManager().beginTransaction().replace(R.id.fragment, mf).commit();
+                }
+                else{
+                    getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
+                }
             }
         });
 

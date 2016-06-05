@@ -148,12 +148,16 @@
                 android:id="@+id/stopButton"
                 android:background="@drawable/stop" />
 
-            <Button
+            <ToggleButton
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="50dip"
                 android:layout_height="50dip"
                 android:id="@+id/mixerButton"
-                android:background="@drawable/mixer" />
+                android:textOn=""
+                android:textOff=""
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:background="@drawable/check_mixer" />
         </LinearLayout>
 
         <LinearLayout

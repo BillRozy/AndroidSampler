@@ -17,44 +17,86 @@
         android:layout_height="wrap_content"
         android:id="@+id/menuLayout"
         android:background="@color/bright_foreground_disabled_material_light"
-        android:layout_weight="0.1">
+        android:layout_weight="0.1"
+        android:padding="5dp">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Load Preset"
-            android:id="@+id/button"
-            android:layout_marginLeft="20dip" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Preset1"
-            android:id="@+id/presetName"
-            android:layout_marginRight="50dip" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Load "
+                android:id="@+id/button"
+                android:background="@drawable/rounded"
+                android:padding="2dp"
+                android:layout_marginRight="5dip" />
 
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/prevPattern"
-            android:background="@android:drawable/ic_media_previous" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Preset1"
+                android:id="@+id/presetName"
+                android:layout_marginRight="50dip" />
+        </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="1"
-            android:id="@+id/numPattern"
-            android:textStyle="bold" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33">
 
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/nextPatt"
-            android:background="@android:drawable/ic_media_next" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"></LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="110dp"
+                android:layout_height="match_parent">
+
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/prevPattern"
+                    android:background="@android:drawable/ic_media_previous" />
+
+                <TextView
+                    android:layout_width="10dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="1"
+                    android:id="@+id/numPattern"
+                    android:textStyle="bold" />
+
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/nextPatt"
+                    android:background="@android:drawable/ic_media_next" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"></LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33"></LinearLayout>
 
     </LinearLayout>
 
@@ -79,50 +121,84 @@
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout"
         android:layout_weight="0.1"
-        android:background="@color/material_grey_600">
+        android:background="@color/material_grey_600"
+        android:padding="5dp">
 
-        <Button
-            android:id="@+id/playButton"
-            android:layout_width="50dip"
-            android:layout_height="50dip"
-            android:background="@drawable/play"
-            android:layout_gravity="left" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33">
 
-        <Button
-            android:id="@+id/pauseButton"
-            android:layout_width="50dip"
-            android:layout_height="50dip"
-            android:background="@drawable/pause" />
+            <Button
+                android:id="@+id/playButton"
+                android:layout_width="50dip"
+                android:layout_height="50dip"
+                android:background="@drawable/play" />
 
-        <Button
-            android:layout_width="50dip"
-            android:layout_height="50dip"
-            android:id="@+id/stopButton"
-            android:background="@drawable/stop" />
+            <Button
+                android:id="@+id/pauseButton"
+                android:layout_width="50dip"
+                android:layout_height="50dip"
+                android:background="@drawable/pause" />
 
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="50dip"
-            android:layout_height="50dip"
-            android:id="@+id/mixerButton"
-            android:background="@drawable/mixer" />
+            <Button
+                android:layout_width="50dip"
+                android:layout_height="50dip"
+                android:id="@+id/stopButton"
+                android:background="@drawable/stop" />
 
-        <NumberPicker
-            android:layout_width="50dip"
-            android:layout_height="50dip"
-            android:id="@+id/numberPicker"
-            android:minHeight="40dp"
-            android:minWidth="40dip"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="100dip"
-            android:background="@android:color/holo_orange_dark" />
+            <ToggleButton
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="50dip"
+                android:layout_height="50dip"
+                android:id="@+id/mixerButton"
+                android:background="@drawable/check_mixer" />
+        </LinearLayout>
 
-        <Button
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="AddTrack"
-            android:id="@+id/addTrackButton"
-            android:layout_marginLeft="100dip" />
+            android:layout_weight="0.33">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"></LinearLayout>
+
+            <NumberPicker
+                android:layout_width="50dip"
+                android:layout_height="50dip"
+                android:id="@+id/numberPicker"
+                android:minHeight="40dp"
+                android:minWidth="40dip"
+                android:background="@drawable/rounded"
+                android:gravity="center_vertical|center_horizontal" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"></LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Track"
+                android:id="@+id/addTrackButton"
+                android:background="@drawable/rounded"
+                android:layout_weight="0.33" />
+        </LinearLayout>
 
     </LinearLayout>
 
