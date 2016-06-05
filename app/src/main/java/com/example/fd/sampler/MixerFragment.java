@@ -7,7 +7,9 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -15,7 +17,7 @@ import java.util.ArrayList;
 
 public class MixerFragment extends Fragment {
     private ArrayList<MixerTrackLayout> mixerTracksArray = null;
-    private LinearLayout selfFrame;
+    private ViewGroup selfFrame;
     private LinearLayout containerForTracks;
     private TextView mPatternTitle;
 
@@ -34,12 +36,13 @@ public class MixerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        selfFrame = (LinearLayout) inflater.inflate(R.layout.fragment_mixer, container, false);
+        selfFrame = (HorizontalScrollView) inflater.inflate(R.layout.fragment_mixer, container, false);
         containerForTracks = (LinearLayout) selfFrame.findViewById(R.id.containerForMixerTracks);
         for(Track track : Sampler.getSampler().getActivePattern().getTracksArray()){
             if(Sampler.getSampler().getActivePattern().getTracksArray().indexOf(track) != 0) {
                 MixerTrackLayout mtl = new MixerTrackLayout(getActivity());
                 mtl.getTrackName().setText(track.getTrackName());
+                mtl.getVolumeSlider().setProgress((int)(track.getTrackVolume()*100));
                 remakeTracks(mtl);
                 mixerTracksArray.add(mtl);
                 containerForTracks.addView(mtl);

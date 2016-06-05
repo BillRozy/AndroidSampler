@@ -30,10 +30,6 @@ class Sampler {
     // Methods
 
 
-    public void offSampler(){
-        isPlaying = false;
-    }
-
     public void play() {
         System.out.println("Начинаю воспроизведение...");
         if (activePattern.getMusicThread().getState() == Thread.State.NEW) {
@@ -44,6 +40,7 @@ class Sampler {
         {
             activePattern.requestResume();
         }
+        setPlaying(true);
     }
 
     public void stop(){
@@ -51,11 +48,13 @@ class Sampler {
         activePattern.pause();
         currentStep=1;
         System.out.println("After stop step is: " + currentStep);
+        setPlaying(false);
     }
     public void pause(){
         System.out.println("Paused sampler!");
         activePattern.pause();
         currentStep+=1;
+        setPlaying(false);
     }
     public void addPattern(Pattern patt){
         patterns.add(patt);

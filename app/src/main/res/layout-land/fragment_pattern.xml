@@ -3,6 +3,9 @@
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/scroller">
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -10,5 +13,5 @@
         android:padding="8dip"
         android:background="@drawable/pattern_background_rounded"
         android:id="@+id/verticalLayer"/>
-
+    </HorizontalScrollView>
 </ScrollView>

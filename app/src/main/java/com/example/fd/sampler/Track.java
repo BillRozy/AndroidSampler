@@ -43,7 +43,7 @@ class Track{
     }
 
     public float getTrackVolume(){
-        return connectedInstrument.getVolume();
+        return mTrackVolume;
     }
 
     public String getPathToInstrument() {
@@ -78,6 +78,7 @@ class Track{
     protected ArrayList<Hit> hitsArray = new ArrayList<>();
     protected Instrument connectedInstrument;
     public String mPathToInstrument;
+    private float mTrackVolume = 0.7F;
     //INNER CLASS
     public class Hit
     {

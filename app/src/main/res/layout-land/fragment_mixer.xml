@@ -1,25 +1,32 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<HorizontalScrollView android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.example.fd.sampler.MixerFragment"
-    android:background="@drawable/pattern_background_rounded">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Pattern Title"
-        android:id="@+id/patternTitleView" />
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/pattern_background_rounded_darker">
     <LinearLayout
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/containerForMixerTracks"
-        android:orientation="horizontal"
-        android:background="#999">
+        android:orientation="vertical"
+        tools:context="com.example.fd.sampler.MixerFragment"
+>
+
+        <!-- TODO: Update blank fragment layout -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Pattern Title"
+            android:id="@+id/patternTitleView"
+            android:background="#444"
+            android:padding="2dp"
+            android:textAlignment="center" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/containerForMixerTracks"
+            android:orientation="horizontal">
+
+        </LinearLayout>
 
     </LinearLayout>
-
-</LinearLayout>
+</HorizontalScrollView>

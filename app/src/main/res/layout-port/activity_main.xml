@@ -9,7 +9,7 @@
     android:orientation="vertical"
     tools:context="com.example.fd.sampler.MainActivity"
     android:weightSum="1"
-    android:background="@drawable/pattern_background">
+    android:background="@color/dim_foreground_disabled_material_dark">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -38,29 +38,24 @@
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Prev"
-            android:id="@+id/prevPattern" />
+            android:id="@+id/prevPattern"
+            android:background="@android:drawable/ic_media_previous" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="1"
-            android:id="@+id/numPattern" />
+            android:id="@+id/numPattern"
+            android:textStyle="bold" />
 
         <Button
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Next"
-            android:id="@+id/nextPatt" />
+            android:id="@+id/nextPatt"
+            android:background="@android:drawable/ic_media_next" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="browse"
-            android:id="@+id/fileBrowseBtn"
-            android:layout_gravity="right" />
     </LinearLayout>
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -83,7 +78,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout"
-        android:layout_weight="0.1">
+        android:layout_weight="0.1"
+        android:background="@color/material_grey_600">
 
         <Button
             android:id="@+id/playButton"

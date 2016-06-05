@@ -17,7 +17,8 @@
         android:background="@drawable/rounded"
         android:layout_marginTop="0dp"
         android:layout_gravity="center_vertical"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:padding="3dp"/>
 
     <ImageButton
         android:layout_width="35dip"

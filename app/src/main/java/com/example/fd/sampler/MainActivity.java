@@ -34,7 +34,6 @@ public class MainActivity extends Activity {
     private Button pause;
     private Button nextPattern;
     private Button prevPattern;
-    private Button fileBrowseBtn;
     private Button mixerButton;
     private TextView patternNumber;
     private ArrayList<PatternFragment> mPatternFragmentsArray = null;
@@ -62,7 +61,6 @@ public class MainActivity extends Activity {
            prevPattern = (Button) this.findViewById(R.id.prevPattern);
             patternNumber = (TextView) this.findViewById(R.id.numPattern);
             patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
-        fileBrowseBtn = (Button) this.findViewById(R.id.fileBrowseBtn);
         mixerButton = (Button) this.findViewById(R.id.mixerButton);
 
            Log.d("OnCreate", "WOrked");
@@ -119,7 +117,12 @@ public class MainActivity extends Activity {
            nextPattern.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View v) {
-                   myApp.stop();
+                   boolean wasPlaying = false;
+                   if(myApp.isPlaying()) {
+                       wasPlaying = true;
+                       myApp.pause();
+                       play.setBackgroundResource(R.drawable.play);
+                   }
                    if (mChosenPatternFragmentNumber == (mPatternFragmentsArray.size() - 1)) {
                        addPattern();
                    } else {
@@ -129,28 +132,35 @@ public class MainActivity extends Activity {
 
                    }
                    patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
+                   if(wasPlaying){
+                       myApp.play();
+                       play.setBackgroundResource(R.drawable.play_white);
+                   }
                }
            });
 
            prevPattern.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View v) {
+                   boolean wasPlaying = false;
+                   if(myApp.isPlaying()) {
+                       wasPlaying = true;
+                       myApp.pause();
+                       play.setBackgroundResource(R.drawable.play);
+                   }
                    if (mChosenPatternFragmentNumber != 0) {
                        mChosenPatternFragmentNumber--;
                        myApp.setPatternActive(myApp.getPattern(mChosenPatternFragmentNumber+1));
                        getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
                    }
                    patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
+                   if(wasPlaying){
+                       myApp.play();
+                       play.setBackgroundResource(R.drawable.play_white);
+                   }
+
                }
            });
-
-        fileBrowseBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, FileBrowserActivity.class);
-                startActivity(intent);
-            }
-        });
 
         mixerButton.setOnClickListener(new View.OnClickListener() {
             @Override
