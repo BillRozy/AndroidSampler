@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -25,14 +26,15 @@ public class FileBrowserActivity extends Activity {
     public final static String mSelectedSamplePath = "com.example.fd.sampler.mSelectedSamplePath";
     public final static String mSelectedSampleName = "com.example.fd.sampler.mSelectedSampleName";
     static final String FILES_DIRECTORY = android.os.Environment.getExternalStorageDirectory()
-            .getAbsolutePath() + "/SampleSounds/";
-    private List<File> fileList = new ArrayList<File>();
-    ArrayAdapter<String> adapter;
+            .getAbsolutePath() + "/DrumSampler/";
+    BrowseFilesAdapter adapter;
     ListView fileListView;
     TextView pathTextView;
+    Button backBtn;
     String[] fileArray;
     File[] files;
     File selected;
+    File lastSelected;
     String pathToChosenFile;
 
 
@@ -46,6 +48,7 @@ public class FileBrowserActivity extends Activity {
         fileListView = (ListView) this.findViewById(R.id.fileListView);
         pathTextView = (TextView) this.findViewById(R.id.pathTextView);
         pathTextView.setText(FILES_DIRECTORY);
+        backBtn = (Button) findViewById(R.id.backButton);
 
         selected = new File(FILES_DIRECTORY);
         if(!selected.exists()){
@@ -60,8 +63,7 @@ public class FileBrowserActivity extends Activity {
             for(int i = 0; i < files.length; i++){
                 fileArray[i] = files[i].getName();
             }
-            adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_list_item_1, fileArray);
+            adapter = new BrowseFilesAdapter(this, fileArray);
         }
         Log.d("FOUND FILES:", fileArray.toString());
 
@@ -70,6 +72,7 @@ public class FileBrowserActivity extends Activity {
         fileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                lastSelected = selected;
                 if(files[position].isFile()){
                     pathToChosenFile = files[position].getAbsolutePath();
                     String name = files[position].getName();
@@ -83,6 +86,7 @@ public class FileBrowserActivity extends Activity {
                 }
 
                 else{
+
                     selected = new File(files[position].getAbsolutePath());
                     files = new File[selected.listFiles().length];
                     files = selected.listFiles();
@@ -90,14 +94,30 @@ public class FileBrowserActivity extends Activity {
                     for(int i = 0; i < files.length; i++){
                         titles[i] = files[i].getName();
                     }
-                    ArrayAdapter<String> secAdapter = new ArrayAdapter<String>(FileBrowserActivity.this,
-                            android.R.layout.simple_list_item_1, titles);
+                    BrowseFilesAdapter secAdapter = new BrowseFilesAdapter(FileBrowserActivity.this, titles);
                     fileListView.setAdapter(secAdapter);
                     Log.d("ENDED LISTENER"," pos");
                 }
 
             }
         });
+
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                files = new File[lastSelected.listFiles().length];
+                files = lastSelected.listFiles();
+                String[] titles = new String[files.length];
+                for(int i = 0; i < files.length; i++){
+                    titles[i] = files[i].getName();
+                }
+                BrowseFilesAdapter secAdapter = new BrowseFilesAdapter(FileBrowserActivity.this, titles);
+                fileListView.setAdapter(secAdapter);
+                Log.d("ENDED LISTENER"," pos");
+                selected = lastSelected;
+            }
+            }
+        );
 
 
 
