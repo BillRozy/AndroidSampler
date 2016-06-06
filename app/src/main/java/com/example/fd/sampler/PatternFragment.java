@@ -18,9 +18,11 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
-
+import android.widget.ToggleButton;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by FD on 26.05.2016.
@@ -29,22 +31,26 @@ public class PatternFragment extends Fragment {
 
     private ArrayList<TrackLayout> tracksArray = null;
     private LinearLayout verticalLayer;
+    private StepsLayout stepsLayout;
     private int mChosenTrack;
     private String chosenPath;
     static final private int CHOOSE_SAMPLE = 0;
     private Pattern mConnectedPattern;
     private Activity connectedActivity;
     private ViewGroup scrollViewFrame;
+    int currentStep;
 
 
     public PatternFragment() {
 
         tracksArray = new ArrayList<>(8);
+
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        stepsLayout = new StepsLayout(connectedActivity);
         Log.d("onCreate Fragment", "WORKED");
     }
 
@@ -80,6 +86,7 @@ public class PatternFragment extends Fragment {
     }
 
     public void makeTracks(Context context) {
+
         while (Sampler.getSampler().getActivePattern().getTracksArray().size() - 1 > tracksArray.size()) {
             TrackLayout tl = new TrackLayout(context);
             tl.getTrackName().setText(Sampler.getSampler().getActivePattern().getTrack(tracksArray.size() + 1).getTrackName());
@@ -98,10 +105,6 @@ public class PatternFragment extends Fragment {
     public void remakeTracks() {
         for (final TrackLayout tl : tracksArray) {
             tl.getConnectInstrumentBtn().setOnClickListener(new InstrumentConnectionListener(tl));
-
-            tl.getVolumeSlider().setOnSeekBarChangeListener(new VolumeControllerListener(tl, tracksArray) );
-
-            tl.getMuteBtn().setOnCheckedChangeListener(new MuteControllerListener(tl,tracksArray));
 
             tl.getTrackName().setOnClickListener(new TrackNameControlListener(tl, tracksArray,connectedActivity));
 
@@ -151,7 +154,12 @@ public class PatternFragment extends Fragment {
             verticalLayer.setOrientation(LinearLayout.VERTICAL);
             verticalLayer.setPadding(8, 8, 8, 8);
         }
+
+        if(verticalLayer.getChildAt(0) == null) {
+            verticalLayer.addView(stepsLayout);
+        }
         Log.d("OnCreateView", "WORKED");
+        currentStep = Sampler.getSampler().getCurrentStep();
         if (tracksArray.size() == 0) {
             makeTracks(connectedActivity);
             remakeTracks();
@@ -207,6 +215,20 @@ public class PatternFragment extends Fragment {
     }
 
 
+    public void changeStepInView(){
+        ArrayList<ToggleButton> list = stepsLayout.getStepsArray();
+        for(ToggleButton tb : list){
+            if(list.indexOf(tb) == currentStep-1){
+                tb.setChecked(true);
+            }
+            else
+            {
+                tb.setChecked(false);
+            }
+        }
+    }
+
+
     class InstrumentConnectionListener implements View.OnClickListener {
 
         private TrackLayout tl;
@@ -253,10 +275,10 @@ class VolumeControllerListener implements SeekBar.OnSeekBarChangeListener{
 
 class MuteControllerListener implements CompoundButton.OnCheckedChangeListener{
 
-    private TrackInterface tl;
+    private MixerTrackLayout tl;
     private ArrayList tracksArray;
 
-    public MuteControllerListener(TrackInterface tl, ArrayList array){
+    public MuteControllerListener(MixerTrackLayout tl, ArrayList array){
         this.tl =  tl;
         tracksArray = array;
     }
@@ -317,5 +339,7 @@ class TrackNameControlListener implements View.OnClickListener{
 
         alertDialog.show();
     }
+
+
 
 }

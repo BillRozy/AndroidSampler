@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="34dp">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="115dp"
+        android:layout_height="match_parent"></LinearLayout>
+
+    <ToggleButton
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        android:text="New ToggleButton"
+        android:layout_gravity="center_vertical"
+        android:textOn=""
+        android:textOff=""
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="@drawable/check_step"
+        android:id="@+id/step1"/>
+    <ToggleButton
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        android:text="New ToggleButton"
+        android:layout_gravity="center_vertical"
+        android:textOn=""
+        android:textOff=""
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="@drawable/check_step"
+        android:id="@+id/step2"/>
+    <ToggleButton
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        android:text="New ToggleButton"
+        android:layout_gravity="center_vertical"
+        android:textOn=""
+        android:textOff=""
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="@drawable/check_step"
+        android:id="@+id/step3"/>
+    <ToggleButton
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        android:text="New ToggleButton"
+        android:layout_gravity="center_vertical"
+        android:textOn=""
+        android:textOff=""
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="@drawable/check_step"
+        android:id="@+id/step4"/>
+    <ToggleButton
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        android:text="New ToggleButton"
+        android:layout_gravity="center_vertical"
+        android:textOn=""
+        android:textOff=""
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="@drawable/check_step"
+        android:id="@+id/step5"/>
+    <ToggleButton
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        android:text="New ToggleButton"
+        android:layout_gravity="center_vertical"
+        android:textOn=""
+        android:textOff=""
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="@drawable/check_step"
+    android:id="@+id/step6"/>
+    <ToggleButton
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        android:text="New ToggleButton"
+        android:layout_gravity="center_vertical"
+        android:textOn=""
+        android:textOff=""
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="@drawable/check_step"
+        android:id="@+id/step7"/>
+    <ToggleButton
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        android:text="New ToggleButton"
+        android:layout_gravity="center_vertical"
+        android:textOn=""
+        android:textOff=""
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="@drawable/check_step"
+        android:id="@+id/step8"/>
+    <ToggleButton
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        android:text="New ToggleButton"
+        android:layout_gravity="center_vertical"
+        android:textOn=""
+        android:textOff=""
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="@drawable/check_step"
+        android:id="@+id/step9"/>
+    <ToggleButton
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        android:text="New ToggleButton"
+        android:layout_gravity="center_vertical"
+        android:textOn=""
+        android:textOff=""
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="@drawable/check_step"
+        android:id="@+id/step10"/>
+    <ToggleButton
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        android:text="New ToggleButton"
+        android:layout_gravity="center_vertical"
+        android:textOn=""
+        android:textOff=""
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="@drawable/check_step"
+        android:id="@+id/step11"/>
+    <ToggleButton
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        android:text="New ToggleButton"
+        android:layout_gravity="center_vertical"
+        android:textOn=""
+        android:textOff=""
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="@drawable/check_step"
+        android:id="@+id/step12"/>
+    <ToggleButton
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        android:text="New ToggleButton"
+        android:layout_gravity="center_vertical"
+        android:textOn=""
+        android:textOff=""
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="@drawable/check_step"
+        android:id="@+id/step13"/>
+    <ToggleButton
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        android:text="New ToggleButton"
+        android:layout_gravity="center_vertical"
+        android:textOn=""
+        android:textOff=""
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="@drawable/check_step"
+        android:id="@+id/step14"/>
+    <ToggleButton
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        android:text="New ToggleButton"
+        android:layout_gravity="center_vertical"
+        android:textOn=""
+        android:textOff=""
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="@drawable/check_step"
+        android:id="@+id/step15"/>
+    <ToggleButton
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="@dimen/hit_right_margin"
+        android:text="New ToggleButton"
+        android:layout_gravity="center_vertical"
+        android:textOn=""
+        android:textOff=""
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="@drawable/check_step"
+        android:id="@+id/step16"/>
+
+</LinearLayout>

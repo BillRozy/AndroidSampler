@@ -21,13 +21,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
 public class MainActivity extends Activity {
 
-    private static final String BILL_TOTAL = "sum";
+    static final String FILES_DIRECTORY_PRESETS = android.os.Environment.getExternalStorageDirectory()
+            .getAbsolutePath() + "/DrumSampler/Presets/";
     private Sampler myApp;
     private DataBaseHelper mDatabaseHelper;
     private Button addTrack;
@@ -38,11 +46,14 @@ public class MainActivity extends Activity {
     private Button prevPattern;
     private ToggleButton mixerButton;
     private TextView patternNumber;
+    private Button savePresetBtn;
+    private Button loadPresetBtn;
     private  TextView presetName;
     private ArrayList<PatternFragment> mPatternFragmentsArray = null;
     private SharedPreferences sp;
     private int mChosenPatternFragmentNumber = 0;
     public static final String APP_PREFERENCES = "mysettings";
+    static final private int CHOOSE_SAMPLE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +73,8 @@ public class MainActivity extends Activity {
            play = (Button) this.findViewById(R.id.playButton);
            nextPattern = (Button) this.findViewById(R.id.nextPatt);
            prevPattern = (Button) this.findViewById(R.id.prevPattern);
+            savePresetBtn = (Button)  findViewById(R.id.saveBtn);
+        loadPresetBtn = (Button) findViewById(R.id.loadBtn);
             patternNumber = (TextView) this.findViewById(R.id.numPattern);
             patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
         mixerButton = (ToggleButton) this.findViewById(R.id.mixerButton);
@@ -183,6 +196,34 @@ public class MainActivity extends Activity {
             }
         });
 
+        savePresetBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Preset preset = new Preset();
+                    preset.setBPM(myApp.getBPM());
+                    preset.setTitle(myApp.getActivePattern().getPatternName());
+                    preset.setSteps(myApp.getActivePattern().getPatternSteps());
+                    preset.setTrackTitles(myApp.getAllTracksNames());
+                    preset.setActiveHits(myApp.getAllTracksHitsDescription());
+                    FileOutputStream fos = new FileOutputStream(FILES_DIRECTORY_PRESETS + "temp.out");
+                    ObjectOutputStream oos = new ObjectOutputStream(fos);
+                    oos.writeObject(preset);
+                    oos.flush();
+                    oos.close();
+                }catch (IOException exc){Log.d("EXCEPTION", exc.toString());}
+                Log.d("SAVER", "file" + FILES_DIRECTORY_PRESETS + "temp.out");
+        }
+        });
+
+        loadPresetBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, FileBrowserActivity.class);
+                startActivityForResult(intent, CHOOSE_SAMPLE);
+            }
+        });
+
 
            NumberPicker bpmPicker = (NumberPicker) this.findViewById(R.id.numberPicker);
         bpmPicker.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
@@ -199,6 +240,44 @@ public class MainActivity extends Activity {
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CHOOSE_SAMPLE) {
+            if (resultCode == -1) {
+                loadPreset(data.getStringExtra(SampleListActivity.mSelectedSamplePath));
+            }
+        }
+    }
+
+    public void loadPreset(String Path){
+        try {
+            FileInputStream fis = new FileInputStream(Path);
+            ObjectInputStream oin = new ObjectInputStream(fis);
+            Preset preset = (Preset) oin.readObject();
+            String[] titles = preset.getTrackTitles();
+            String[] description = preset.getActiveHits();
+            Pattern patt = new Pattern(this);
+            patt.setPatternName(preset.getTitle());
+            patt.setPatternBPM(preset.getBPM());
+            patt.setPatternSteps(preset.getSteps());
+            for(int i=1;i<titles.length;i++){
+                Track track = patt.addTrack(titles[i]);
+                track.makeHitsActiveFromDescription(description[i]);
+                Log.d("Active ", description[i]);
+            }
+            myApp.getPatternsList().set(myApp.getPatternsList().indexOf(myApp.getActivePattern()),patt);
+            PatternFragment pf = new PatternFragment();
+            pf.connectPattern(patt);
+            pf.makeTracks(this);
+            mPatternFragmentsArray.set(mChosenPatternFragmentNumber,pf);
+            getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
+
+
+            //Log.d("LOADED ","name= " + preset.getTitle());
+        }catch(IOException | ClassNotFoundException exc){Log.d("EXCEPTION", exc.toString());}
+
+    }
 
     @Override
     protected void onStart() {
@@ -298,10 +377,6 @@ public class MainActivity extends Activity {
 
         }
         sdb.close();
-       // if(myApp.getLastActivePattern() != null) {
-         //   myApp.setPatternActive(myApp.getLastActivePattern());
-        //}
-      //  myApp.clearPatternsList();
     }
 
 

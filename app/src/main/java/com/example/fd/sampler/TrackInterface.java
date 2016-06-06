@@ -9,7 +9,5 @@ import android.widget.ToggleButton;
  */
 public interface TrackInterface {
     Button getTrackName();
-     SeekBar getVolumeSlider();
-    ToggleButton getMuteBtn();
 
 }

@@ -4,6 +4,7 @@ import android.util.Log;
 import android.widget.ProgressBar;
 
 import java.util.ArrayList;
+import java.util.Observable;
 
 /**
  * Created by FD on 28.04.2016.
@@ -85,6 +86,22 @@ class Sampler {
         double delay =  120.0/dblBPM * 250.0;
         return (int) delay;
 
+    }
+
+    public String[] getAllTracksNames(){
+        String[] array = new String[activePattern.getTracksArray().size()];
+        for(int i =0; i < activePattern.getTracksArray().size();i++){
+            array[i] = activePattern.getTrack(i).getTrackName();
+        }
+        return array;
+    }
+
+    public String[] getAllTracksHitsDescription(){
+        String[] array = new String[activePattern.getTracksArray().size()];
+        for(int i =0; i < activePattern.getTracksArray().size();i++){
+            array[i] = activePattern.getTrack(i).getHitsDescroption();
+        }
+        return array;
     }
 
 

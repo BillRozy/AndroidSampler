@@ -23,8 +23,6 @@ import java.util.ArrayList;
 public class TrackLayout extends LinearLayout implements TrackInterface {
     private ArrayList<HitView> mHitsArray = null;
     private ImageButton connectInstrumentBtn;
-    private SeekBar mVolumeSlider;
-    private ToggleButton mMuteBtn;
     private ImageButton mDeleteBtn;
     private Button mTrackName;
 
@@ -46,12 +44,6 @@ public class TrackLayout extends LinearLayout implements TrackInterface {
     public ImageButton getConnectInstrumentBtn() {
         return connectInstrumentBtn;
     }
-
-    public SeekBar getVolumeSlider(){
-        return mVolumeSlider;
-    }
-
-    public ToggleButton getMuteBtn(){return mMuteBtn;}
 
     public ImageButton getDeleteBtn(){return mDeleteBtn;}
 
@@ -78,9 +70,6 @@ public class TrackLayout extends LinearLayout implements TrackInterface {
         mHitsArray.add((HitView) findViewById(R.id.hit15));
         mHitsArray.add((HitView) findViewById(R.id.hit16));
         connectInstrumentBtn = (ImageButton) findViewById(R.id.connectInstrumentButton);
-        mVolumeSlider = (SeekBar) findViewById(R.id.volumeSlider);
-        mVolumeSlider.setProgress(100);
-        mMuteBtn = (ToggleButton) findViewById(R.id.mute);
         mDeleteBtn = (ImageButton) findViewById(R.id.delete);
         mTrackName = (Button) findViewById(R.id.trackNameView);
     }

@@ -1,13 +1,14 @@
 package com.example.fd.sampler;
 import android.content.Context;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by FD on 28.04.2016.
  */
 //CLASS track, keeper of HITS, and performer of hits running
-class Track{
+class Track implements Serializable{
     //METHODS
     //test
     public Instrument getConnectedInstrument(){
@@ -69,11 +70,39 @@ class Track{
             hit.toggleActive();
         }
     }
+
+    public void makeHitsActiveFromDescription(String desc){
+        String[] hitsString = desc.split(" ");
+        int activeHitsArray[] = new int[hitsString.length];
+        for (int i = 0; i < hitsString.length; i++) {
+            if(!hitsString[i].equals("")) {
+                activeHitsArray[i] = Integer.parseInt(hitsString[i]);
+            }
+            // System.out.println(numArr[i]);
+        }
+        makeHitActive(activeHitsArray);
+    }
+
+
+
     public void performSound(){
 
                     this.connectedInstrument.playSound();
 
         }
+
+    public String getHitsDescroption(){
+        String desc = "";
+        for (Track.Hit hit : hitsArray){
+            if(hit.getState()){
+                desc = desc + (hitsArray.indexOf(hit) + 1) + " ";
+            }
+        }
+        if (desc.length() > 2) {
+            desc = desc.substring(0, desc.length() - 1);
+        }
+        return desc;
+    }
 
     //PROPERTIES
     private String mTrackName;

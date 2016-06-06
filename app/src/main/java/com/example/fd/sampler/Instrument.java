@@ -11,9 +11,10 @@ import android.util.Log;
 
 
 import java.io.IOException;
+import java.io.Serializable;
 
 // CLASS Instrument keeper of wav sound, and have method to play it
-class Instrument{
+class Instrument implements Serializable{
     private float mVolume;
 
     public Instrument(){
