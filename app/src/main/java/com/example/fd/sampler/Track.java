@@ -31,6 +31,7 @@ class Track{
     public void connectInstrument(Context mCont, String URL){
         this.connectedInstrument = new Instrument(mCont,parentPatt.getSoundPool(),URL);
         mPathToInstrument = URL;
+        hasConnectedInstrument = true;
     }
 
     public boolean getHitState(int num){
@@ -49,6 +50,8 @@ class Track{
     public String getPathToInstrument() {
         return mPathToInstrument;
     }
+
+    public boolean getHasConnectedInstrument(){return hasConnectedInstrument;}
 
     public void makeHits(){
         for(int i=0;i<Sampler.getSampler().getSteps();i++)
@@ -79,6 +82,7 @@ class Track{
     protected Instrument connectedInstrument;
     public String mPathToInstrument;
     private float mTrackVolume = 0.7F;
+    private boolean hasConnectedInstrument = false;
     //INNER CLASS
     public class Hit
     {

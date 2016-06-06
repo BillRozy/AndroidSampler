@@ -83,6 +83,10 @@ public class PatternFragment extends Fragment {
         while (Sampler.getSampler().getActivePattern().getTracksArray().size() - 1 > tracksArray.size()) {
             TrackLayout tl = new TrackLayout(context);
             tl.getTrackName().setText(Sampler.getSampler().getActivePattern().getTrack(tracksArray.size() + 1).getTrackName());
+            if(Sampler.getSampler().getActivePattern().getTrack(tracksArray.size() + 1).getHasConnectedInstrument())
+            {
+                tl.getConnectInstrumentBtn().setBackgroundResource(R.drawable.galka);
+            }
             addTrackLayout(tl);
         }
     }

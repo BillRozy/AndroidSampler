@@ -9,7 +9,7 @@
     android:orientation="vertical"
     tools:context="com.example.fd.sampler.MainActivity"
     android:weightSum="1"
-    android:background="@color/dim_foreground_disabled_material_dark">
+    android:background="@drawable/pattern_background">
 
     <LinearLayout
         android:orientation="horizontal"

@@ -38,6 +38,7 @@ public class MainActivity extends Activity {
     private Button prevPattern;
     private ToggleButton mixerButton;
     private TextView patternNumber;
+    private  TextView presetName;
     private ArrayList<PatternFragment> mPatternFragmentsArray = null;
     private SharedPreferences sp;
     private int mChosenPatternFragmentNumber = 0;
@@ -64,6 +65,8 @@ public class MainActivity extends Activity {
             patternNumber = (TextView) this.findViewById(R.id.numPattern);
             patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
         mixerButton = (ToggleButton) this.findViewById(R.id.mixerButton);
+        presetName = (TextView) findViewById(R.id.presetName);
+        presetName.setText(myApp.getActivePattern().getPatternName());
 
            Log.d("OnCreate", "WOrked");
 
@@ -134,6 +137,7 @@ public class MainActivity extends Activity {
 
                    }
                    patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
+                   presetName.setText(myApp.getActivePattern().getPatternName());
                    if(wasPlaying){
                        myApp.play();
                        play.setBackgroundResource(R.drawable.play_white);
@@ -157,6 +161,7 @@ public class MainActivity extends Activity {
                        getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
                    }
                    patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
+                   presetName.setText(myApp.getActivePattern().getPatternName());
                    if(wasPlaying){
                        myApp.play();
                        play.setBackgroundResource(R.drawable.play_white);
@@ -248,7 +253,8 @@ public class MainActivity extends Activity {
                         DataBaseHelper.TRACK_HITS_ARRAY_COLUMN, DataBaseHelper.TRACK_VOLUME_COLUMN,
                         DataBaseHelper.TRACK_MUTE_COLUMN,
                         DataBaseHelper.TRACK_PATH_TO_SAMPLE_COLUMN,
-                        DataBaseHelper.TRACK_PATTERN_ID_COLUMN}, null, null, null, null, null);
+                        DataBaseHelper.TRACK_PATTERN_ID_COLUMN,
+                        DataBaseHelper.TRACK_HAS_CONNECTED_SAMPLE}, null, null, null, null, null);
 
         while(trackCursor.moveToNext()){
                 int trackID = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper._ID));
@@ -263,6 +269,7 @@ public class MainActivity extends Activity {
                         }
                     // System.out.println(numArr[i]);
                 }
+                int hasConnectedSample = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_HAS_CONNECTED_SAMPLE));
                 int volume = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_VOLUME_COLUMN));
                 int mute = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_MUTE_COLUMN));
                 String path = trackCursor.getString(trackCursor.getColumnIndex(DataBaseHelper.TRACK_PATH_TO_SAMPLE_COLUMN));
@@ -273,13 +280,14 @@ public class MainActivity extends Activity {
                     track.makeHitActive(activeHitsArray);
                 }
                     track.setTrackVolume((float) volume);
-            if (path != null) {
+            if (hasConnectedSample == 1) {
                 track.connectInstrument(this, path);
             }
         }
         trackCursor.close();
 
-        mChosenPatternFragmentNumber = myApp.getPatternsList().indexOf(myApp.getActivePattern());
+        mChosenPatternFragmentNumber = myApp.getLastActivePatternIndex();
+        myApp.setPatternActive(myApp.getPattern(mChosenPatternFragmentNumber+1));
         for(Pattern patt : myApp.getPatternsList()){
             PatternFragment pf = new PatternFragment();
             pf.connectPattern(patt);
@@ -309,7 +317,7 @@ public class MainActivity extends Activity {
        super.onPause();
         Log.d("OnPause", "WORKED");
         myApp.stop();
-        myApp.setLastPatternActive(myApp.getActivePattern());
+        myApp.setLastPatternActiveIndex();
         mDatabaseHelper = new DataBaseHelper(this, "mainbase.db", null, 1);
 
         SQLiteDatabase mSqLiteDatabase = mDatabaseHelper.getWritableDatabase();
@@ -349,6 +357,12 @@ public class MainActivity extends Activity {
                 trackData.put(DataBaseHelper.TRACK_MUTE_COLUMN, false);
                 trackData.put(DataBaseHelper.TRACK_PATH_TO_SAMPLE_COLUMN, track.getPathToInstrument());
                 trackData.put(DataBaseHelper.TRACK_PATTERN_ID_COLUMN, i+1);
+                if(track.getHasConnectedInstrument()){
+                    trackData.put(DataBaseHelper.TRACK_HAS_CONNECTED_SAMPLE, 1);
+                }
+                else{
+                    trackData.put(DataBaseHelper.TRACK_HAS_CONNECTED_SAMPLE, 0);
+                }
                 mSqLiteDatabase.insert(mDatabaseHelper.DATABASE_TABLE_TRACKS, null, trackData);
             }
             Log.d("PATTERN DDED TO BD ", i+"");

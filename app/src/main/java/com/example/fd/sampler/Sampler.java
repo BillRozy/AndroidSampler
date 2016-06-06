@@ -68,12 +68,12 @@ class Sampler {
         return this.activePattern;
     }
 
-    public void setLastPatternActive(Pattern pattern){
-        lastActivePattern = pattern;
+    public void setLastPatternActiveIndex(){
+        lastActivePatternIndex = patterns.indexOf(activePattern);
     }
 
-    public Pattern getLastActivePattern(){
-        return lastActivePattern;
+    public int getLastActivePatternIndex(){
+        return lastActivePatternIndex;
     }
 
     public void clearPatternsList(){
@@ -124,7 +124,7 @@ class Sampler {
     //PROPERTIES
     private ArrayList<Pattern> patterns = new ArrayList<>();
     private Pattern activePattern;
-    private Pattern lastActivePattern;
+    private int lastActivePatternIndex;
     private int currentStep = 1;
     private int BPM = 120;
     private int steps = 16;
