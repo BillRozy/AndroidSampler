@@ -1,5 +1,6 @@
 package com.example.fd.sampler;
 import android.content.Context;
+import android.util.Log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -54,6 +55,10 @@ class Track implements Serializable{
 
     public boolean getHasConnectedInstrument(){return hasConnectedInstrument;}
 
+    public void setHasConnectedInstrument(boolean hasConnectedInstrument) {
+        this.hasConnectedInstrument = hasConnectedInstrument;
+    }
+
     public void makeHits(){
         for(int i=0;i<Sampler.getSampler().getSteps();i++)
         {
@@ -72,22 +77,26 @@ class Track implements Serializable{
     }
 
     public void makeHitsActiveFromDescription(String desc){
-        String[] hitsString = desc.split(" ");
-        int activeHitsArray[] = new int[hitsString.length];
-        for (int i = 0; i < hitsString.length; i++) {
-            if(!hitsString[i].equals("")) {
-                activeHitsArray[i] = Integer.parseInt(hitsString[i]);
+        if(!desc.equals("")) {
+            String[] hitsString = desc.split(" ");
+            int activeHitsArray[] = new int[hitsString.length];
+            for (int i = 0; i < hitsString.length; i++) {
+                if (!hitsString[i].equals("")) {
+                    activeHitsArray[i] = Integer.parseInt(hitsString[i]);
+                }
+                // System.out.println(numArr[i]);
             }
-            // System.out.println(numArr[i]);
+            makeHitActive(activeHitsArray);
         }
-        makeHitActive(activeHitsArray);
     }
 
 
 
     public void performSound(){
-
+                try {
                     this.connectedInstrument.playSound();
+                }catch (NullPointerException exc){
+                    Log.d("EXCEPTION","Not loaded sample");}
 
         }
 

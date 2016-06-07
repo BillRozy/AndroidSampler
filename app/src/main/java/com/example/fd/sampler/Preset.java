@@ -12,6 +12,24 @@ public class Preset implements Serializable {
     private int tracksQ;
     private String[] activeHits;
     private String[] trackTitles;
+    private String[] pathsToSamples;
+    private Boolean[] hasSample;
+
+    public Boolean[] getHasSample() {
+        return hasSample;
+    }
+
+    public String[] getPathsToSamples() {
+        return pathsToSamples;
+    }
+
+    public void setHasSample(Boolean[] hasSample) {
+        this.hasSample = hasSample;
+    }
+
+    public void setPathsToSamples(String[] pathsToSamples) {
+        this.pathsToSamples = pathsToSamples;
+    }
 
     public void setActiveHits(String[] activeHits) {
         this.activeHits = activeHits;

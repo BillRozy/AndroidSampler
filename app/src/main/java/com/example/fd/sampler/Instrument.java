@@ -38,14 +38,14 @@ class Instrument implements Serializable{
 
     public void playSound()
     {
-     //  try{
+      try{
             long begin = System.currentTimeMillis();
             this.pool.play(id,mVolume,mVolume,1,0,1); //Поехали!!!
-          // TimeUnit.MILLISECONDS.sleep(Sampler.getSampler().getDelay());
-            //this.pool.pause(id);
             long end = System.currentTimeMillis();
-            Log.d(Thread.currentThread().getName() + " Time delayed: ","" + (end-begin));
-     //  }  catch (InterruptedException exc) {}
+          Log.d(Thread.currentThread().getName() + " Time delayed: ","" + (end-begin));
+      }  catch (NullPointerException exc) {Log.d("Instrument isnt loaded!",exc.toString());}
+
+
     }
 
 
@@ -56,8 +56,10 @@ class Instrument implements Serializable{
         } catch (IOException e) {
             e.printStackTrace();
             Log.e("FILE","Cant open file from assets");
-            int id = pool.load(fileName,1);
-            return id;
+            try {
+                int id = pool.load(fileName, 1);
+                return id;
+            }catch (NullPointerException exc){Log.d("Cant open from direct", exc.toString());}
         }
         return pool.load(afd, 1);
     }

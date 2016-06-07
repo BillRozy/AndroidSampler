@@ -104,6 +104,22 @@ class Sampler {
         return array;
     }
 
+    public Boolean[] getExistenceOfSample(){
+        Boolean[] array = new Boolean[activePattern.getTracksArray().size()];
+        for(int i =0; i < activePattern.getTracksArray().size();i++){
+            array[i] = activePattern.getTrack(i).getHasConnectedInstrument();
+        }
+        return array;
+    }
+    public String[] getAllTracksPaths(){
+        String[] array = new String[activePattern.getTracksArray().size()];
+        for(int i =0; i < activePattern.getTracksArray().size();i++){
+            array[i] = activePattern.getTrack(i).getPathToInstrument();
+        }
+        return array;
+    }
+
+
 
     public void setReplays(int q){
         replays = q;

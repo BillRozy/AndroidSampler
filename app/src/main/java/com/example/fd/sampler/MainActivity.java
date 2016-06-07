@@ -1,8 +1,10 @@
 package com.example.fd.sampler;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -15,6 +17,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -199,20 +203,35 @@ public class MainActivity extends Activity {
         savePresetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    Preset preset = new Preset();
-                    preset.setBPM(myApp.getBPM());
-                    preset.setTitle(myApp.getActivePattern().getPatternName());
-                    preset.setSteps(myApp.getActivePattern().getPatternSteps());
-                    preset.setTrackTitles(myApp.getAllTracksNames());
-                    preset.setActiveHits(myApp.getAllTracksHitsDescription());
-                    FileOutputStream fos = new FileOutputStream(FILES_DIRECTORY_PRESETS + "temp.out");
-                    ObjectOutputStream oos = new ObjectOutputStream(fos);
-                    oos.writeObject(preset);
-                    oos.flush();
-                    oos.close();
-                }catch (IOException exc){Log.d("EXCEPTION", exc.toString());}
-                Log.d("SAVER", "file" + FILES_DIRECTORY_PRESETS + "temp.out");
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+                alertDialog.setTitle("Write name of preset");
+                alertDialog.setMessage("Enter Preset Name");
+
+                final EditText input = new EditText(MainActivity.this);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                input.setLayoutParams(lp);
+                alertDialog.setView(input);
+                alertDialog.setIcon(R.drawable.file_icon);
+
+                alertDialog.setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                String title = input.getText().toString();
+                                if (title.compareTo("") != 0) {
+                                    savePreset(title);
+                                }
+                            }
+                        });
+                alertDialog.setNegativeButton("NO",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+
+                alertDialog.show();
         }
         });
 
@@ -250,6 +269,26 @@ public class MainActivity extends Activity {
         }
     }
 
+    private void savePreset(String name){
+        try {
+            myApp.getActivePattern().setPatternName(name);
+            Preset preset = new Preset();
+            preset.setBPM(myApp.getBPM());
+            preset.setTitle(name);
+            preset.setSteps(myApp.getActivePattern().getPatternSteps());
+            preset.setTrackTitles(myApp.getAllTracksNames());
+            preset.setActiveHits(myApp.getAllTracksHitsDescription());
+            preset.setPathsToSamples(myApp.getAllTracksPaths());
+            preset.setHasSample(myApp.getExistenceOfSample());
+            FileOutputStream fos = new FileOutputStream(FILES_DIRECTORY_PRESETS + name + ".dmp");
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(preset);
+            oos.flush();
+            oos.close();
+            presetName.setText(name);
+        }catch (IOException exc){Log.d("EXCEPTION", exc.toString());}
+    }
+
     public void loadPreset(String Path){
         try {
             FileInputStream fis = new FileInputStream(Path);
@@ -257,6 +296,8 @@ public class MainActivity extends Activity {
             Preset preset = (Preset) oin.readObject();
             String[] titles = preset.getTrackTitles();
             String[] description = preset.getActiveHits();
+            String[] paths = preset.getPathsToSamples();
+            Boolean[] mark = preset.getHasSample();
             Pattern patt = new Pattern(this);
             patt.setPatternName(preset.getTitle());
             patt.setPatternBPM(preset.getBPM());
@@ -264,17 +305,19 @@ public class MainActivity extends Activity {
             for(int i=1;i<titles.length;i++){
                 Track track = patt.addTrack(titles[i]);
                 track.makeHitsActiveFromDescription(description[i]);
+                if(paths[i] != null) {
+                    track.connectInstrument(this, paths[i]);
+                }
+                track.setHasConnectedInstrument(mark[i]);
                 Log.d("Active ", description[i]);
             }
             myApp.getPatternsList().set(myApp.getPatternsList().indexOf(myApp.getActivePattern()),patt);
+            myApp.setPatternActive(patt);
             PatternFragment pf = new PatternFragment();
             pf.connectPattern(patt);
-            pf.makeTracks(this);
             mPatternFragmentsArray.set(mChosenPatternFragmentNumber,pf);
             getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
-
-
-            //Log.d("LOADED ","name= " + preset.getTitle());
+            presetName.setText(patt.getPatternName());
         }catch(IOException | ClassNotFoundException exc){Log.d("EXCEPTION", exc.toString());}
 
     }
@@ -309,7 +352,6 @@ public class MainActivity extends Activity {
                 null
         );
 
-        int pos = 1;
         while (patternCursor.moveToNext()) {
             int id = patternCursor.getInt(patternCursor.getColumnIndex(DataBaseHelper._ID));
             String name = patternCursor.getString(patternCursor
