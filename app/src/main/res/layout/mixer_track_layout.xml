@@ -5,9 +5,13 @@
     <com.example.fd.sampler.VerticalSeekBar
         android:id="@+id/volumeBar"
         android:layout_width="wrap_content"
-        android:layout_height="100dp"
+        android:layout_height="120dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="5dp" />
+        android:minHeight="9dip"
+        android:maxHeight="9dip"
+        android:layout_marginBottom="5dp"
+        android:progressDrawable="@drawable/styled_seek_bar"
+        android:thumb="@drawable/volume_thumbler"/>
     <ToggleButton
         android:layout_width="35dip"
         android:layout_height="35dip"

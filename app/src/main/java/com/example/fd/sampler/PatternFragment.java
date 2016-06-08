@@ -221,6 +221,7 @@ public class PatternFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
+            connectedActivity.findViewById(R.id.playButton).setBackgroundResource(R.drawable.play);
             Intent intent = new Intent(PatternFragment.this.getActivity(), FileBrowserActivity.class);
             mChosenTrack = tracksArray.indexOf(tl) + 1;
             startActivityForResult(intent, CHOOSE_SAMPLE);

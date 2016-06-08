@@ -39,16 +39,17 @@
                 android:id="@+id/loadBtn"
                 android:background="@drawable/load_button"
                 android:padding="2dp"
-                android:layout_marginRight="5dip" />
+                android:layout_marginRight="10dp" />
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="22dp"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Preset1"
                 android:id="@+id/presetName"
                 android:textSize="18dp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_gravity="center_vertical" />
         </LinearLayout>
 
         <LinearLayout

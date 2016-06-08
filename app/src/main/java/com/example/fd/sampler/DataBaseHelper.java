@@ -43,7 +43,7 @@ public class DataBaseHelper extends SQLiteOpenHelper implements BaseColumns {
             + " integer, " + TRACK_MUTE_COLUMN + " numeric, " + TRACK_PATH_TO_SAMPLE_COLUMN + " text, "
             + TRACK_PATTERN_ID_COLUMN + " integer not null, " + TRACK_HAS_CONNECTED_SAMPLE + " numeric not null);";
     private static final String FIRST_INITIALIZATION_OF_PATTERNS = "INSERT INTO " + DATABASE_TABLE_PATTERNS
-            + " VALUES ('1', 'base_pattern', '130', '16'); ";
+            + " VALUES ('1', 'base_pattern', '16', '130'); ";
     private static final String FIRST_INITIALIZATION_OF_TRACKS = "INSERT INTO " + DATABASE_TABLE_TRACKS + " VALUES ('1', 'Kick', '1 5 9 14', '70', '0', 'something', '1','0'),('2', 'Snare', '5 14', '70', '0', 'something', '1','0'),('3', 'Hi-Hat', '1 3 5 7 9 11 13 15', '70', '0', 'something', '1','0');";
 
 

@@ -19,7 +19,6 @@ public class MixerFragment extends Fragment {
     private ArrayList<MixerTrackLayout> mixerTracksArray = null;
     private ViewGroup selfFrame;
     private LinearLayout containerForTracks;
-    private TextView mPatternTitle;
 
     public MixerFragment() {
         super();
@@ -48,8 +47,6 @@ public class MixerFragment extends Fragment {
                 containerForTracks.addView(mtl);
             }
         }
-        mPatternTitle = (TextView) selfFrame.findViewById(R.id.patternTitleView);
-        mPatternTitle.setText( Sampler.getSampler().getActivePattern().getPatternName());
         return selfFrame;
     }
 

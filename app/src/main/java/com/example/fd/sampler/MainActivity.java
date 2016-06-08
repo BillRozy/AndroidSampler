@@ -47,7 +47,7 @@ public class MainActivity extends Activity {
     private DataBaseHelper mDatabaseHelper;
     private Button addTrack;
     private Button stop;
-    private Button play;
+    public Button play;
     private Button pause;
     private Button nextPattern;
     private Button prevPattern;
@@ -75,6 +75,16 @@ public class MainActivity extends Activity {
        if ( mPatternFragmentsArray == null ) {
            mPatternFragmentsArray = new ArrayList<>();
        }
+        bpmPicker = (NumberPicker) this.findViewById(R.id.numberPicker);
+        bpmPicker.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        bpmPicker.setMaxValue(400);
+        bpmPicker.setMinValue(60);
+        setNumberPickerTextColor(bpmPicker, Color.BLACK);
+        stepPicker = (NumberPicker) findViewById(R.id.stepPicker);
+        stepPicker.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        stepPicker.setMaxValue(16);
+        stepPicker.setMinValue(4);
+        setNumberPickerTextColor(stepPicker, Color.BLACK);
         initOnCreate();
            addTrack = (Button) this.findViewById(R.id.addTrackButton);
            stop = (Button) this.findViewById(R.id.stopButton);
@@ -87,18 +97,7 @@ public class MainActivity extends Activity {
             patternNumber = (TextView) this.findViewById(R.id.numPattern);
             patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
         mixerButton = (ToggleButton) this.findViewById(R.id.mixerButton);
-        bpmPicker = (NumberPicker) this.findViewById(R.id.numberPicker);
-        bpmPicker.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-        bpmPicker.setMaxValue(400);
-        bpmPicker.setMinValue(60);
-        setNumberPickerTextColor(bpmPicker, Color.BLACK);
-        stepPicker = (NumberPicker) findViewById(R.id.stepPicker);
-        stepPicker.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-        stepPicker.setMaxValue(16);
-        stepPicker.setMinValue(4);
-        setNumberPickerTextColor(stepPicker, Color.BLACK);
-        bpmPicker.setValue(myApp.getActivePattern().getPatternBPM());
-        stepPicker.setValue(myApp.getActivePattern().getPatternSteps());
+
         presetName = (TextView) findViewById(R.id.presetName);
         presetName.setText(myApp.getActivePattern().getPatternName());
 
@@ -274,7 +273,8 @@ public class MainActivity extends Activity {
            Sampler.getSampler().stepsBar.setMax(16);
            Sampler.getSampler().stepsBar.setProgress(0);
 
-
+        bpmPicker.setValue(myApp.getActivePattern().getPatternBPM());
+        stepPicker.setValue(myApp.getActivePattern().getPatternSteps());
 
     }
 
@@ -355,6 +355,8 @@ public class MainActivity extends Activity {
         PatternFragment pf = new PatternFragment();
         mPatternFragmentsArray.add(pf);
         mPatternFragmentsArray.get(mChosenPatternFragmentNumber).makePatternForFragment(this);
+        bpmPicker.setValue(myApp.getActivePattern().getPatternBPM());
+        stepPicker.setValue(myApp.getActivePattern().getPatternSteps());
         getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
         Log.d("NEW FRAGMENT", pf.isAdded()+"");
     }
