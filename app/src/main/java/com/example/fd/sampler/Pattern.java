@@ -155,5 +155,5 @@ class Pattern implements Runnable{
     private int mPatternSteps = 16;
    AudioAttributes attributes;
     SoundPool sPool;
-    static private int mPatternCounter = 0;
+    static public int mPatternCounter = 0;
 }

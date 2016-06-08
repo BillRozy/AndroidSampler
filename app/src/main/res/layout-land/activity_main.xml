@@ -77,12 +77,13 @@
                     android:background="@android:drawable/ic_media_previous" />
 
                 <TextView
-                    android:layout_width="10dp"
+                    android:layout_width="20dp"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="1"
                     android:id="@+id/numPattern"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textAlignment="center" />
 
                 <Button
                     style="?android:attr/buttonStyleSmall"

@@ -40,7 +40,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class MainActivity extends Activity {
-
+    final private int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL = 1;
+    final private int MY_PERMISSIONS_REQUEST_READ_EXTERNAL = 2;
     static final String FILES_DIRECTORY_PRESETS = android.os.Environment.getExternalStorageDirectory()
             .getAbsolutePath() + "/DrumSampler/Presets/";
     private Sampler myApp;
@@ -362,6 +363,7 @@ public class MainActivity extends Activity {
     }
 
     private void initOnCreate(){
+        myApp.getPatternsList().clear();
         myApp.clearPatternsList();
         mDatabaseHelper = new DataBaseHelper(this, "mainbase.db", null, 1);
         SQLiteDatabase sdb;
@@ -517,6 +519,7 @@ public class MainActivity extends Activity {
             Log.d("PATTERN DDED TO BD ", i+"");
         }
         mSqLiteDatabase.close();
+        //myApp.getPatternsList().clear();
     }
 
     public static boolean setNumberPickerTextColor(NumberPicker numberPicker, int color)

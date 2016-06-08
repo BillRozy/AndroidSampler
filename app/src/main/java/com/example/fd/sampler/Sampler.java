@@ -79,6 +79,7 @@ class Sampler {
 
     public void clearPatternsList(){
         patterns = new ArrayList<>();
+        Pattern.mPatternCounter = 0;
     }
 
     public int getDelay(){

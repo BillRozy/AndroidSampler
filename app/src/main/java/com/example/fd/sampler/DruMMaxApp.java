@@ -1,7 +1,12 @@
 package com.example.fd.sampler;
 
+import android.Manifest;
 import android.app.Application;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import java.io.File;
@@ -9,17 +14,45 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
+import java.util.List;
+import java.util.Scanner;
 
 /**
  * Created by FD on 31.05.2016.
  */
 public class DruMMaxApp extends Application {
+    final private int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL = 1;
     @Override
     public void onCreate() {
         super.onCreate();
        Sampler myApp = Sampler.getSampler();
-        copyFilesToSdCard();
+        File dir = new File(FileBrowserActivity.FILES_DIRECTORY);
+        if (dir.mkdir()) {
+                Log.d("Created", dir.getAbsolutePath());
+                myCopy();
+        }
+    }
 
+    private void myCopy(){
+        AssetManager assetManager = this.getAssets();
+        String assets[] = null;
+        try {
+            InputStream indexFile = assetManager.open("assets.index");
+            String test = convertStreamToString(indexFile);
+            assets = test.split("\\n");
+            for(String url : assets){
+                File file = new File(url);
+                if(file.getName().contains(".")) {
+                    copyFile(url);
+                }
+                else
+                {
+                    File dir = new File(FileBrowserActivity.FILES_DIRECTORY + url);
+                    dir.mkdirs();
+                }
+            }
+        }catch (IOException exc){}
     }
 
     private void copyFilesToSdCard() {
@@ -28,10 +61,16 @@ public class DruMMaxApp extends Application {
 
     private void copyFileOrDir(String path) {
         AssetManager assetManager = this.getAssets();
+
         String assets[] = null;
+        String assetsTwo[] = null;
         try {
+            InputStream indexFile = assetManager.open("assets.index");
+            String test = convertStreamToString(indexFile);
+            assets = test.split("\\n");
+            assetsTwo = assetManager.list(path);
+            Log.d("LIST", assetsTwo[0]);
             Log.i("tag", "copyFileOrDir() "+path);
-            assets = assetManager.list(path);
             if (assets.length == 0) {
                 copyFile(path);
             } else {
@@ -87,5 +126,12 @@ public class DruMMaxApp extends Application {
             Log.e("tag", "Exception in copyFile() "+e.toString());
         }
 
+    }
+
+    static String convertStreamToString(java.io.InputStream is) {
+        Scanner scanner = new Scanner(is);
+        String text = scanner.useDelimiter("\\A").next();
+        scanner.close();
+        return text;
     }
 }

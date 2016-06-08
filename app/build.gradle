@@ -17,6 +17,43 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+      task indexAssets {
+        description 'Index Build Variant assets for faster lookup by AssetManager later'
+
+        ext.assetsSrcDir = file( "${projectDir}/src/main/assets" )
+        ext.assetsBuildDir = file( "${buildDir}/assets" )
+
+        inputs.dir assetsSrcDir
+        //outputs.dir assetsBuildDir
+
+        doLast {
+            android.applicationVariants.each { target ->
+                ext.variantPath = "${buildDir.name}/intermediates/assets/${target.dirName}"
+                println "copyAssetRec:${target.dirName} -> ${ext.variantPath}"
+
+                def relativeVariantAssetPath = projectDir.name.toString() + "/" + ext.variantPath.toString()
+                def assetIndexFile = new File(relativeVariantAssetPath +"/assets.index")
+                def contents = ""
+
+                def tree = fileTree(dir: "${ext.variantPath}", exclude: ['**/.svn/**', '*.index'])
+
+                tree.visit { fileDetails ->
+                    contents += "${fileDetails.relativePath}" + "\n"
+                }
+
+                assetIndexFile.write contents
+            }
+        }
+    }
+
+    indexAssets.dependsOn {
+        tasks.matching { task -> task.name.startsWith( 'merge' ) && task.name.endsWith( 'Assets' ) }
+    }
+
+    tasks.withType( JavaCompile ) {
+        compileTask -> compileTask.dependsOn indexAssets
+    }
 }
 
 dependencies {
