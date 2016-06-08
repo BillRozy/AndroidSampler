@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,6 +34,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -52,6 +55,8 @@ public class MainActivity extends Activity {
     private TextView patternNumber;
     private Button savePresetBtn;
     private Button loadPresetBtn;
+    private NumberPicker bpmPicker;
+    private NumberPicker stepPicker;
     private  TextView presetName;
     private ArrayList<PatternFragment> mPatternFragmentsArray = null;
     private SharedPreferences sp;
@@ -82,6 +87,18 @@ public class MainActivity extends Activity {
             patternNumber = (TextView) this.findViewById(R.id.numPattern);
             patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
         mixerButton = (ToggleButton) this.findViewById(R.id.mixerButton);
+        bpmPicker = (NumberPicker) this.findViewById(R.id.numberPicker);
+        bpmPicker.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        bpmPicker.setMaxValue(400);
+        bpmPicker.setMinValue(60);
+        setNumberPickerTextColor(bpmPicker, Color.BLACK);
+        stepPicker = (NumberPicker) findViewById(R.id.stepPicker);
+        stepPicker.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        stepPicker.setMaxValue(16);
+        stepPicker.setMinValue(4);
+        setNumberPickerTextColor(stepPicker, Color.BLACK);
+        bpmPicker.setValue(myApp.getActivePattern().getPatternBPM());
+        stepPicker.setValue(myApp.getActivePattern().getPatternSteps());
         presetName = (TextView) findViewById(R.id.presetName);
         presetName.setText(myApp.getActivePattern().getPatternName());
 
@@ -150,6 +167,8 @@ public class MainActivity extends Activity {
                    } else {
                        mChosenPatternFragmentNumber++;
                        myApp.setPatternActive(myApp.getPattern(mChosenPatternFragmentNumber+1));
+                       bpmPicker.setValue(myApp.getActivePattern().getPatternBPM());
+                       stepPicker.setValue(myApp.getActivePattern().getPatternSteps());
                        getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
 
                    }
@@ -175,6 +194,8 @@ public class MainActivity extends Activity {
                    if (mChosenPatternFragmentNumber != 0) {
                        mChosenPatternFragmentNumber--;
                        myApp.setPatternActive(myApp.getPattern(mChosenPatternFragmentNumber+1));
+                       bpmPicker.setValue(myApp.getActivePattern().getPatternBPM());
+                       stepPicker.setValue(myApp.getActivePattern().getPatternSteps());
                        getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
                    }
                    patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
@@ -244,12 +265,10 @@ public class MainActivity extends Activity {
         });
 
 
-           NumberPicker bpmPicker = (NumberPicker) this.findViewById(R.id.numberPicker);
-        bpmPicker.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-           bpmPicker.setMaxValue(400);
-           bpmPicker.setMinValue(60);
-           bpmPicker.setValue(Sampler.getSampler().getBPM());
-           bpmPicker.setOnValueChangedListener(new bpmPickerHandler());
+
+        bpmPicker.setOnValueChangedListener(new bpmPickerHandler());
+
+        stepPicker.setOnValueChangedListener(new stepsPickerHandler());
 
            Sampler.getSampler().stepsBar = (ProgressBar) this.findViewById(R.id.progressBar);
            Sampler.getSampler().stepsBar.setMax(16);
@@ -273,7 +292,7 @@ public class MainActivity extends Activity {
         try {
             myApp.getActivePattern().setPatternName(name);
             Preset preset = new Preset();
-            preset.setBPM(myApp.getBPM());
+            preset.setBPM(myApp.getActivePattern().getPatternSteps());
             preset.setTitle(name);
             preset.setSteps(myApp.getActivePattern().getPatternSteps());
             preset.setTrackTitles(myApp.getAllTracksNames());
@@ -318,6 +337,8 @@ public class MainActivity extends Activity {
             mPatternFragmentsArray.set(mChosenPatternFragmentNumber,pf);
             getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
             presetName.setText(patt.getPatternName());
+            stepPicker.setValue(patt.getPatternSteps());
+            bpmPicker.setValue(patt.getPatternBPM());
         }catch(IOException | ClassNotFoundException exc){Log.d("EXCEPTION", exc.toString());}
 
     }
@@ -364,8 +385,8 @@ public class MainActivity extends Activity {
             patt.setPatternName(name);
             patt.setPatternBPM(bpm);
             patt.setPatternSteps(steps);
-            Sampler.getSampler().addPattern(patt);
-            Sampler.getSampler().setPatternActive(patt);
+            myApp.addPattern(patt);
+            myApp.setPatternActive(patt);
         }
         patternCursor.close();
 
@@ -426,6 +447,15 @@ public class MainActivity extends Activity {
         @Override
         public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
             myApp.setBPM(newVal);
+            myApp.getActivePattern().setPatternBPM(newVal);
+        }
+    }
+
+    class stepsPickerHandler implements NumberPicker.OnValueChangeListener{
+        @Override
+        public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+            myApp.setSteps(newVal);
+            myApp.getActivePattern().setPatternBPM(newVal);
         }
     }
 
@@ -485,5 +515,34 @@ public class MainActivity extends Activity {
             Log.d("PATTERN DDED TO BD ", i+"");
         }
         mSqLiteDatabase.close();
+    }
+
+    public static boolean setNumberPickerTextColor(NumberPicker numberPicker, int color)
+    {
+        final int count = numberPicker.getChildCount();
+        for(int i = 0; i < count; i++){
+            View child = numberPicker.getChildAt(i);
+            if(child instanceof EditText){
+                try{
+                    Field selectorWheelPaintField = numberPicker.getClass()
+                            .getDeclaredField("mSelectorWheelPaint");
+                    selectorWheelPaintField.setAccessible(true);
+                    ((Paint)selectorWheelPaintField.get(numberPicker)).setColor(color);
+                    ((EditText)child).setTextColor(color);
+                    numberPicker.invalidate();
+                    return true;
+                }
+                catch(NoSuchFieldException e){
+                    Log.w("setNumberPickerTexColor", e);
+                }
+                catch(IllegalAccessException e){
+                    Log.w("setNumberPickerTexColor", e);
+                }
+                catch(IllegalArgumentException e){
+                    Log.w("setNumberPickerTexColor", e);
+                }
+            }
+        }
+        return false;
     }
 }

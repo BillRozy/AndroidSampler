@@ -187,6 +187,15 @@
                 android:background="@drawable/rounded"
                 android:gravity="center_vertical|center_horizontal" />
 
+            <NumberPicker
+                android:layout_width="50dip"
+                android:layout_height="50dip"
+                android:id="@+id/stepPicker"
+                android:minHeight="40dp"
+                android:minWidth="40dip"
+                android:background="@drawable/rounded"
+                android:gravity="center_vertical|center_horizontal" />
+
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"

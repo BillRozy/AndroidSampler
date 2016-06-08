@@ -1,7 +1,7 @@
 <HorizontalScrollView android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@drawable/pattern_background_rounded_darker">
+    android:background="@drawable/pattern_background_rounded">
     <LinearLayout
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"

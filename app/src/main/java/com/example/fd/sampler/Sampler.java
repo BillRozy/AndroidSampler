@@ -83,7 +83,7 @@ class Sampler {
 
     public int getDelay(){
         double dblBPM = (double) BPM;
-        double delay =  120.0/dblBPM * 250.0;
+        double delay =  120.0/dblBPM * 125.0;
         return (int) delay;
 
     }

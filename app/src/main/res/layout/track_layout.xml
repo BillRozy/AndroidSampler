@@ -10,11 +10,11 @@
 
     <Button
         android:layout_width="70dip"
-        android:layout_height="35dip"
+        android:layout_height="25dip"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Track "
         android:id="@+id/trackNameView"
-        android:background="@drawable/rounded"
+        android:background="@drawable/track_name_view"
         android:layout_marginTop="0dp"
         android:layout_gravity="center_vertical"
         android:textAlignment="center"

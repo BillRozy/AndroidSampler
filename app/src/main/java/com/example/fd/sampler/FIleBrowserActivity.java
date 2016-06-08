@@ -34,7 +34,7 @@ public class FileBrowserActivity extends Activity {
     String[] fileArray;
     File[] files;
     File selected;
-    File lastSelected;
+    ArrayList<File> lastSelected = new ArrayList<>();
     String pathToChosenFile;
 
 
@@ -72,7 +72,7 @@ public class FileBrowserActivity extends Activity {
         fileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                lastSelected = selected;
+                lastSelected.add(selected);
                 if(files[position].isFile()){
                     pathToChosenFile = files[position].getAbsolutePath();
                     String name = files[position].getName();
@@ -105,19 +105,21 @@ public class FileBrowserActivity extends Activity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                files = new File[lastSelected.listFiles().length];
-                files = lastSelected.listFiles();
-                String[] titles = new String[files.length];
-                for(int i = 0; i < files.length; i++){
-                    titles[i] = files[i].getName();
+                if(lastSelected.size() != 0) {
+                    files = new File[lastSelected.get(lastSelected.size() - 1).listFiles().length];
+                    files = lastSelected.get(lastSelected.size() - 1).listFiles();
+                    String[] titles = new String[files.length];
+                    for (int i = 0; i < files.length; i++) {
+                        titles[i] = files[i].getName();
+                    }
+                    BrowseFilesAdapter secAdapter = new BrowseFilesAdapter(FileBrowserActivity.this, titles);
+                    fileListView.setAdapter(secAdapter);
+                    Log.d("ENDED LISTENER", " pos");
+                    selected = lastSelected.get(lastSelected.size() - 1);
+                    lastSelected.remove(lastSelected.size() - 1);
                 }
-                BrowseFilesAdapter secAdapter = new BrowseFilesAdapter(FileBrowserActivity.this, titles);
-                fileListView.setAdapter(secAdapter);
-                Log.d("ENDED LISTENER"," pos");
-                selected = lastSelected;
             }
-            }
-        );
+        });
 
 
 

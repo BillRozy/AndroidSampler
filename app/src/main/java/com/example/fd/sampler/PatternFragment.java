@@ -31,7 +31,6 @@ public class PatternFragment extends Fragment {
 
     private ArrayList<TrackLayout> tracksArray = null;
     private LinearLayout verticalLayer;
-    private StepsLayout stepsLayout;
     private int mChosenTrack;
     private String chosenPath;
     static final private int CHOOSE_SAMPLE = 0;
@@ -50,7 +49,6 @@ public class PatternFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        stepsLayout = new StepsLayout(connectedActivity);
         Log.d("onCreate Fragment", "WORKED");
     }
 
@@ -122,7 +120,7 @@ public class PatternFragment extends Fragment {
             for (final HitView hv : hitsArrayOfCurrentTrack) {
                 if (Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl) + 1).getHitState(hitsArrayOfCurrentTrack.indexOf(hv))) {
                     hv.setActive();
-                    hv.setImageResource(R.drawable.btn_media_player_selected);
+                    hv.setImageResource(R.drawable.hit_btn_selected);
                 }
                 hv.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -155,9 +153,6 @@ public class PatternFragment extends Fragment {
             verticalLayer.setPadding(8, 8, 8, 8);
         }
 
-        if(verticalLayer.getChildAt(0) == null) {
-            verticalLayer.addView(stepsLayout);
-        }
         Log.d("OnCreateView", "WORKED");
         currentStep = Sampler.getSampler().getCurrentStep();
         if (tracksArray.size() == 0) {
@@ -207,26 +202,13 @@ public class PatternFragment extends Fragment {
     public void hitsStateMaker(TrackLayout tl, HitView hv, ArrayList<HitView> hitsAr) {
         if (hv.getState()) {
             Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl) + 1).makeHitActive(hitsAr.indexOf(hv) + 1);
-            hv.setImageResource(R.drawable.btn_media_player_selected);
+            hv.setImageResource(R.drawable.hit_btn_selected);
         } else {
             Sampler.getSampler().getActivePattern().getTrack(getTracksLayoutsArray().indexOf(tl) + 1).makeHitActive(hitsAr.indexOf(hv) + 1);
-            hv.setImageResource(R.drawable.btn_media_player_disabled_selected);
+            hv.setImageResource(R.drawable.hit_btn);
         }
     }
 
-
-    public void changeStepInView(){
-        ArrayList<ToggleButton> list = stepsLayout.getStepsArray();
-        for(ToggleButton tb : list){
-            if(list.indexOf(tb) == currentStep-1){
-                tb.setChecked(true);
-            }
-            else
-            {
-                tb.setChecked(false);
-            }
-        }
-    }
 
 
     class InstrumentConnectionListener implements View.OnClickListener {
