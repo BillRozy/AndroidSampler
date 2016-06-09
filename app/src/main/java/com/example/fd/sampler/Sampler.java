@@ -78,8 +78,12 @@ class Sampler {
     }
 
     public void clearPatternsList(){
-        patterns = new ArrayList<>();
+        patterns.clear();
         Pattern.mPatternCounter = 0;
+    }
+
+    public void clearActivePattern(){
+            activePattern = null;
     }
 
     public int getDelay(){
@@ -87,6 +91,14 @@ class Sampler {
         double delay =  120.0/dblBPM * 125.0;
         return (int) delay;
 
+    }
+
+    public void interruptAllThreads(){
+        for(Pattern patt : patterns){
+            if(patt.getMusicThread() != null) {
+                patt.getMusicThread().interrupt();
+            }
+        }
     }
 
     public String[] getAllTracksNames(){
@@ -118,6 +130,15 @@ class Sampler {
             array[i] = activePattern.getTrack(i).getPathToInstrument();
         }
         return array;
+    }
+
+    public void clearPools(){
+        for(Pattern patt : patterns){
+            if(patt.getSoundPool() != null){
+                patt.getSoundPool().release();
+                patt.setSoundPoolNull();
+            }
+        }
     }
 
 

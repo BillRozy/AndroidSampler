@@ -25,11 +25,15 @@ class Pattern implements Runnable{
         return tracksArray;
     }
     public SoundPool getSoundPool(){return this.sPool;}
+
+    public void setSoundPoolNull() {
+        this.sPool = null;
+    }
     //end test
 
     //CONSTRUCTOR
     public Pattern(Context mCont){
-        tracksArray = new ArrayList<>(6);
+        tracksArray = new ArrayList<>(12);
         int currentapiVersion = android.os.Build.VERSION.SDK_INT;
         if (currentapiVersion < Build.VERSION_CODES.LOLLIPOP) {
             sPool = new SoundPool(12, AudioManager.STREAM_MUSIC, 1);
@@ -125,22 +129,28 @@ class Pattern implements Runnable{
             }
     }
 
+    public void interruptThread(){
+        musicThread.stop();
+    }
+
 
     public void run() {
-        keepRunning = true;
-        try {
-            while (keepRunning) {
-                if (isPaused) {
-                    synchronized (this){
-                        // System.out.println("Поступил запрос на стоп");
-                        wait();
-                        isPaused = false;
-                    }
+        while(!musicThread.isInterrupted()) {
+            keepRunning = true;
+            try {
+                while (keepRunning) {
+                    if (isPaused) {
+                        synchronized (this) {
+                            // System.out.println("Поступил запрос на стоп");
+                            wait();
+                            isPaused = false;
+                        }
+                    } else playPattern(Sampler.getSampler().getCurrentStep());
                 }
-                else playPattern(Sampler.getSampler().getCurrentStep());
+            } catch (Exception e) {
+                System.out.println(this + " прерван." + e);
             }
-        } catch (Exception e) {
-            System.out.println(this + " прерван." + e);}
+        }
     }
 
 

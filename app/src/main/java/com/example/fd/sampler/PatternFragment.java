@@ -178,8 +178,8 @@ public class PatternFragment extends Fragment {
             if (resultCode == -1) {
                 chosenPath = data.getStringExtra(SampleListActivity.mSelectedSamplePath);
                 String chosenName = data.getStringExtra(SampleListActivity.mSelectedSampleName);
-                Sampler.getSampler().getActivePattern().getTrack(mChosenTrack).connectInstrument(getActivity().getApplicationContext(), chosenPath);
-                Sampler.getSampler().getActivePattern().getTrack(mChosenTrack).setTrackName(chosenName);
+               PatternFragmentInterface act = (PatternFragmentInterface) connectedActivity;
+                act.putDataAboutTrack(mChosenTrack,chosenPath,chosenName);
                 tracksArray.get(mChosenTrack - 1).getTrackName().setText(chosenName);
                 tracksArray.get(mChosenTrack - 1).getConnectInstrumentBtn().setBackgroundResource(R.drawable.galka);
             }
@@ -227,6 +227,9 @@ public class PatternFragment extends Fragment {
             startActivityForResult(intent, CHOOSE_SAMPLE);
         }
 
+    }
+    public interface PatternFragmentInterface{
+        void putDataAboutTrack(int num, String path, String name);
     }
 }
 
@@ -322,6 +325,8 @@ class TrackNameControlListener implements View.OnClickListener{
 
         alertDialog.show();
     }
+
+
 
 
 

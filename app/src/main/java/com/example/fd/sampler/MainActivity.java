@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements PatternFragment.PatternFragmentInterface {
     final private int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL = 1;
     final private int MY_PERMISSIONS_REQUEST_READ_EXTERNAL = 2;
     static final String FILES_DIRECTORY_PRESETS = android.os.Environment.getExternalStorageDirectory()
@@ -61,6 +61,9 @@ public class MainActivity extends Activity {
     private  TextView presetName;
     private ArrayList<PatternFragment> mPatternFragmentsArray = null;
     private SharedPreferences sp;
+    public String pathChosen = "";
+    public String nameChosen = "";
+    public int trackChosen = 0;
     private int mChosenPatternFragmentNumber = 0;
     public static final String APP_PREFERENCES = "mysettings";
     static final private int CHOOSE_SAMPLE = 0;
@@ -363,8 +366,7 @@ public class MainActivity extends Activity {
     }
 
     private void initOnCreate(){
-        myApp.getPatternsList().clear();
-        myApp.clearPatternsList();
+        mChosenPatternFragmentNumber = myApp.getLastActivePatternIndex();
         mDatabaseHelper = new DataBaseHelper(this, "mainbase.db", null, 1);
         SQLiteDatabase sdb;
         sdb = mDatabaseHelper.getReadableDatabase();
@@ -432,7 +434,7 @@ public class MainActivity extends Activity {
         }
         trackCursor.close();
 
-        mChosenPatternFragmentNumber = myApp.getLastActivePatternIndex();
+
         myApp.setPatternActive(myApp.getPattern(mChosenPatternFragmentNumber+1));
         for(Pattern patt : myApp.getPatternsList()){
             PatternFragment pf = new PatternFragment();
@@ -467,8 +469,10 @@ public class MainActivity extends Activity {
     protected void onPause() {
        super.onPause();
         Log.d("OnPause", "WORKED");
-        myApp.stop();
-        myApp.setLastPatternActiveIndex();
+        if(myApp.getActivePattern()!=null) {
+            myApp.stop();
+            myApp.setLastPatternActiveIndex();
+        }
         mDatabaseHelper = new DataBaseHelper(this, "mainbase.db", null, 1);
 
         SQLiteDatabase mSqLiteDatabase = mDatabaseHelper.getWritableDatabase();
@@ -519,6 +523,10 @@ public class MainActivity extends Activity {
             Log.d("PATTERN DDED TO BD ", i+"");
         }
         mSqLiteDatabase.close();
+        myApp.clearPools();
+        myApp.interruptAllThreads();
+        myApp.clearPatternsList();
+        myApp.clearActivePattern();
         //myApp.getPatternsList().clear();
     }
 
@@ -549,5 +557,16 @@ public class MainActivity extends Activity {
             }
         }
         return false;
+    }
+
+    @Override
+    public void putDataAboutTrack(int num, String path, String name) {
+
+        initOnCreate();
+        trackChosen = num;
+        pathChosen = path;
+        nameChosen = name;
+        myApp.getActivePattern().getTrack(num).connectInstrument(this,path);
+        myApp.getActivePattern().getTrack(num).setTrackName(name);
     }
 }
