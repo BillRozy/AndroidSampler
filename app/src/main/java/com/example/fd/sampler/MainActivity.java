@@ -63,6 +63,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
     private SharedPreferences sp;
     public String pathChosen = "";
     public String nameChosen = "";
+    public String presetChosen = "";
     public int trackChosen = 0;
     private int mChosenPatternFragmentNumber = 0;
     public static final String APP_PREFERENCES = "mysettings";
@@ -162,14 +163,18 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                    boolean wasPlaying = false;
                    if(myApp.isPlaying()) {
                        wasPlaying = true;
-                       myApp.pause();
+                       myApp.stop();
                        play.setBackgroundResource(R.drawable.play);
                    }
                    if (mChosenPatternFragmentNumber == (mPatternFragmentsArray.size() - 1)) {
                        addPattern();
                    } else {
                        mChosenPatternFragmentNumber++;
-                       myApp.setPatternActive(myApp.getPattern(mChosenPatternFragmentNumber+1));
+                       myApp.setMuseNull();
+                       Pattern temp = myApp.getPattern(mChosenPatternFragmentNumber+1);
+                       myApp.setPatternActive(temp);
+                       myApp.setBPM(temp.getPatternBPM());
+                       myApp.setSteps(temp.getPatternSteps());
                        bpmPicker.setValue(myApp.getActivePattern().getPatternBPM());
                        stepPicker.setValue(myApp.getActivePattern().getPatternSteps());
                        getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
@@ -191,12 +196,16 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                    boolean wasPlaying = false;
                    if(myApp.isPlaying()) {
                        wasPlaying = true;
-                       myApp.pause();
+                       myApp.stop();
                        play.setBackgroundResource(R.drawable.play);
                    }
                    if (mChosenPatternFragmentNumber != 0) {
                        mChosenPatternFragmentNumber--;
-                       myApp.setPatternActive(myApp.getPattern(mChosenPatternFragmentNumber+1));
+                       myApp.setMuseNull();
+                       Pattern temp = myApp.getPattern(mChosenPatternFragmentNumber+1);
+                       myApp.setPatternActive(temp);
+                       myApp.setBPM(temp.getPatternBPM());
+                       myApp.setSteps(temp.getPatternSteps());
                        bpmPicker.setValue(myApp.getActivePattern().getPatternBPM());
                        stepPicker.setValue(myApp.getActivePattern().getPatternSteps());
                        getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
@@ -287,6 +296,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CHOOSE_SAMPLE) {
             if (resultCode == -1) {
+                initOnCreate();
                 loadPreset(data.getStringExtra(SampleListActivity.mSelectedSamplePath));
             }
         }
@@ -434,8 +444,10 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
         }
         trackCursor.close();
 
-
-        myApp.setPatternActive(myApp.getPattern(mChosenPatternFragmentNumber+1));
+        Pattern temp = myApp.getPattern(mChosenPatternFragmentNumber+1);
+        myApp.setPatternActive(temp);
+        myApp.setBPM(temp.getPatternBPM());
+        myApp.setSteps(temp.getPatternSteps());
         for(Pattern patt : myApp.getPatternsList()){
             PatternFragment pf = new PatternFragment();
             pf.connectPattern(patt);
@@ -445,6 +457,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
             }
 
         }
+
         sdb.close();
     }
 

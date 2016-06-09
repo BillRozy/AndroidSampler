@@ -32,6 +32,7 @@ class Sampler {
 
 
     public void play() {
+       // activePattern = lastActivePattern;
         System.out.println("Начинаю воспроизведение...");
         if(muse == null) {
             muse = new Thread(activePattern);
@@ -39,7 +40,6 @@ class Sampler {
        if (muse.getState() == Thread.State.NEW) {
 
             muse.start();
-            //activePattern.getMusicThread().start();
             Log.d("Thread started","SUCESS");
         }
        else
@@ -51,7 +51,10 @@ class Sampler {
 
     public void stop(){
         System.out.println("Trying to stop sampler!");
+       // lastActivePattern = activePattern;
         activePattern.pause();
+        muse = null;
+        askedToInterruptMuse = true;
         currentStep=1;
         System.out.println("After stop step is: " + currentStep);
         setPlaying(false);
@@ -96,14 +99,6 @@ class Sampler {
         double delay =  120.0/dblBPM * 125.0;
         return (int) delay;
 
-    }
-
-    public void interruptAllThreads(){
-        for(Pattern patt : patterns){
-            if(patt.getMusicThread() != null) {
-                patt.getMusicThread().interrupt();
-            }
-        }
     }
 
     public String[] getAllTracksNames(){
@@ -193,6 +188,7 @@ class Sampler {
     //PROPERTIES
     private ArrayList<Pattern> patterns = new ArrayList<>();
     private Pattern activePattern;
+    private Pattern lastActivePattern;
     private int lastActivePatternIndex;
     private int currentStep = 1;
     private int BPM = 120;
@@ -201,5 +197,6 @@ class Sampler {
     private boolean isPlaying = false;
     private Thread muse;
     public ProgressBar stepsBar;
+    public boolean askedToInterruptMuse;
 
 }

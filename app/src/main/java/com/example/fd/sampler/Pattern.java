@@ -33,10 +33,10 @@ class Pattern implements Runnable{
 
     //CONSTRUCTOR
     public Pattern(Context mCont){
-        tracksArray = new ArrayList<>(12);
+        tracksArray = new ArrayList<>(6);
         int currentapiVersion = android.os.Build.VERSION.SDK_INT;
         if (currentapiVersion < Build.VERSION_CODES.LOLLIPOP) {
-            sPool = new SoundPool(12, AudioManager.STREAM_MUSIC, 1);
+            sPool = new SoundPool(6, AudioManager.STREAM_MUSIC, 1);
         }
         else {
             attributes = new AudioAttributes.Builder()
@@ -47,11 +47,8 @@ class Pattern implements Runnable{
             sPool = new SoundPool.Builder().setAudioAttributes(attributes).setMaxStreams(12).build();
         }
         this.addMetronome(mCont);
-        //this.musicThread = new Thread(this);
         mPatternCounter++;
         mPatternName = "Pattern " + mPatternCounter;
-
-
 
     }
     public void setPatternName(String name){mPatternName = name;}
@@ -77,10 +74,6 @@ class Pattern implements Runnable{
     public void removeTrack(Track track){
         tracksArray.remove(track);
         trackCounter--;
-    }
-
-    public Thread getMusicThread(){
-        return musicThread;
     }
 
     public int getTrackCounter(){
@@ -129,33 +122,38 @@ class Pattern implements Runnable{
             }
     }
 
-    public void interruptThread(){
-        musicThread.stop();
-    }
-
 
     public void run() {
             keepRunning = true;
             try {
                 while (keepRunning) {
                     if (isPaused) {
-                        synchronized (this) {
-                            // System.out.println("Поступил запрос на стоп");
-                            wait();
-                            isPaused = false;
-                        }
-                    } else playPattern(Sampler.getSampler().getCurrentStep());
+                        // synchronized (this) {
+                        // System.out.println("Поступил запрос на стоп");
+                        // wait();
+                        //   isPaused = false;
+                        keepRunning = false;
+
+                    }
+                //}
+                else
+                    {//if(!Sampler.getSampler().askedToInterruptMuse)
+                        playPattern(Sampler.getSampler().getCurrentStep());
+                       // else{keepRunning = false;}
+                    }
                 }
             } catch (Exception e) {
                 System.out.println(this + " прерван." + e);
             }
+        Log.d("Muse Thread", "finished");
+       keepRunning = true;
+        isPaused = false;
     }
 
 
     //PROPERTIES
     private ArrayList<Track> tracksArray;
     private int trackCounter = 0;
-    private Thread musicThread;
     private String mPatternName;
     protected boolean isPaused = false;
     protected boolean keepRunning = false;
