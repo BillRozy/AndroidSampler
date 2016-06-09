@@ -472,62 +472,61 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
         if(myApp.getActivePattern()!=null) {
             myApp.stop();
             myApp.setLastPatternActiveIndex();
-        }
-        mDatabaseHelper = new DataBaseHelper(this, "mainbase.db", null, 1);
+            //myApp.getMuse().interrupt();
+            myApp.setMuseNull();
+            SQLiteDatabase mSqLiteDatabase = mDatabaseHelper.getWritableDatabase();
+            int deleted = mSqLiteDatabase.delete(mDatabaseHelper.DATABASE_TABLE_PATTERNS, "1", null);
+            Log.d("REMOVED FROM PATTERNS", deleted + "");
+            mSqLiteDatabase.delete(mDatabaseHelper.DATABASE_TABLE_TRACKS, "1", null);
+            for (int i = 0; i < myApp.getPatternsList().size(); i++) {
+                Pattern patt = myApp.getPattern(i + 1);
+                ContentValues values = new ContentValues();
 
-        SQLiteDatabase mSqLiteDatabase = mDatabaseHelper.getWritableDatabase();
-        int deleted = mSqLiteDatabase.delete(mDatabaseHelper.DATABASE_TABLE_PATTERNS, "1", null);
-        Log.d("REMOVED FROM PATTERNS" , deleted+"");
-        mSqLiteDatabase.delete(mDatabaseHelper.DATABASE_TABLE_TRACKS, "1", null);
-        for( int i = 0;i < myApp.getPatternsList().size(); i++ ) {
-            Pattern patt = myApp.getPattern(i+1);
-            ContentValues values = new ContentValues();
-
-            values.put(DataBaseHelper.PATTERN_NAME_COLUMN, patt.getPatternName());
-            values.put(DataBaseHelper.PATTERN_BPM_COLUMN, patt.getPatternBPM());
-            values.put(DataBaseHelper.PATTERN_STEP_COLUMN, patt.getPatternSteps());
-            // Вставляем данные в таблицу
-            //int res = (int) mSqLiteDatabase.insertWithOnConflict(mDatabaseHelper.DATABASE_TABLE_PATTERNS, null, values, SQLiteDatabase.CONFLICT_IGNORE);
-            //if (res == -1) {
-              //  mSqLiteDatabase.update(mDatabaseHelper.DATABASE_TABLE_PATTERNS, values, "_ID=?", new String[] {Integer.toString(i+1)});  // number 1 is the _id here, update to variable for your code
-            //}
-            mSqLiteDatabase.insert(mDatabaseHelper.DATABASE_TABLE_PATTERNS, null, values);
-            for(int j = 1; j < patt.getTracksArray().size();j++){
-                Track track = patt.getTrack(j);
-                ArrayList<Track.Hit> hitsArray = track.getHits();
-                String activeHits = "";
-                for (Track.Hit hit : hitsArray){
-                    if(hit.getState()){
-                        activeHits = activeHits + (hitsArray.indexOf(hit) + 1) + " ";
+                values.put(DataBaseHelper.PATTERN_NAME_COLUMN, patt.getPatternName());
+                values.put(DataBaseHelper.PATTERN_BPM_COLUMN, patt.getPatternBPM());
+                values.put(DataBaseHelper.PATTERN_STEP_COLUMN, patt.getPatternSteps());
+                // Вставляем данные в таблицу
+                //int res = (int) mSqLiteDatabase.insertWithOnConflict(mDatabaseHelper.DATABASE_TABLE_PATTERNS, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+                //if (res == -1) {
+                //  mSqLiteDatabase.update(mDatabaseHelper.DATABASE_TABLE_PATTERNS, values, "_ID=?", new String[] {Integer.toString(i+1)});  // number 1 is the _id here, update to variable for your code
+                //}
+                mSqLiteDatabase.insert(mDatabaseHelper.DATABASE_TABLE_PATTERNS, null, values);
+                for (int j = 1; j < patt.getTracksArray().size(); j++) {
+                    Track track = patt.getTrack(j);
+                    ArrayList<Track.Hit> hitsArray = track.getHits();
+                    String activeHits = "";
+                    for (Track.Hit hit : hitsArray) {
+                        if (hit.getState()) {
+                            activeHits = activeHits + (hitsArray.indexOf(hit) + 1) + " ";
+                        }
                     }
+                    if (activeHits.length() > 2) {
+                        activeHits = activeHits.substring(0, activeHits.length() - 1);
+                    }
+                    Log.d("active hits: ", activeHits);
+                    ContentValues trackData = new ContentValues();
+                    trackData.put(DataBaseHelper.TRACK_TITLE_COLUMN, track.getTrackName());
+                    trackData.put(DataBaseHelper.TRACK_HITS_ARRAY_COLUMN, activeHits);
+                    trackData.put(DataBaseHelper.TRACK_VOLUME_COLUMN, 70);
+                    trackData.put(DataBaseHelper.TRACK_MUTE_COLUMN, false);
+                    trackData.put(DataBaseHelper.TRACK_PATH_TO_SAMPLE_COLUMN, track.getPathToInstrument());
+                    trackData.put(DataBaseHelper.TRACK_PATTERN_ID_COLUMN, i + 1);
+                    if (track.getHasConnectedInstrument()) {
+                        trackData.put(DataBaseHelper.TRACK_HAS_CONNECTED_SAMPLE, 1);
+                    } else {
+                        trackData.put(DataBaseHelper.TRACK_HAS_CONNECTED_SAMPLE, 0);
+                    }
+                    mSqLiteDatabase.insert(mDatabaseHelper.DATABASE_TABLE_TRACKS, null, trackData);
                 }
-                if (activeHits.length() > 2) {
-                    activeHits = activeHits.substring(0, activeHits.length() - 1);
-                }
-                Log.d("active hits: ", activeHits);
-                ContentValues trackData = new ContentValues();
-                trackData.put(DataBaseHelper.TRACK_TITLE_COLUMN,track.getTrackName());
-                trackData.put(DataBaseHelper.TRACK_HITS_ARRAY_COLUMN, activeHits);
-                trackData.put(DataBaseHelper.TRACK_VOLUME_COLUMN,70);
-                trackData.put(DataBaseHelper.TRACK_MUTE_COLUMN, false);
-                trackData.put(DataBaseHelper.TRACK_PATH_TO_SAMPLE_COLUMN, track.getPathToInstrument());
-                trackData.put(DataBaseHelper.TRACK_PATTERN_ID_COLUMN, i+1);
-                if(track.getHasConnectedInstrument()){
-                    trackData.put(DataBaseHelper.TRACK_HAS_CONNECTED_SAMPLE, 1);
-                }
-                else{
-                    trackData.put(DataBaseHelper.TRACK_HAS_CONNECTED_SAMPLE, 0);
-                }
-                mSqLiteDatabase.insert(mDatabaseHelper.DATABASE_TABLE_TRACKS, null, trackData);
+                Log.d("PATTERN DDED TO BD ", i + "");
             }
-            Log.d("PATTERN DDED TO BD ", i+"");
+            mSqLiteDatabase.close();
+            myApp.clearPools();
+            // myApp.interruptAllThreads();
+            myApp.clearPatternsList();
+            myApp.clearActivePattern();
+            //myApp.getPatternsList().clear();
         }
-        mSqLiteDatabase.close();
-        myApp.clearPools();
-        myApp.interruptAllThreads();
-        myApp.clearPatternsList();
-        myApp.clearActivePattern();
-        //myApp.getPatternsList().clear();
     }
 
     public static boolean setNumberPickerTextColor(NumberPicker numberPicker, int color)

@@ -33,11 +33,16 @@ class Sampler {
 
     public void play() {
         System.out.println("Начинаю воспроизведение...");
-        if (activePattern.getMusicThread().getState() == Thread.State.NEW) {
-            activePattern.getMusicThread().start();
+        if(muse == null) {
+            muse = new Thread(activePattern);
+        }
+       if (muse.getState() == Thread.State.NEW) {
+
+            muse.start();
+            //activePattern.getMusicThread().start();
             Log.d("Thread started","SUCESS");
         }
-        else
+       else
         {
             activePattern.requestResume();
         }
@@ -166,6 +171,15 @@ class Sampler {
     public Pattern getPattern(int number){
         return patterns.get(number-1);
     }
+
+    public Thread getMuse() {
+        return muse;
+    }
+
+    public void setMuseNull() {
+        this.muse = null;
+    }
+
     public int getCurrentStep(){
         return currentStep;
     }
@@ -185,6 +199,7 @@ class Sampler {
     private int steps = 16;
     private int replays = 1;
     private boolean isPlaying = false;
+    private Thread muse;
     public ProgressBar stepsBar;
 
 }

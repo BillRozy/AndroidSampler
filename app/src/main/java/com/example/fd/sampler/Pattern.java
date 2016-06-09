@@ -47,7 +47,7 @@ class Pattern implements Runnable{
             sPool = new SoundPool.Builder().setAudioAttributes(attributes).setMaxStreams(12).build();
         }
         this.addMetronome(mCont);
-        this.musicThread = new Thread(this);
+        //this.musicThread = new Thread(this);
         mPatternCounter++;
         mPatternName = "Pattern " + mPatternCounter;
 
@@ -135,7 +135,6 @@ class Pattern implements Runnable{
 
 
     public void run() {
-        while(!musicThread.isInterrupted()) {
             keepRunning = true;
             try {
                 while (keepRunning) {
@@ -150,7 +149,6 @@ class Pattern implements Runnable{
             } catch (Exception e) {
                 System.out.println(this + " прерван." + e);
             }
-        }
     }
 
 
