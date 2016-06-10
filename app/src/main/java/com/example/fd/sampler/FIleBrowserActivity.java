@@ -2,6 +2,7 @@ package com.example.fd.sampler;
 
 import android.app.Activity;
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -26,6 +27,8 @@ public class FileBrowserActivity extends Activity {
     public final static String mSelectedSamplePath = "com.example.fd.sampler.mSelectedSamplePath";
     public final static String mSelectedSampleName = "com.example.fd.sampler.mSelectedSampleName";
     static final String FILES_DIRECTORY = android.os.Environment.getExternalStorageDirectory()
+            .getAbsolutePath() + "/DrumSampler/";
+    static String FILES_DIRECTORY_INTER = android.os.Environment.getDataDirectory()
             .getAbsolutePath() + "/DrumSampler/";
     BrowseFilesAdapter adapter;
     ListView fileListView;

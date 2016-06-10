@@ -52,11 +52,14 @@ public class PatternFragment extends Fragment {
         Log.d("onCreate Fragment", "WORKED");
     }
 
+
     @Override
     public void onStart() {
         super.onStart();
         Log.d("onStart Fragment", "WORKED");
     }
+
+
 
     public void makePatternForFragment(Context mCont) {
         mConnectedPattern = new Pattern(mCont);
@@ -210,7 +213,6 @@ public class PatternFragment extends Fragment {
     }
 
 
-
     class InstrumentConnectionListener implements View.OnClickListener {
 
         private TrackLayout tl;
@@ -221,13 +223,16 @@ public class PatternFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            connectedActivity.findViewById(R.id.playButton).setBackgroundResource(R.drawable.play);
+            connectedActivity.findViewById(R.id.playButton).setBackgroundResource(R.drawable.play_white);
             Intent intent = new Intent(PatternFragment.this.getActivity(), FileBrowserActivity.class);
             mChosenTrack = tracksArray.indexOf(tl) + 1;
             startActivityForResult(intent, CHOOSE_SAMPLE);
         }
 
     }
+
+
+
     public interface PatternFragmentInterface{
         void putDataAboutTrack(int num, String path, String name);
     }
@@ -245,7 +250,13 @@ class VolumeControllerListener implements SeekBar.OnSeekBarChangeListener{
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        Sampler.getSampler().getActivePattern().getTrack(tracksArray.indexOf(tl) + 1).setTrackVolume((float) seekBar.getProgress() / 100);
+        if(fromUser) {
+            Sampler.getSampler().getActivePattern().getTrack(tracksArray.indexOf(tl) + 1).setTrackVolume((float) progress / 100);
+        }
+        else{
+            Log.d("ZAPUSTILI NASILNO SUKI","AAAAA");
+        }
+
     }
 
     @Override

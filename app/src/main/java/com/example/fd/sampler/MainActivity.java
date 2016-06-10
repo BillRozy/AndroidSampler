@@ -1,18 +1,23 @@
 package com.example.fd.sampler;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,15 +34,15 @@ import android.widget.ToggleButton;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.Scanner;
 
 public class MainActivity extends Activity implements PatternFragment.PatternFragmentInterface {
     final private int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL = 1;
@@ -52,6 +57,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
     private Button pause;
     private Button nextPattern;
     private Button prevPattern;
+    private Button parseSiteBtn;
     private ToggleButton mixerButton;
     private TextView patternNumber;
     private Button savePresetBtn;
@@ -67,6 +73,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
     public int trackChosen = 0;
     private int mChosenPatternFragmentNumber = 0;
     public static final String APP_PREFERENCES = "mysettings";
+    public static final String APP_PREFERENCES_COPIED = "file_copied"; // возраст кота
     static final private int CHOOSE_SAMPLE = 0;
 
     @Override
@@ -75,6 +82,16 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+        sp = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        if(!sp.contains(APP_PREFERENCES_COPIED) || sp.getInt(APP_PREFERENCES_COPIED,0)==0){
+            int permissionCheck = ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            if(permissionCheck != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_CONTACTS},
+                        MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL);
+            }
+        }
         myApp = Sampler.getSampler();
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
        if ( mPatternFragmentsArray == null ) {
@@ -102,6 +119,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
             patternNumber = (TextView) this.findViewById(R.id.numPattern);
             patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
         mixerButton = (ToggleButton) this.findViewById(R.id.mixerButton);
+        parseSiteBtn = (Button) findViewById(R.id.siteParseBtn);
 
         presetName = (TextView) findViewById(R.id.presetName);
         presetName.setText(myApp.getActivePattern().getPatternName());
@@ -128,7 +146,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                    for (TrackLayout tl : mPatternFragmentsArray.get(mChosenPatternFragmentNumber).getTracksLayoutsArray()) {
                        tl.getDeleteBtn().setEnabled(false);
                    }
-                   play.setBackgroundResource(R.drawable.play_white);
+                   play.setBackgroundResource(R.drawable.play_red);
                }
            });
 
@@ -141,7 +159,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                    for (TrackLayout tl : mPatternFragmentsArray.get(mChosenPatternFragmentNumber).getTracksLayoutsArray()) {
                        tl.getDeleteBtn().setEnabled(true);
                    }
-                   play.setBackgroundResource(R.drawable.play);
+                   play.setBackgroundResource(R.drawable.play_white);
                }
            });
 
@@ -153,7 +171,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                    for (TrackLayout tl : mPatternFragmentsArray.get(mChosenPatternFragmentNumber).getTracksLayoutsArray()) {
                        tl.getDeleteBtn().setEnabled(true);
                    }
-                   play.setBackgroundResource(R.drawable.play);
+                   play.setBackgroundResource(R.drawable.play_white);
                }
            });
 
@@ -164,7 +182,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                    if(myApp.isPlaying()) {
                        wasPlaying = true;
                        myApp.stop();
-                       play.setBackgroundResource(R.drawable.play);
+                       play.setBackgroundResource(R.drawable.play_white);
                    }
                    if (mChosenPatternFragmentNumber == (mPatternFragmentsArray.size() - 1)) {
                        addPattern();
@@ -197,7 +215,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                    if(myApp.isPlaying()) {
                        wasPlaying = true;
                        myApp.stop();
-                       play.setBackgroundResource(R.drawable.play);
+                       play.setBackgroundResource(R.drawable.play_white);
                    }
                    if (mChosenPatternFragmentNumber != 0) {
                        mChosenPatternFragmentNumber--;
@@ -219,6 +237,14 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                    mixerButton.setChecked(false);
                }
            });
+
+        parseSiteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SiteParserActivity.class);
+                startActivity(intent);
+            }
+        });
 
         mixerButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -313,6 +339,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
             preset.setActiveHits(myApp.getAllTracksHitsDescription());
             preset.setPathsToSamples(myApp.getAllTracksPaths());
             preset.setHasSample(myApp.getExistenceOfSample());
+            preset.setVolumesArray(myApp.getAllTracksVolumes());
             FileOutputStream fos = new FileOutputStream(FILES_DIRECTORY_PRESETS + name + ".dmp");
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(preset);
@@ -331,6 +358,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
             String[] description = preset.getActiveHits();
             String[] paths = preset.getPathsToSamples();
             Boolean[] mark = preset.getHasSample();
+            float[] volumes = preset.getVolumesArray();
             Pattern patt = new Pattern(this);
             patt.setPatternName(preset.getTitle());
             patt.setPatternBPM(preset.getBPM());
@@ -338,6 +366,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
             for(int i=1;i<titles.length;i++){
                 Track track = patt.addTrack(titles[i]);
                 track.makeHitsActiveFromDescription(description[i]);
+                track.setTrackVolume(volumes[i]);
                 if(paths[i] != null) {
                     track.connectInstrument(this, paths[i]);
                 }
@@ -428,16 +457,16 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                     // System.out.println(numArr[i]);
                 }
                 int hasConnectedSample = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_HAS_CONNECTED_SAMPLE));
-                int volume = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_VOLUME_COLUMN));
+                float volume = ((float)trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_VOLUME_COLUMN))/100);
                 int mute = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_MUTE_COLUMN));
                 String path = trackCursor.getString(trackCursor.getColumnIndex(DataBaseHelper.TRACK_PATH_TO_SAMPLE_COLUMN));
                 Pattern patt = myApp.getPattern(pattID);
                     Log.d("FOUNDPATTERN FOR TRACK!", (pattID-1) + "");
                     Track track = patt.addTrack(trackName);
+                     track.setTrackVolume(volume);
                 if(activeHitsArray[0] != 0) {
                     track.makeHitActive(activeHitsArray);
                 }
-                    track.setTrackVolume((float) volume);
             if (hasConnectedSample == 1) {
                 track.connectInstrument(this, path);
             }
@@ -446,6 +475,9 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
 
         Pattern temp = myApp.getPattern(mChosenPatternFragmentNumber+1);
         myApp.setPatternActive(temp);
+        if(mChosenPatternFragmentNumber == -1){
+            myApp.setPatternActive(myApp.getPattern(1));
+        }
         myApp.setBPM(temp.getPatternBPM());
         myApp.setSteps(temp.getPatternSteps());
         for(Pattern patt : myApp.getPatternsList()){
@@ -498,11 +530,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                 values.put(DataBaseHelper.PATTERN_NAME_COLUMN, patt.getPatternName());
                 values.put(DataBaseHelper.PATTERN_BPM_COLUMN, patt.getPatternBPM());
                 values.put(DataBaseHelper.PATTERN_STEP_COLUMN, patt.getPatternSteps());
-                // Вставляем данные в таблицу
-                //int res = (int) mSqLiteDatabase.insertWithOnConflict(mDatabaseHelper.DATABASE_TABLE_PATTERNS, null, values, SQLiteDatabase.CONFLICT_IGNORE);
-                //if (res == -1) {
-                //  mSqLiteDatabase.update(mDatabaseHelper.DATABASE_TABLE_PATTERNS, values, "_ID=?", new String[] {Integer.toString(i+1)});  // number 1 is the _id here, update to variable for your code
-                //}
+
                 mSqLiteDatabase.insert(mDatabaseHelper.DATABASE_TABLE_PATTERNS, null, values);
                 for (int j = 1; j < patt.getTracksArray().size(); j++) {
                     Track track = patt.getTrack(j);
@@ -520,7 +548,8 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                     ContentValues trackData = new ContentValues();
                     trackData.put(DataBaseHelper.TRACK_TITLE_COLUMN, track.getTrackName());
                     trackData.put(DataBaseHelper.TRACK_HITS_ARRAY_COLUMN, activeHits);
-                    trackData.put(DataBaseHelper.TRACK_VOLUME_COLUMN, 70);
+                    int volume = (int) (track.getTrackVolume()*100);
+                    trackData.put(DataBaseHelper.TRACK_VOLUME_COLUMN, volume);
                     trackData.put(DataBaseHelper.TRACK_MUTE_COLUMN, false);
                     trackData.put(DataBaseHelper.TRACK_PATH_TO_SAMPLE_COLUMN, track.getPathToInstrument());
                     trackData.put(DataBaseHelper.TRACK_PATTERN_ID_COLUMN, i + 1);
@@ -581,4 +610,102 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
         myApp.getActivePattern().getTrack(num).connectInstrument(this,path);
         myApp.getActivePattern().getTrack(num).setTrackName(name);
     }
+
+    private void myCopy(){
+        AssetManager assetManager = this.getAssets();
+        String assets[] = null;
+        try {
+            String[] testing = assetManager.list("");
+            InputStream indexFile = assetManager.open("assets.index");
+            String test = convertStreamToString(indexFile);
+            assets = test.split("\\n");
+        }catch (IOException exc){}
+            for(String url : assets){
+                File file = new File(url);
+
+                if(file.getName().contains(".")) {
+                    copyFile(url);
+                }
+                else
+                {
+                    File dir = new File(FileBrowserActivity.FILES_DIRECTORY + url);
+                    dir.mkdirs();
+                }
+            }
+        }
+
+    private void copyFile(String filename) {
+        AssetManager assetManager = this.getAssets();
+
+        InputStream in = null;
+        OutputStream out = null;
+        String newFileName = null;
+        try {
+            Log.i("tag", "copyFile() "+filename);
+            in = assetManager.open(filename);
+            if (filename.endsWith(".jpg")) // extension was added to avoid compression on APK file
+                newFileName = FileBrowserActivity.FILES_DIRECTORY + filename.substring(0, filename.length()-4);
+            else
+                newFileName = FileBrowserActivity.FILES_DIRECTORY + filename;
+            out = new FileOutputStream(newFileName);
+
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+            in.close();
+            in = null;
+            out.flush();
+            out.close();
+            out = null;
+        } catch (Exception e) {
+            Log.e("tag", "Exception in copyFile() of "+newFileName);
+            Log.e("tag", "Exception in copyFile() "+e.toString());
+        }
+
+    }
+
+    static String convertStreamToString(java.io.InputStream is) {
+        Scanner scanner = new Scanner(is);
+        String text = scanner.useDelimiter("\\A").next();
+        scanner.close();
+        return text;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    SharedPreferences.Editor spEditor = sp.edit();
+                    File dir = new File(FileBrowserActivity.FILES_DIRECTORY);
+                    if (dir.mkdir()) {
+                        Log.d("Created", dir.getAbsolutePath());
+                        myCopy();
+                    }
+                    spEditor.putInt(APP_PREFERENCES_COPIED,1);
+
+
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
 }

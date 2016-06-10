@@ -21,6 +21,7 @@ class Track implements Serializable{
         System.out.println("Новый поток: " + mTrackName) ;
         this.makeHits();
         this.parentPatt = parent;
+        mTrackVolume = 0.7F;
         //t.start();
     }
     public String getTrackName(){
@@ -32,6 +33,7 @@ class Track implements Serializable{
     }
     public void connectInstrument(Context mCont, String URL){
         this.connectedInstrument = new Instrument(mCont,parentPatt.getSoundPool(),URL);
+        connectedInstrument.setVolume(mTrackVolume);
         mPathToInstrument = URL;
         hasConnectedInstrument = true;
     }
@@ -41,8 +43,9 @@ class Track implements Serializable{
     }
 
     public void setTrackVolume(float level){
+        mTrackVolume = level;
         if(connectedInstrument != null){
-        connectedInstrument.setVolume(level);}
+        connectedInstrument.setVolume(mTrackVolume);}
     }
 
     public float getTrackVolume(){
@@ -119,7 +122,7 @@ class Track implements Serializable{
     protected ArrayList<Hit> hitsArray = new ArrayList<>();
     protected Instrument connectedInstrument;
     public String mPathToInstrument;
-    private float mTrackVolume = 0.7F;
+    private float mTrackVolume;
     private boolean hasConnectedInstrument = false;
     //INNER CLASS
     public class Hit

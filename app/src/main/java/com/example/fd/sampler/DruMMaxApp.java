@@ -5,8 +5,6 @@ import android.app.Application;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import java.io.File;
@@ -22,16 +20,17 @@ import java.util.Scanner;
  * Created by FD on 31.05.2016.
  */
 public class DruMMaxApp extends Application {
+
     final private int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL = 1;
     @Override
     public void onCreate() {
         super.onCreate();
-       Sampler myApp = Sampler.getSampler();
-        File dir = new File(FileBrowserActivity.FILES_DIRECTORY);
-        if (dir.mkdir()) {
-                Log.d("Created", dir.getAbsolutePath());
-                myCopy();
-        }
+       AssetManager assetManager = getAssets();
+        //File dir = new File(FileBrowserActivity.FILES_DIRECTORY);
+      //  if (dir.mkdir()) {
+      //          Log.d("Created", dir.getAbsolutePath());
+    //            myCopy();
+      //  }
     }
 
     private void myCopy(){

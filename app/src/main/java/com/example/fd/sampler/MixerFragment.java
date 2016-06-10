@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -37,8 +38,9 @@ public class MixerFragment extends Fragment {
                              Bundle savedInstanceState) {
         selfFrame = (HorizontalScrollView) inflater.inflate(R.layout.fragment_mixer, container, false);
         containerForTracks = (LinearLayout) selfFrame.findViewById(R.id.containerForMixerTracks);
-        for(Track track : Sampler.getSampler().getActivePattern().getTracksArray()){
-            if(Sampler.getSampler().getActivePattern().getTracksArray().indexOf(track) != 0) {
+        final ArrayList<Track> trackList =Sampler.getSampler().getActivePattern().getTracksArray();
+        for(final Track track : trackList){
+            if(trackList.indexOf(track) != 0) {
                 MixerTrackLayout mtl = new MixerTrackLayout(getActivity());
                 mtl.getTrackName().setText(track.getTrackName());
                 mtl.getVolumeSlider().setProgress((int)(track.getTrackVolume()*100));
@@ -49,7 +51,6 @@ public class MixerFragment extends Fragment {
         }
         return selfFrame;
     }
-
 
 
     @Override
@@ -63,13 +64,43 @@ public class MixerFragment extends Fragment {
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        for(MixerTrackLayout mtl : mixerTracksArray){
+            mtl.getVolumeSlider().setOnSeekBarChangeListener(null);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        for(final MixerTrackLayout mtl : mixerTracksArray){
+            mtl.getVolumeSlider().setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    Sampler.getSampler().getActivePattern().getTrack(mixerTracksArray.indexOf(mtl)+1).setTrackVolume((float) progress / 100);
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+            });
+        }
+    }
+
     public void remakeTracks(MixerTrackLayout mtl) {
-            mtl.getVolumeSlider().setOnSeekBarChangeListener(new VolumeControllerListener(mtl,  mixerTracksArray));
+         //   mtl.getVolumeSlider().setOnSeekBarChangeListener(new VolumeControllerListener(mtl,  mixerTracksArray));
 
             mtl.getMuteBtn().setOnCheckedChangeListener(new MuteControllerListener(mtl,  mixerTracksArray));
 
             mtl.getTrackName().setOnClickListener(new TrackNameControlListener(mtl,  mixerTracksArray, getActivity()));
     }
-
 
 }

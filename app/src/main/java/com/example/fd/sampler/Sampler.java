@@ -132,6 +132,14 @@ class Sampler {
         return array;
     }
 
+    public float[] getAllTracksVolumes(){
+        float[] array = new float[activePattern.getTracksArray().size()];
+        for(int i =0; i < activePattern.getTracksArray().size();i++){
+            array[i] = activePattern.getTrack(i).getTrackVolume();
+        }
+        return array;
+    }
+
     public void clearPools(){
         for(Pattern patt : patterns){
             if(patt.getSoundPool() != null){

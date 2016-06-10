@@ -13,7 +13,16 @@ public class Preset implements Serializable {
     private String[] activeHits;
     private String[] trackTitles;
     private String[] pathsToSamples;
+    private float[] volumesArray;
     private Boolean[] hasSample;
+
+    public void setVolumesArray(float[] volumesArray) {
+        this.volumesArray = volumesArray;
+    }
+
+    public float[] getVolumesArray() {
+        return volumesArray;
+    }
 
     public Boolean[] getHasSample() {
         return hasSample;
