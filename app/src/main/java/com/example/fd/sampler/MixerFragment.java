@@ -1,7 +1,6 @@
 package com.example.fd.sampler;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,17 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
 
 public class MixerFragment extends Fragment {
     private ArrayList<MixerTrackLayout> mixerTracksArray = null;
-    private ViewGroup selfFrame;
-    private LinearLayout containerForTracks;
 
     public MixerFragment() {
         super();
@@ -36,8 +31,8 @@ public class MixerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        selfFrame = (HorizontalScrollView) inflater.inflate(R.layout.fragment_mixer, container, false);
-        containerForTracks = (LinearLayout) selfFrame.findViewById(R.id.containerForMixerTracks);
+        ViewGroup selfFrame = (HorizontalScrollView) inflater.inflate(R.layout.fragment_mixer, container, false);
+        LinearLayout containerForTracks = (LinearLayout) selfFrame.findViewById(R.id.containerForMixerTracks);
         final ArrayList<Track> trackList =Sampler.getSampler().getActivePattern().getTracksArray();
         for(final Track track : trackList){
             if(trackList.indexOf(track) != 0) {

@@ -8,9 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-/**
- * Created by FD on 06.06.2016.
- */
+
 public class BrowseFilesAdapter extends ArrayAdapter<String> {
     private final Context context;
     private final String[] values;

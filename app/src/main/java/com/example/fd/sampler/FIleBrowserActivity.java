@@ -1,27 +1,18 @@
 package com.example.fd.sampler;
 
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
-/**
- * Created by FD on 03.06.2016.
- */
+
 public class FileBrowserActivity extends Activity {
 
     public final static String mSelectedSamplePath = "com.example.fd.sampler.mSelectedSamplePath";
@@ -68,10 +59,8 @@ public class FileBrowserActivity extends Activity {
             }
             adapter = new BrowseFilesAdapter(this, fileArray);
         }
-        Log.d("FOUND FILES:", fileArray.toString());
 
         fileListView.setAdapter(adapter);
-
         fileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

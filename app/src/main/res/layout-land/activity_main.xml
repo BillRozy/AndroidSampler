@@ -107,13 +107,26 @@
             android:layout_height="match_parent"
             android:layout_weight="0.33">
 
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"></LinearLayout>
+
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="more kits!"
+                android:text="get more kits"
                 android:id="@+id/siteParseBtn"
                 android:background="@drawable/rounded_white"
-                android:textColor="#000000" />
+                android:textColor="#000000"
+                android:padding="5dp" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"></LinearLayout>
         </LinearLayout>
 
     </LinearLayout>
@@ -250,13 +263,19 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.6"></LinearLayout>
+                android:layout_weight="0.33"></LinearLayout>
 
             <Button
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:id="@+id/addTrackButton"
                 android:background="@drawable/add_track_button" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"></LinearLayout>
 
         </LinearLayout>
 

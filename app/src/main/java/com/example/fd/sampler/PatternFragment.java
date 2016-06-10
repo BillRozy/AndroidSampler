@@ -6,9 +6,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,23 +14,15 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.SeekBar;
-import android.widget.ToggleButton;
-
 import java.util.ArrayList;
-import java.util.Observable;
-import java.util.Observer;
 
-/**
- * Created by FD on 26.05.2016.
- */
+
 public class PatternFragment extends Fragment {
 
     private ArrayList<TrackLayout> tracksArray = null;
     private LinearLayout verticalLayer;
     private int mChosenTrack;
-    private String chosenPath;
     static final private int CHOOSE_SAMPLE = 0;
     private Pattern mConnectedPattern;
     private Activity connectedActivity;
@@ -78,10 +68,6 @@ public class PatternFragment extends Fragment {
         return tracksArray;
     }
 
-    public TrackLayout getTrackLayout(int the_index) {
-        return tracksArray.get(the_index);
-    }
-
     public void addTrackLayout(TrackLayout tl) {
         tracksArray.add(tl);
     }
@@ -93,7 +79,7 @@ public class PatternFragment extends Fragment {
             tl.getTrackName().setText(Sampler.getSampler().getActivePattern().getTrack(tracksArray.size() + 1).getTrackName());
             if(Sampler.getSampler().getActivePattern().getTrack(tracksArray.size() + 1).getHasConnectedInstrument())
             {
-                tl.getConnectInstrumentBtn().setBackgroundResource(R.drawable.galka);
+                tl.getConnectInstrumentBtn().setBackgroundResource(R.drawable.connected_sample);
             }
             addTrackLayout(tl);
         }
@@ -179,10 +165,10 @@ public class PatternFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CHOOSE_SAMPLE) {
             if (resultCode == -1) {
-                chosenPath = data.getStringExtra(SampleListActivity.mSelectedSamplePath);
+                String chosenPath = data.getStringExtra(SampleListActivity.mSelectedSamplePath);
                 String chosenName = data.getStringExtra(SampleListActivity.mSelectedSampleName);
                PatternFragmentInterface act = (PatternFragmentInterface) connectedActivity;
-                act.putDataAboutTrack(mChosenTrack,chosenPath,chosenName);
+                act.putDataAboutTrack(mChosenTrack, chosenPath,chosenName);
                 tracksArray.get(mChosenTrack - 1).getTrackName().setText(chosenName);
                 tracksArray.get(mChosenTrack - 1).getConnectInstrumentBtn().setBackgroundResource(R.drawable.galka);
             }
@@ -235,38 +221,6 @@ public class PatternFragment extends Fragment {
 
     public interface PatternFragmentInterface{
         void putDataAboutTrack(int num, String path, String name);
-    }
-}
-
-class VolumeControllerListener implements SeekBar.OnSeekBarChangeListener{
-
-    private TrackInterface tl;
-    private ArrayList tracksArray;
-
-    public VolumeControllerListener(TrackInterface tl, ArrayList array){
-        this.tl =  tl;
-        tracksArray = array;
-    }
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if(fromUser) {
-            Sampler.getSampler().getActivePattern().getTrack(tracksArray.indexOf(tl) + 1).setTrackVolume((float) progress / 100);
-        }
-        else{
-            Log.d("ZAPUSTILI NASILNO SUKI","AAAAA");
-        }
-
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-        // TODO Auto-generated method stub
     }
 }
 

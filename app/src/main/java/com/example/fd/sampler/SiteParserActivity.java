@@ -10,12 +10,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import org.htmlcleaner.TagNode;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,21 +29,17 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-/**
- * Created by FD on 10.06.2016.
- */
+
 public class SiteParserActivity extends Activity {
     /** Called when the activity is first created. */
     public ListView listview;
     public List<String> refs;
     public String zipName;
     public final static String SITE_ADDRESS = "http://xbeat.ucoz.net/index.html";
-        // button to show progress dialog
-        Button btnShowProgress;
-
         // Progress Dialog
         private ProgressDialog pDialog;
-
+        //Диалог ожидания
+          private ProgressDialog pd;
         // Progress dialog type (0 - for Horizontal progress bar)
         public static final int progress_bar_type = 0;
 
@@ -54,29 +47,17 @@ public class SiteParserActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_site_parse);
-
-        //Находим кнопку
-        Button button = (Button)findViewById(R.id.parse);
-        //Регистрируем onClick слушателя
-        button.setOnClickListener(myListener);
-    }
-
-    //Диалог ожидания
-    private ProgressDialog pd;
-    //Слушатель OnClickListener для нашей кнопки
-    private View.OnClickListener myListener = new View.OnClickListener() {
-        public void onClick(View v) {
-            //Показываем диалог ожидания
             pd = ProgressDialog.show(SiteParserActivity.this, "Working...", "request to server", true, false);
             //Запускаем парсинг
             new ParseSite().execute(SITE_ADDRESS);
-        }
-    };
+
+    }
+
 
     private class ParseSite extends AsyncTask<String, Void, List<String>> {
         //Фоновая операция
         protected List<String> doInBackground(String... arg) {
-            List<String> output = new ArrayList<String>();
+            List<String> output = new ArrayList<>();
             refs = new ArrayList<>();
             try
             {
@@ -85,7 +66,7 @@ public class SiteParserActivity extends Activity {
 
                 for (Iterator<TagNode> iterator = links.iterator(); iterator.hasNext();)
                 {
-                    TagNode divElement = (TagNode) iterator.next();
+                    TagNode divElement = iterator.next();
                     output.add(divElement.getText().toString());
                     refs.add(divElement.getAttributeByName("href"));
                 }
@@ -104,8 +85,8 @@ public class SiteParserActivity extends Activity {
             //Находим ListView
             listview = (ListView) findViewById(R.id.listViewData);
             //Загружаем в него результат работы doInBackground
-            listview.setAdapter(new ArrayAdapter<String>(SiteParserActivity.this,
-                    android.R.layout.simple_list_item_1 , output));
+            listview.setAdapter(new ArrayAdapter<>(SiteParserActivity.this,
+                    android.R.layout.simple_list_item_1, output));
 
             listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -119,19 +100,12 @@ public class SiteParserActivity extends Activity {
 
     class DownloadFileFromURL extends AsyncTask<String, String, String> {
 
-        /**
-         * Before starting background thread
-         * Show Progress Bar Dialog
-         * */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             showDialog(progress_bar_type);
         }
 
-        /**
-         * Downloading file in background thread
-         * */
         @Override
         protected String doInBackground(String... f_url) {
             int count;
@@ -177,18 +151,11 @@ public class SiteParserActivity extends Activity {
             return null;
         }
 
-        /**
-         * Updating progress bar
-         * */
         protected void onProgressUpdate(String... progress) {
             // setting progress percentage
             pDialog.setProgress(Integer.parseInt(progress[0]));
         }
 
-        /**
-         * After completing background task
-         * Dismiss the progress dialog
-         * **/
         @Override
         protected void onPostExecute(String file_url) {
             // dismiss the dialog after the file was downloaded
@@ -201,14 +168,7 @@ public class SiteParserActivity extends Activity {
             Toast toast = Toast.makeText(getApplicationContext(),
                     "File was Loaded", Toast.LENGTH_SHORT);
             toast.show();
-
-            // Displaying downloaded image into image view
-            // Reading image path from sdcard
-            //String imagePath = Environment.getExternalStorageDirectory().toString() + "/downloadedfile.jpg";
-            // setting downloaded into image view
-            //my_image.setImageDrawable(Drawable.createFromPath(imagePath));
         }
-
     }
 
     @Override
@@ -250,11 +210,6 @@ public class SiteParserActivity extends Activity {
                 } finally {
                     fout.close();
                 }
-            /* if time should be restored as well
-            long time = ze.getTime();
-            if (time > 0)
-                file.setLastModified(time);
-            */
             }
         } finally {
             zis.close();

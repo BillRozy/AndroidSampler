@@ -2,14 +2,10 @@ package com.example.fd.sampler;
 
 import java.io.Serializable;
 
-/**
- * Created by FD on 06.06.2016.
- */
 public class Preset implements Serializable {
     private String title;
     private int steps;
     private int BPM;
-    private int tracksQ;
     private String[] activeHits;
     private String[] trackTitles;
     private String[] pathsToSamples;
@@ -56,10 +52,6 @@ public class Preset implements Serializable {
         this.title = title;
     }
 
-    public void setTracksQ(int tracksQ) {
-        this.tracksQ = tracksQ;
-    }
-
     public void setTrackTitles(String[] trackTitles) {
         this.trackTitles = trackTitles;
     }
@@ -72,9 +64,6 @@ public class Preset implements Serializable {
         return steps;
     }
 
-    public int getTracksQ() {
-        return tracksQ;
-    }
 
     public String getTitle() {
         return title;

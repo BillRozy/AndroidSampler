@@ -1,24 +1,15 @@
 package com.example.fd.sampler;
 
-/**
- * Created by BDV on 14.05.2016.
- */
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.ToggleButton;
 
-/**
- * Created by FD on 12.05.2016.
- */
+
+
 public class HitView extends ImageButton {
     public HitView(Context context, boolean isActive){
         super(context);
@@ -40,8 +31,6 @@ public class HitView extends ImageButton {
         int row_height = getResources().getDimensionPixelOffset(R.dimen.app_list_row_size);
         this.setMaxHeight(row_height*2);
         this.setMaxWidth(row_height);
-        //this.setMinimumHeight(70);
-        //this.setMinimumWidth(40);
         this.setPadding(0,0,5,5);
         this.setImageResource(R.drawable.selector);
         this.setScaleType(ScaleType.CENTER_CROP);

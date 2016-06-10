@@ -5,18 +5,11 @@ import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Build;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
-
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Observable;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by FD on 28.04.2016.
- */
+
 //CLASS Pattern, keeper of tracks
 class Pattern implements Runnable{
     //METHODS
@@ -56,7 +49,6 @@ class Pattern implements Runnable{
     public Track getTrack(int number) {
         return tracksArray.get(number);
     }
-    public void stopPlaying(){keepRunning = false;}
     public void pause() {
         isPaused = true;
     }

@@ -2,13 +2,9 @@ package com.example.fd.sampler;
 
 import android.util.Log;
 import android.widget.ProgressBar;
-
 import java.util.ArrayList;
-import java.util.Observable;
 
-/**
- * Created by FD on 28.04.2016.
- */
+
 // Class-controller of app, singletone
 
 class Sampler {
@@ -196,7 +192,6 @@ class Sampler {
     //PROPERTIES
     private ArrayList<Pattern> patterns = new ArrayList<>();
     private Pattern activePattern;
-    private Pattern lastActivePattern;
     private int lastActivePatternIndex;
     private int currentStep = 1;
     private int BPM = 120;

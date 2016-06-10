@@ -34,7 +34,7 @@ public class SampleListActivity extends Activity {
         ListView lvMain = (ListView) findViewById(R.id.lvMain);
 
         // создаем адаптер
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, names);
 
         // присваиваем адаптер списку
@@ -101,5 +101,7 @@ public class SampleListActivity extends Activity {
             }
             while (musicCursor.moveToNext());
         }
+        assert musicCursor != null;
+        musicCursor.close();
     }
 }

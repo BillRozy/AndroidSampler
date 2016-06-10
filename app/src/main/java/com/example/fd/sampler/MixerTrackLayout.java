@@ -4,14 +4,11 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.ToggleButton;
 
-/**
- * Created by FD on 05.06.2016.
- */
+
 public class MixerTrackLayout extends LinearLayout implements TrackInterface {
     private SeekBar mVolumeBar;
     private ToggleButton mMuteBtn;
@@ -38,10 +35,6 @@ public class MixerTrackLayout extends LinearLayout implements TrackInterface {
 
     public ToggleButton getMuteBtn() {
         return mMuteBtn;
-    }
-
-    public void setNameBtn(Button mNameBtn) {
-        this.mNameBtn = mNameBtn;
     }
 
     private void initComponent() {

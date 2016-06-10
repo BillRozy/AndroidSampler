@@ -16,6 +16,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -31,7 +32,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -51,17 +51,9 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
             .getAbsolutePath() + "/DrumSampler/Presets/";
     private Sampler myApp;
     private DataBaseHelper mDatabaseHelper;
-    private Button addTrack;
-    private Button stop;
     public Button play;
-    private Button pause;
-    private Button nextPattern;
-    private Button prevPattern;
-    private Button parseSiteBtn;
     private ToggleButton mixerButton;
     private TextView patternNumber;
-    private Button savePresetBtn;
-    private Button loadPresetBtn;
     private NumberPicker bpmPicker;
     private NumberPicker stepPicker;
     private  TextView presetName;
@@ -73,7 +65,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
     public int trackChosen = 0;
     private int mChosenPatternFragmentNumber = 0;
     public static final String APP_PREFERENCES = "mysettings";
-    public static final String APP_PREFERENCES_COPIED = "file_copied"; // возраст кота
+    public static final String APP_PREFERENCES_COPIED = "file_copied";
     static final private int CHOOSE_SAMPLE = 0;
 
     @Override
@@ -108,18 +100,18 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
         stepPicker.setMinValue(4);
         setNumberPickerTextColor(stepPicker, Color.BLACK);
         initOnCreate();
-           addTrack = (Button) this.findViewById(R.id.addTrackButton);
-           stop = (Button) this.findViewById(R.id.stopButton);
-           pause = (Button) this.findViewById(R.id.pauseButton);
+        Button addTrack = (Button) this.findViewById(R.id.addTrackButton);
+        Button stop = (Button) this.findViewById(R.id.stopButton);
+        Button pause = (Button) this.findViewById(R.id.pauseButton);
            play = (Button) this.findViewById(R.id.playButton);
-           nextPattern = (Button) this.findViewById(R.id.nextPatt);
-           prevPattern = (Button) this.findViewById(R.id.prevPattern);
-            savePresetBtn = (Button)  findViewById(R.id.saveBtn);
-        loadPresetBtn = (Button) findViewById(R.id.loadBtn);
+        Button nextPattern = (Button) this.findViewById(R.id.nextPatt);
+        Button prevPattern = (Button) this.findViewById(R.id.prevPattern);
+        Button savePresetBtn = (Button) findViewById(R.id.saveBtn);
+        Button loadPresetBtn = (Button) findViewById(R.id.loadBtn);
             patternNumber = (TextView) this.findViewById(R.id.numPattern);
             patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
         mixerButton = (ToggleButton) this.findViewById(R.id.mixerButton);
-        parseSiteBtn = (Button) findViewById(R.id.siteParseBtn);
+        Button parseSiteBtn = (Button) findViewById(R.id.siteParseBtn);
 
         presetName = (TextView) findViewById(R.id.presetName);
         presetName.setText(myApp.getActivePattern().getPatternName());
@@ -454,7 +446,6 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                         if(!hitsString[i].equals("")) {
                             activeHitsArray[i] = Integer.parseInt(hitsString[i]);
                         }
-                    // System.out.println(numArr[i]);
                 }
                 int hasConnectedSample = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_HAS_CONNECTED_SAMPLE));
                 float volume = ((float)trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_VOLUME_COLUMN))/100);
@@ -586,13 +577,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                     numberPicker.invalidate();
                     return true;
                 }
-                catch(NoSuchFieldException e){
-                    Log.w("setNumberPickerTexColor", e);
-                }
-                catch(IllegalAccessException e){
-                    Log.w("setNumberPickerTexColor", e);
-                }
-                catch(IllegalArgumentException e){
+                catch(NoSuchFieldException | IllegalAccessException e){
                     Log.w("setNumberPickerTexColor", e);
                 }
             }
@@ -615,30 +600,27 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
         AssetManager assetManager = this.getAssets();
         String assets[] = null;
         try {
-            String[] testing = assetManager.list("");
             InputStream indexFile = assetManager.open("assets.index");
             String test = convertStreamToString(indexFile);
             assets = test.split("\\n");
-        }catch (IOException exc){}
-            for(String url : assets){
+        }catch (IOException exc){Log.d("ERROR",exc.toString());}
+            for(String url : assets != null ? assets : new String[0]){
                 File file = new File(url);
-
                 if(file.getName().contains(".")) {
                     copyFile(url);
                 }
                 else
                 {
                     File dir = new File(FileBrowserActivity.FILES_DIRECTORY + url);
-                    dir.mkdirs();
+                    boolean success = dir.mkdirs();
                 }
             }
         }
 
     private void copyFile(String filename) {
         AssetManager assetManager = this.getAssets();
-
-        InputStream in = null;
-        OutputStream out = null;
+        InputStream in;
+        OutputStream out;
         String newFileName = null;
         try {
             Log.i("tag", "copyFile() "+filename);
@@ -655,10 +637,8 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                 out.write(buffer, 0, read);
             }
             in.close();
-            in = null;
             out.flush();
             out.close();
-            out = null;
         } catch (Exception e) {
             Log.e("tag", "Exception in copyFile() of "+newFileName);
             Log.e("tag", "Exception in copyFile() "+e.toString());
@@ -675,7 +655,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL: {
                 // If request is cancelled, the result arrays are empty.
@@ -691,18 +671,9 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                         myCopy();
                     }
                     spEditor.putInt(APP_PREFERENCES_COPIED,1);
-
-
-
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-
+                    spEditor.commit();
                 }
-                return;
             }
-
             // other 'case' lines to check for other
             // permissions this app might request
         }

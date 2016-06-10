@@ -1,15 +1,12 @@
 package com.example.fd.sampler;
 
 import android.content.Context;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 import android.util.Log;
 
-/**
- * Created by FD on 02.06.2016.
- */
+
 public class DataBaseHelper extends SQLiteOpenHelper implements BaseColumns {
 
     // имя базы данных
@@ -47,21 +44,11 @@ public class DataBaseHelper extends SQLiteOpenHelper implements BaseColumns {
     private static final String FIRST_INITIALIZATION_OF_TRACKS = "INSERT INTO " + DATABASE_TABLE_TRACKS + " VALUES ('1', 'Kick', '1 5 9 14', '70', '0', 'something', '1','0'),('2', 'Snare', '5 14', '70', '0', 'something', '1','0'),('3', 'Hi-Hat', '1 3 5 7 9 11 13 15', '70', '0', 'something', '1','0');";
 
 
-
-
-    public DataBaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    }
-
     public DataBaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory,
                           int version) {
         super(context, name, factory, version);
     }
 
-    public DataBaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory,
-                          int version, DatabaseErrorHandler errorHandler) {
-        super(context, name, factory, version, errorHandler);
-    }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -69,8 +56,6 @@ public class DataBaseHelper extends SQLiteOpenHelper implements BaseColumns {
         db.execSQL(TRACKS_CREATE_SCRIPT);
         db.execSQL(FIRST_INITIALIZATION_OF_TRACKS);
         db.execSQL(FIRST_INITIALIZATION_OF_PATTERNS);
-
-
     }
 
     @Override
