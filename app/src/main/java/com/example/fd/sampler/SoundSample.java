@@ -1,8 +1,6 @@
 package com.example.fd.sampler;
 
-/**
- * Created by FD on 25.05.2016.
- */
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -29,10 +27,7 @@ public class SoundSample  implements Parcelable {
     }
     public long getID(){return id;}
     public String getTitle(){return title;}
-    public String getArtist(){return artist;}
-    public long getAlbumID(){return alid;}
     public String getPath(){return data;}
-    public String getAlbumKey(){return albumkey;}
     public String getSize(){return size;}
 
     @Override

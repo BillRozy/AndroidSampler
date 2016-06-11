@@ -171,6 +171,14 @@ class Sampler {
         return patterns.get(number-1);
     }
 
+    public void setSizeOfProgramm() {
+        this.sizeOfProgramm = patterns.size();
+    }
+
+    public int getSizeOfProgramm() {
+        return sizeOfProgramm;
+    }
+
     public Thread getMuse() {
         return muse;
     }
@@ -201,5 +209,6 @@ class Sampler {
     private Thread muse;
     public ProgressBar stepsBar;
     public boolean askedToInterruptMuse;
+    private int sizeOfProgramm;
 
 }

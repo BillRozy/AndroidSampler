@@ -170,7 +170,7 @@ public class PatternFragment extends Fragment {
                PatternFragmentInterface act = (PatternFragmentInterface) connectedActivity;
                 act.putDataAboutTrack(mChosenTrack, chosenPath,chosenName);
                 tracksArray.get(mChosenTrack - 1).getTrackName().setText(chosenName);
-                tracksArray.get(mChosenTrack - 1).getConnectInstrumentBtn().setBackgroundResource(R.drawable.galka);
+                tracksArray.get(mChosenTrack - 1).getConnectInstrumentBtn().setBackgroundResource(R.drawable.connected_sample);
             }
         }
     }

@@ -76,12 +76,24 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
         setContentView(R.layout.activity_main);
         sp = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         if(!sp.contains(APP_PREFERENCES_COPIED) || sp.getInt(APP_PREFERENCES_COPIED,0)==0){
-            int permissionCheck = ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            if(permissionCheck != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_CONTACTS},
-                        MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL);
+            if(android.os.Build.VERSION.SDK_INT >= 23) {
+                int permissionCheck = ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.READ_CONTACTS},
+                            MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL);
+                }
+            }
+            else{
+                SharedPreferences.Editor spEditor = sp.edit();
+                File dir = new File(FileBrowserActivity.FILES_DIRECTORY);
+                if (dir.mkdir()) {
+                    Log.d("Created", dir.getAbsolutePath());
+                    myCopy();
+                }
+                spEditor.putInt(APP_PREFERENCES_COPIED,1);
+                spEditor.commit();
             }
         }
         myApp = Sampler.getSampler();
@@ -176,19 +188,15 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                        myApp.stop();
                        play.setBackgroundResource(R.drawable.play_white);
                    }
-                   if (mChosenPatternFragmentNumber == (mPatternFragmentsArray.size() - 1)) {
+                   saveStateInDatabase();
+                   if (mChosenPatternFragmentNumber == (myApp.getSizeOfProgramm() - 1)) {
+                       initOnCreate();
                        addPattern();
                    } else {
+                       initOnCreate();
                        mChosenPatternFragmentNumber++;
-                       myApp.setMuseNull();
-                       Pattern temp = myApp.getPattern(mChosenPatternFragmentNumber+1);
-                       myApp.setPatternActive(temp);
-                       myApp.setBPM(temp.getPatternBPM());
-                       myApp.setSteps(temp.getPatternSteps());
-                       bpmPicker.setValue(myApp.getActivePattern().getPatternBPM());
-                       stepPicker.setValue(myApp.getActivePattern().getPatternSteps());
-                       getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
-
+                       myApp.setPatternActive(myApp.getPatternsList().get(mChosenPatternFragmentNumber));
+                      getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
                    }
                    patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
                    presetName.setText(myApp.getActivePattern().getPatternName());
@@ -209,15 +217,11 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                        myApp.stop();
                        play.setBackgroundResource(R.drawable.play_white);
                    }
+                   saveStateInDatabase();
                    if (mChosenPatternFragmentNumber != 0) {
+                       initOnCreate();
                        mChosenPatternFragmentNumber--;
-                       myApp.setMuseNull();
-                       Pattern temp = myApp.getPattern(mChosenPatternFragmentNumber+1);
-                       myApp.setPatternActive(temp);
-                       myApp.setBPM(temp.getPatternBPM());
-                       myApp.setSteps(temp.getPatternSteps());
-                       bpmPicker.setValue(myApp.getActivePattern().getPatternBPM());
-                       stepPicker.setValue(myApp.getActivePattern().getPatternSteps());
+                       myApp.setPatternActive(myApp.getPatternsList().get(mChosenPatternFragmentNumber));
                        getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
                    }
                    patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
@@ -504,11 +508,16 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
     @Override
     protected void onPause() {
        super.onPause();
+        saveStateInDatabase();
         Log.d("OnPause", "WORKED");
+
+    }
+
+    private void saveStateInDatabase(){
         if(myApp.getActivePattern()!=null) {
             myApp.stop();
             myApp.setLastPatternActiveIndex();
-            //myApp.getMuse().interrupt();
+            myApp.setSizeOfProgramm();
             myApp.setMuseNull();
             SQLiteDatabase mSqLiteDatabase = mDatabaseHelper.getWritableDatabase();
             int deleted = mSqLiteDatabase.delete(mDatabaseHelper.DATABASE_TABLE_PATTERNS, "1", null);
@@ -559,6 +568,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
             myApp.clearPatternsList();
             myApp.clearActivePattern();
             //myApp.getPatternsList().clear();
+            mPatternFragmentsArray.clear();
         }
     }
 
@@ -604,7 +614,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
             String test = convertStreamToString(indexFile);
             assets = test.split("\\n");
         }catch (IOException exc){Log.d("ERROR",exc.toString());}
-            for(String url : assets != null ? assets : new String[0]){
+            for(String url : assets){
                 File file = new File(url);
                 if(file.getName().contains(".")) {
                     copyFile(url);
