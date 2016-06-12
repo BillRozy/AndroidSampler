@@ -55,10 +55,12 @@ public class FileBrowserActivity extends Activity {
             files = new File[selected.listFiles().length];
             files = selected.listFiles();
             fileArray = new String[files.length];
+            String[] refsArray = new String[files.length];
             for(int i = 0; i < files.length; i++){
                 fileArray[i] = files[i].getName();
+                refsArray[i] = files[i].getAbsolutePath();
             }
-            adapter = new BrowseFilesAdapter(this, fileArray);
+            adapter = new BrowseFilesAdapter(this, fileArray,refsArray);
         }
 
         fileListView.setAdapter(adapter);
@@ -85,10 +87,12 @@ public class FileBrowserActivity extends Activity {
                     files = new File[selected.listFiles().length];
                     files = selected.listFiles();
                     String[] titles = new String[files.length];
+                    String[] refsArray = new String[files.length];
                     for(int i = 0; i < files.length; i++){
                         titles[i] = files[i].getName();
+                        refsArray[i] = files[i].getAbsolutePath();
                     }
-                    BrowseFilesAdapter secAdapter = new BrowseFilesAdapter(FileBrowserActivity.this, titles);
+                    BrowseFilesAdapter secAdapter = new BrowseFilesAdapter(FileBrowserActivity.this, titles,refsArray);
                     fileListView.setAdapter(secAdapter);
                     Log.d("ENDED LISTENER"," pos");
                 }
@@ -111,10 +115,12 @@ public class FileBrowserActivity extends Activity {
                     files = new File[lastSelected.get(lastSelected.size() - 1).listFiles().length];
                     files = lastSelected.get(lastSelected.size() - 1).listFiles();
                     String[] titles = new String[files.length];
+                    String[] refsArray = new String[files.length];
                     for (int i = 0; i < files.length; i++) {
                         titles[i] = files[i].getName();
+                        refsArray[i] = files[i].getAbsolutePath();
                     }
-                    BrowseFilesAdapter secAdapter = new BrowseFilesAdapter(FileBrowserActivity.this, titles);
+                    BrowseFilesAdapter secAdapter = new BrowseFilesAdapter(FileBrowserActivity.this, titles,refsArray);
                     fileListView.setAdapter(secAdapter);
                     Log.d("ENDED LISTENER", " pos");
                     selected = lastSelected.get(lastSelected.size() - 1);

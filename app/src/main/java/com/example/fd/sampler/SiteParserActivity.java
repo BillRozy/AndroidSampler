@@ -251,7 +251,7 @@ public class SiteParserActivity extends Activity {
         protected void onPostExecute(String file_url) {
             // dismiss the dialog after the file was downloaded
             File zip = new File(Environment.getExternalStorageDirectory() + "/" + zipName + ".zip");
-            File target = new File(FileBrowserActivity.FILES_DIRECTORY + "/RockKits");
+            File target = new File(FileBrowserActivity.SAMPLES_DIRECTORY);
             try {
                 unzip(zip, target);
             } catch (IOException exc) {
