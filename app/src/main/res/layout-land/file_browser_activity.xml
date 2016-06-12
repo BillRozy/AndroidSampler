@@ -2,20 +2,61 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="BACK"
-        android:id="@+id/backButton"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Path"
-        android:id="@+id/pathTextView" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="@color/dim_foreground_disabled_material_dark">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.2">
+
+            <Button
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:id="@+id/backButton"
+                android:background="@drawable/abc_ic_ab_back_mtrl_am_alpha"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="20dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.6">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Path"
+                android:id="@+id/pathTextView"
+                android:layout_gravity="center_vertical"
+                android:textSize="18dp"
+                android:textColor="#ffffff"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <Button
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:text="GET MORE KITS"
+            android:id="@+id/parseSiteBtn"
+            android:background="#00ffffff"
+            android:textAlignment="center" />
+
+    </LinearLayout>
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/fileListView"
-        android:background="#444040" />
+        android:background="#00ffffff" />
+
 </LinearLayout>

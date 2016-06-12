@@ -113,15 +113,6 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0.33"></LinearLayout>
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="get more kits"
-                android:id="@+id/siteParseBtn"
-                android:background="@drawable/rounded_white"
-                android:textColor="#000000"
-                android:padding="5dp" />
-
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"

@@ -107,11 +107,17 @@
             android:layout_height="match_parent"
             android:layout_weight="0.33">
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="downloadKit"
-                android:id="@+id/siteParseBtn" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"></LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"></LinearLayout>
         </LinearLayout>
 
     </LinearLayout>
@@ -156,10 +162,10 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:id="@+id/linearLayout"
         android:layout_weight="0.1"
-        android:background="@color/material_grey_600"
+        android:background="@drawable/top_menu_background"
         android:padding="5dp">
 
         <LinearLayout
@@ -172,19 +178,19 @@
                 android:id="@+id/playButton"
                 android:layout_width="50dip"
                 android:layout_height="50dip"
-                android:background="@drawable/play" />
+                android:background="@drawable/play_white" />
 
             <Button
                 android:id="@+id/pauseButton"
                 android:layout_width="50dip"
                 android:layout_height="50dip"
-                android:background="@drawable/pause" />
+                android:background="@drawable/pause_white" />
 
             <Button
                 android:layout_width="50dip"
                 android:layout_height="50dip"
                 android:id="@+id/stopButton"
-                android:background="@drawable/stop" />
+                android:background="@drawable/stop_white" />
 
             <ToggleButton
                 style="?android:attr/buttonStyleSmall"
@@ -244,13 +250,24 @@
             android:layout_height="match_parent"
             android:layout_weight="0.33">
 
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"></LinearLayout>
+
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Add Track"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:id="@+id/addTrackButton"
-                android:background="@drawable/rounded"
-                android:layout_weight="0.33" />
+                android:background="@drawable/add_track_button" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"></LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>

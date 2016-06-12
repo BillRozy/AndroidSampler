@@ -1,66 +1,66 @@
 Metronome.wav
 Presets
 Presets/put_your_presets_here.txt
-RockKits
-RockKits/KIT 01 Samples
-RockKits/KIT 01 Samples/BD01.wav
-RockKits/KIT 01 Samples/China 01.wav
-RockKits/KIT 01 Samples/Crash 01.wav
-RockKits/KIT 01 Samples/Crash 02.wav
-RockKits/KIT 01 Samples/HH 1_4 01.wav
-RockKits/KIT 01 Samples/HH Open 01.wav
-RockKits/KIT 01 Samples/HH Pedal 01.wav
-RockKits/KIT 01 Samples/HH01.wav
-RockKits/KIT 01 Samples/Ride K1 01.wav
-RockKits/KIT 01 Samples/Rimshot K1 01.wav
-RockKits/KIT 01 Samples/SD01.wav
-RockKits/KIT 01 Samples/Splash K1 01.wav
-RockKits/KIT 01 Samples/Tom01.wav
-RockKits/KIT 01 Samples/Tom02.wav
-RockKits/KIT 01 Samples/Tom03.wav
-RockKits/KIT 01 Samples/Tom04.wav
-RockKits/KIT 02 Samples
-RockKits/KIT 02 Samples/BD K2 01.wav
-RockKits/KIT 02 Samples/China K2 01.wav
-RockKits/KIT 02 Samples/Crash K2 01.wav
-RockKits/KIT 02 Samples/Crash K2 02.wav
-RockKits/KIT 02 Samples/HH 1_4 K2 01.wav
-RockKits/KIT 02 Samples/HH K2 01.wav
-RockKits/KIT 02 Samples/HH Open K2 01.wav
-RockKits/KIT 02 Samples/Ride K2 01.wav
-RockKits/KIT 02 Samples/Rimsh K2 01.wav
-RockKits/KIT 02 Samples/SD K2 01.wav
-RockKits/KIT 02 Samples/Splash K2 01.wav
-RockKits/KIT 02 Samples/Tom K2 01.wav
-RockKits/KIT 02 Samples/Tom K2 02.wav
-RockKits/KIT 03 Samples
-RockKits/KIT 03 Samples/BD K3 01.wav
-RockKits/KIT 03 Samples/Crash K3 01.wav
-RockKits/KIT 03 Samples/Crash K3 02.wav
-RockKits/KIT 03 Samples/Crash K3 03.wav
-RockKits/KIT 03 Samples/HH 1_4 K2 01.wav
-RockKits/KIT 03 Samples/HH K3 01.wav
-RockKits/KIT 03 Samples/HH Open K3 01.wav
-RockKits/KIT 03 Samples/Ride K3 01.wav
-RockKits/KIT 03 Samples/Rimsh K3 01.wav
-RockKits/KIT 03 Samples/SD K3 01.wav
-RockKits/KIT 03 Samples/Splash K3 03.wav
-RockKits/KIT 03 Samples/Tom K3 01.wav
-RockKits/KIT 03 Samples/Tom K3 02.wav
-RockKits/KIT 03 Samples/Tom K3 03.wav
-RockKits/KIT 04 Samples
-RockKits/KIT 04 Samples/BD K4 01.wav
-RockKits/KIT 04 Samples/Crash K4 01.wav
-RockKits/KIT 04 Samples/Crash K4 02.wav
-RockKits/KIT 04 Samples/HH 1_4 K4 01.wav
-RockKits/KIT 04 Samples/HH K4 01.wav
-RockKits/KIT 04 Samples/HH Open K4 01.wav
-RockKits/KIT 04 Samples/Ride K4 01.wav
-RockKits/KIT 04 Samples/SD K4 01.wav
-RockKits/KIT 04 Samples/Tom K4 01.wav
-RockKits/KIT 04 Samples/Tom K4 02.wav
-RockKits/KIT 04 Samples/Tom K4 03.wav
-RockKits/KIT 04 Samples/Tom K4 04.wav
+Samples
+Samples/Rock Kit 1
+Samples/Rock Kit 1/BD01.wav
+Samples/Rock Kit 1/China 01.wav
+Samples/Rock Kit 1/Crash 01.wav
+Samples/Rock Kit 1/Crash 02.wav
+Samples/Rock Kit 1/HH 1_4 01.wav
+Samples/Rock Kit 1/HH Open 01.wav
+Samples/Rock Kit 1/HH Pedal 01.wav
+Samples/Rock Kit 1/HH01.wav
+Samples/Rock Kit 1/Ride K1 01.wav
+Samples/Rock Kit 1/Rimshot K1 01.wav
+Samples/Rock Kit 1/SD01.wav
+Samples/Rock Kit 1/Splash K1 01.wav
+Samples/Rock Kit 1/Tom01.wav
+Samples/Rock Kit 1/Tom02.wav
+Samples/Rock Kit 1/Tom03.wav
+Samples/Rock Kit 1/Tom04.wav
+Samples/Rock Kit 2
+Samples/Rock Kit 2/BD K2 01.wav
+Samples/Rock Kit 2/China K2 01.wav
+Samples/Rock Kit 2/Crash K2 01.wav
+Samples/Rock Kit 2/Crash K2 02.wav
+Samples/Rock Kit 2/HH 1_4 K2 01.wav
+Samples/Rock Kit 2/HH K2 01.wav
+Samples/Rock Kit 2/HH Open K2 01.wav
+Samples/Rock Kit 2/Ride K2 01.wav
+Samples/Rock Kit 2/Rimsh K2 01.wav
+Samples/Rock Kit 2/SD K2 01.wav
+Samples/Rock Kit 2/Splash K2 01.wav
+Samples/Rock Kit 2/Tom K2 01.wav
+Samples/Rock Kit 2/Tom K2 02.wav
+Samples/Rock Kit 3
+Samples/Rock Kit 3/BD K3 01.wav
+Samples/Rock Kit 3/Crash K3 01.wav
+Samples/Rock Kit 3/Crash K3 02.wav
+Samples/Rock Kit 3/Crash K3 03.wav
+Samples/Rock Kit 3/HH 1_4 K2 01.wav
+Samples/Rock Kit 3/HH K3 01.wav
+Samples/Rock Kit 3/HH Open K3 01.wav
+Samples/Rock Kit 3/Ride K3 01.wav
+Samples/Rock Kit 3/Rimsh K3 01.wav
+Samples/Rock Kit 3/SD K3 01.wav
+Samples/Rock Kit 3/Splash K3 03.wav
+Samples/Rock Kit 3/Tom K3 01.wav
+Samples/Rock Kit 3/Tom K3 02.wav
+Samples/Rock Kit 3/Tom K3 03.wav
+Samples/Rock Kit 4
+Samples/Rock Kit 4/BD K4 01.wav
+Samples/Rock Kit 4/Crash K4 01.wav
+Samples/Rock Kit 4/Crash K4 02.wav
+Samples/Rock Kit 4/HH 1_4 K4 01.wav
+Samples/Rock Kit 4/HH K4 01.wav
+Samples/Rock Kit 4/HH Open K4 01.wav
+Samples/Rock Kit 4/Ride K4 01.wav
+Samples/Rock Kit 4/SD K4 01.wav
+Samples/Rock Kit 4/Tom K4 01.wav
+Samples/Rock Kit 4/Tom K4 02.wav
+Samples/Rock Kit 4/Tom K4 03.wav
+Samples/Rock Kit 4/Tom K4 04.wav
 various
 various/Effect (53).wav
 various/Effect (54).wav

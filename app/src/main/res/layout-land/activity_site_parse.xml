@@ -2,9 +2,43 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:id="@+id/parse_frame">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/dim_foreground_disabled_material_dark">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Available Kits"
+            android:id="@+id/textView"
+            android:layout_gravity="center_vertical"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:layout_weight="0.8"
+            android:layout_marginLeft="20dp"
+            android:textSize="22dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="55dp"
+            android:id="@+id/reconnectBtn"
+            android:background="#00ffffff"
+            android:enabled="false"
+            android:text="Refresh"
+            android:textColor="#ffffff"
+            android:layout_gravity="center_vertical|right"
+            android:textStyle="bold" />
+    </LinearLayout>
+
     <ListView android:id="@+id/listViewData"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
     </ListView>
+
 </LinearLayout>

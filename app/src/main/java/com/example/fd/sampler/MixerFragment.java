@@ -33,7 +33,7 @@ public class MixerFragment extends Fragment {
                              Bundle savedInstanceState) {
         ViewGroup selfFrame = (HorizontalScrollView) inflater.inflate(R.layout.fragment_mixer, container, false);
         LinearLayout containerForTracks = (LinearLayout) selfFrame.findViewById(R.id.containerForMixerTracks);
-        final ArrayList<Track> trackList =Sampler.getSampler().getActivePattern().getTracksArray();
+        final ArrayList<Track> trackList = Sampler.getSampler().getActivePattern().getTracksArray();
         for(final Track track : trackList){
             if(trackList.indexOf(track) != 0) {
                 MixerTrackLayout mtl = new MixerTrackLayout(getActivity());

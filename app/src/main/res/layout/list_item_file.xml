@@ -7,7 +7,8 @@
         android:layout_height="30dp"
         android:id="@+id/icon_file"
         android:background="@drawable/file_icon"
-        android:layout_gravity="center_vertical" />
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp" />
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/file_description"
         android:layout_width="match_parent"

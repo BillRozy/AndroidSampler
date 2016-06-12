@@ -123,8 +123,6 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
             patternNumber = (TextView) this.findViewById(R.id.numPattern);
             patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
         mixerButton = (ToggleButton) this.findViewById(R.id.mixerButton);
-        Button parseSiteBtn = (Button) findViewById(R.id.siteParseBtn);
-
         presetName = (TextView) findViewById(R.id.presetName);
         presetName.setText(myApp.getActivePattern().getPatternName());
 
@@ -186,7 +184,6 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                    if(myApp.isPlaying()) {
                        wasPlaying = true;
                        myApp.stop();
-                       play.setBackgroundResource(R.drawable.play_white);
                    }
                    saveStateInDatabase();
                    if (mChosenPatternFragmentNumber == (myApp.getSizeOfProgramm() - 1)) {
@@ -200,9 +197,11 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                    }
                    patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
                    presetName.setText(myApp.getActivePattern().getPatternName());
+                   myApp.setBPM(myApp.getActivePattern().getPatternBPM());
+                   bpmPicker.setValue(myApp.getBPM());
                    if(wasPlaying){
                        myApp.play();
-                       play.setBackgroundResource(R.drawable.play_white);
+                       play.setBackgroundResource(R.drawable.play_red);
                    }
                    mixerButton.setChecked(false);
                }
@@ -215,7 +214,6 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                    if(myApp.isPlaying()) {
                        wasPlaying = true;
                        myApp.stop();
-                       play.setBackgroundResource(R.drawable.play_white);
                    }
                    saveStateInDatabase();
                    if (mChosenPatternFragmentNumber != 0) {
@@ -226,21 +224,16 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                    }
                    patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
                    presetName.setText(myApp.getActivePattern().getPatternName());
+                   myApp.setBPM(myApp.getActivePattern().getPatternBPM());
+                   bpmPicker.setValue(myApp.getBPM());
                    if(wasPlaying){
                        myApp.play();
-                       play.setBackgroundResource(R.drawable.play_white);
+                       play.setBackgroundResource(R.drawable.play_red);
                    }
                    mixerButton.setChecked(false);
                }
            });
 
-        parseSiteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, SiteParserActivity.class);
-                startActivity(intent);
-            }
-        });
 
         mixerButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

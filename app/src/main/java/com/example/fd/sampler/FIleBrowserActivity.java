@@ -19,8 +19,7 @@ public class FileBrowserActivity extends Activity {
     public final static String mSelectedSampleName = "com.example.fd.sampler.mSelectedSampleName";
     static final String FILES_DIRECTORY = android.os.Environment.getExternalStorageDirectory()
             .getAbsolutePath() + "/DrumSampler/";
-    static String FILES_DIRECTORY_INTER = android.os.Environment.getDataDirectory()
-            .getAbsolutePath() + "/DrumSampler/";
+    static String SAMPLES_DIRECTORY = FILES_DIRECTORY + "Samples/";
     BrowseFilesAdapter adapter;
     ListView fileListView;
     TextView pathTextView;
@@ -30,6 +29,7 @@ public class FileBrowserActivity extends Activity {
     File selected;
     ArrayList<File> lastSelected = new ArrayList<>();
     String pathToChosenFile;
+    Button parseSiteBtn;
 
 
 
@@ -43,6 +43,7 @@ public class FileBrowserActivity extends Activity {
         pathTextView = (TextView) this.findViewById(R.id.pathTextView);
         pathTextView.setText(FILES_DIRECTORY);
         backBtn = (Button) findViewById(R.id.backButton);
+        parseSiteBtn = (Button) findViewById(R.id.parseSiteBtn);
 
         selected = new File(FILES_DIRECTORY);
         if(!selected.exists()){
@@ -80,6 +81,7 @@ public class FileBrowserActivity extends Activity {
                 else{
 
                     selected = new File(files[position].getAbsolutePath());
+                    pathTextView.setText(selected.getAbsolutePath());
                     files = new File[selected.listFiles().length];
                     files = selected.listFiles();
                     String[] titles = new String[files.length];
@@ -91,6 +93,14 @@ public class FileBrowserActivity extends Activity {
                     Log.d("ENDED LISTENER"," pos");
                 }
 
+            }
+        });
+
+        parseSiteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(FileBrowserActivity.this, SiteParserActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -108,6 +118,7 @@ public class FileBrowserActivity extends Activity {
                     fileListView.setAdapter(secAdapter);
                     Log.d("ENDED LISTENER", " pos");
                     selected = lastSelected.get(lastSelected.size() - 1);
+                    pathTextView.setText(selected.getAbsolutePath());
                     lastSelected.remove(lastSelected.size() - 1);
                 }
             }
