@@ -2,6 +2,7 @@ package com.example.fd.sampler;
 
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -11,22 +12,18 @@ import java.util.List;
 public class HtmlHelper {
     TagNode rootNode;
 
-    public HtmlHelper(URL htmlPage) throws IOException
-    {
+    public HtmlHelper(URL htmlPage) throws IOException {
         HtmlCleaner cleaner = new HtmlCleaner();
         rootNode = cleaner.clean(htmlPage);
     }
 
-    List<TagNode> getLinksByClass(String CSSClassname)
-    {
+    List<TagNode> getLinksByClass(String CSSClassname) {
         List<TagNode> linkList = new ArrayList<>();
 
         TagNode linkElements[] = rootNode.getElementsByName("a", true);
-        for (int i = 0; linkElements != null && i < linkElements.length; i++)
-        {
+        for (int i = 0; linkElements != null && i < linkElements.length; i++) {
             String classType = linkElements[i].getAttributeByName("class");
-            if (classType != null && classType.equals(CSSClassname))
-            {
+            if (classType != null && classType.equals(CSSClassname)) {
                 linkList.add(linkElements[i]);
             }
         }

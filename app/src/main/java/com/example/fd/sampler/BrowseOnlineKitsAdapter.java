@@ -47,7 +47,7 @@ public class BrowseOnlineKitsAdapter extends ArrayAdapter<String> {
         return rowView;
     }
 
-    private ArrayList<String> getListOfCurrentKits(){
+    private ArrayList<String> getListOfCurrentKits() {
         File path = new File(FileBrowserActivity.SAMPLES_DIRECTORY);
         String[] array = path.list();
         List<String> list = Arrays.asList(array);

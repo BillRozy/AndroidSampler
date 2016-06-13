@@ -1,8 +1,8 @@
 package com.example.fd.sampler;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,11 +32,11 @@ public class MixerFragment extends Fragment {
         ViewGroup selfFrame = (HorizontalScrollView) inflater.inflate(R.layout.fragment_mixer, container, false);
         LinearLayout containerForTracks = (LinearLayout) selfFrame.findViewById(R.id.containerForMixerTracks);
         final ArrayList<Track> trackList = Sampler.getSampler().getActivePattern().getTracksArray();
-        for(final Track track : trackList){
-            if(trackList.indexOf(track) != 0) {
+        for (final Track track : trackList) {
+            if (trackList.indexOf(track) != 0) {
                 MixerTrackLayout mtl = new MixerTrackLayout(getActivity());
                 mtl.getTrackName().setText(track.getTrackName());
-                mtl.getVolumeSlider().setProgress((int)(track.getTrackVolume()*100));
+                mtl.getVolumeSlider().setProgress((int) (track.getTrackVolume() * 100));
                 remakeTracks(mtl);
                 mixerTracksArray.add(mtl);
                 containerForTracks.addView(mtl);
@@ -60,7 +60,7 @@ public class MixerFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        for(MixerTrackLayout mtl : mixerTracksArray){
+        for (MixerTrackLayout mtl : mixerTracksArray) {
             mtl.getVolumeSlider().setOnSeekBarChangeListener(null);
         }
     }
@@ -68,11 +68,11 @@ public class MixerFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        for(final MixerTrackLayout mtl : mixerTracksArray){
+        for (final MixerTrackLayout mtl : mixerTracksArray) {
             mtl.getVolumeSlider().setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    Sampler.getSampler().getActivePattern().getTrack(mixerTracksArray.indexOf(mtl)+1).setTrackVolume((float) progress / 100);
+                    Sampler.getSampler().getActivePattern().getTrack(mixerTracksArray.indexOf(mtl) + 1).setTrackVolume((float) progress / 100);
                 }
 
                 @Override
@@ -90,9 +90,9 @@ public class MixerFragment extends Fragment {
 
     public void remakeTracks(MixerTrackLayout mtl) {
 
-            mtl.getMuteBtn().setOnCheckedChangeListener(new MuteControllerListener(mtl,  mixerTracksArray));
+        mtl.getMuteBtn().setOnCheckedChangeListener(new MuteControllerListener(mtl, mixerTracksArray));
 
-            mtl.getTrackName().setOnClickListener(new TrackNameControlListener(mtl,  mixerTracksArray, getActivity()));
+        mtl.getTrackName().setOnClickListener(new TrackNameControlListener(mtl, mixerTracksArray, getActivity()));
     }
 
 }

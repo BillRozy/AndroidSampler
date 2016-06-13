@@ -14,13 +14,13 @@ public class MixerTrackLayout extends LinearLayout implements TrackInterface {
     private ToggleButton mMuteBtn;
     private Button mNameBtn;
 
-    public MixerTrackLayout(Context context ){
+    public MixerTrackLayout(Context context) {
         super(context);
         initComponent();
     }
 
-    public MixerTrackLayout(Context context, AttributeSet attrs){
-        super(context,attrs);
+    public MixerTrackLayout(Context context, AttributeSet attrs) {
+        super(context, attrs);
         initComponent();
 
     }

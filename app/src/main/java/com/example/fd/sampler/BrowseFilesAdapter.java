@@ -45,17 +45,17 @@ public class BrowseFilesAdapter extends ArrayAdapter<String> {
                 @Override
                 public void onClick(View v) {
                     pool = new SoundPool(1, AudioManager.STREAM_MUSIC, 1);
-                    pool.load(refs[position],1);
+                    pool.load(refs[position], 1);
                     pool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
                         @Override
                         public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
-                            soundPool.play(sampleId,1,1,1,0,1);
+                            soundPool.play(sampleId, 1, 1, 1, 0, 1);
                         }
                     });
 
                 }
             });
-            if(!(s.contains(".wav") || s.contains(".mp3") || s.contains(".ogg"))){
+            if (!(s.contains(".wav") || s.contains(".mp3") || s.contains(".ogg"))) {
                 prePlayBtn.setVisibility(View.INVISIBLE);
                 prePlayBtn.setEnabled(false);
             }
@@ -70,7 +70,7 @@ public class BrowseFilesAdapter extends ArrayAdapter<String> {
             public void onClick(View v) {
                 FileBrowserActivity act = (FileBrowserActivity) context;
                 act.lastSelected.add(act.selected);
-                if(act.files[position].isFile()){
+                if (act.files[position].isFile()) {
                     Log.d("CLICKED", act.files[position].getName());
                     act.pathToChosenFile = act.files[position].getAbsolutePath();
                     String name = act.files[position].getName();
@@ -81,9 +81,7 @@ public class BrowseFilesAdapter extends ArrayAdapter<String> {
                     intent.putExtra(act.mSelectedSampleName, name);
                     act.setResult(act.RESULT_OK, intent);
                     act.finish();
-                }
-
-                else{
+                } else {
 
                     act.selected = new File(act.files[position].getAbsolutePath());
                     act.pathTextView.setText(act.selected.getAbsolutePath());
@@ -91,13 +89,13 @@ public class BrowseFilesAdapter extends ArrayAdapter<String> {
                     act.files = act.selected.listFiles();
                     String[] titles = new String[act.files.length];
                     String[] refsArray = new String[act.files.length];
-                    for(int i = 0; i < act.files.length; i++){
+                    for (int i = 0; i < act.files.length; i++) {
                         titles[i] = act.files[i].getName();
                         refsArray[i] = act.files[i].getAbsolutePath();
                     }
-                    BrowseFilesAdapter secAdapter = new BrowseFilesAdapter(act, titles,refsArray);
+                    BrowseFilesAdapter secAdapter = new BrowseFilesAdapter(act, titles, refsArray);
                     act.fileListView.setAdapter(secAdapter);
-                    Log.d("ENDED LISTENER"," pos");
+                    Log.d("ENDED LISTENER", " pos");
                 }
             }
         });

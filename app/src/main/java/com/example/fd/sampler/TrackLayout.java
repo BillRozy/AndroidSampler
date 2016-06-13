@@ -2,18 +2,11 @@ package com.example.fd.sampler;
 
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.media.Image;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
-import android.widget.TextView;
-import android.widget.ToggleButton;
-
 
 import java.util.ArrayList;
 
@@ -25,17 +18,17 @@ public class TrackLayout extends LinearLayout implements TrackInterface {
     private Button mTrackName;
 
 
-
     public TrackLayout(Context context) {
         super(context);
         initComponent();
     }
-    public TrackLayout(Context context, AttributeSet attrs){
-        super(context,attrs);
+
+    public TrackLayout(Context context, AttributeSet attrs) {
+        super(context, attrs);
         initComponent();
     }
 
-    public ArrayList<HitView> getHitsArray(){
+    public ArrayList<HitView> getHitsArray() {
         return mHitsArray;
     }
 
@@ -43,9 +36,13 @@ public class TrackLayout extends LinearLayout implements TrackInterface {
         return connectInstrumentBtn;
     }
 
-    public ImageButton getDeleteBtn(){return mDeleteBtn;}
+    public ImageButton getDeleteBtn() {
+        return mDeleteBtn;
+    }
 
-    public Button getTrackName(){return  mTrackName;}
+    public Button getTrackName() {
+        return mTrackName;
+    }
 
     private void initComponent() {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);

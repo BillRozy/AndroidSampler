@@ -32,6 +32,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -45,25 +46,53 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class MainActivity extends Activity implements PatternFragment.PatternFragmentInterface {
+    public static final String APP_PREFERENCES = "mysettings";
+    public static final String APP_PREFERENCES_COPIED = "file_copied";
+    static final private int CHOOSE_SAMPLE = 0;
     final private int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL = 1;
     final private int MY_PERMISSIONS_REQUEST_READ_EXTERNAL = 2;
+    public Button play;
+    public String pathChosen = "";
+    public String nameChosen = "";
+    public int trackChosen = 0;
     private Sampler myApp;
     private DataBaseHelper mDatabaseHelper;
-    public Button play;
     private ToggleButton mixerButton;
     private TextView patternNumber;
     private NumberPicker bpmPicker;
     private NumberPicker stepPicker;
-    private  TextView presetName;
+    private TextView presetName;
     private ArrayList<PatternFragment> mPatternFragmentsArray = null;
     private SharedPreferences sp;
-    public String pathChosen = "";
-    public String nameChosen = "";
-    public int trackChosen = 0;
     private int mChosenPatternFragmentNumber = 0;
-    public static final String APP_PREFERENCES = "mysettings";
-    public static final String APP_PREFERENCES_COPIED = "file_copied";
-    static final private int CHOOSE_SAMPLE = 0;
+
+    public static boolean setNumberPickerTextColor(NumberPicker numberPicker, int color) {
+        final int count = numberPicker.getChildCount();
+        for (int i = 0; i < count; i++) {
+            View child = numberPicker.getChildAt(i);
+            if (child instanceof EditText) {
+                try {
+                    Field selectorWheelPaintField = numberPicker.getClass()
+                            .getDeclaredField("mSelectorWheelPaint");
+                    selectorWheelPaintField.setAccessible(true);
+                    ((Paint) selectorWheelPaintField.get(numberPicker)).setColor(color);
+                    ((EditText) child).setTextColor(color);
+                    numberPicker.invalidate();
+                    return true;
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    Log.w("setNumberPickerTexColor", e);
+                }
+            }
+        }
+        return false;
+    }
+
+    static String convertStreamToString(java.io.InputStream is) {
+        Scanner scanner = new Scanner(is);
+        String text = scanner.useDelimiter("\\A").next();
+        scanner.close();
+        return text;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +101,8 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
         sp = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        if(!sp.contains(APP_PREFERENCES_COPIED) || sp.getInt(APP_PREFERENCES_COPIED,0)==0){
-            if(android.os.Build.VERSION.SDK_INT >= 23) {
+        if (!sp.contains(APP_PREFERENCES_COPIED) || sp.getInt(APP_PREFERENCES_COPIED, 0) == 0) {
+            if (android.os.Build.VERSION.SDK_INT >= 23) {
                 int permissionCheck = ContextCompat.checkSelfPermission(this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
@@ -81,23 +110,22 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                             new String[]{Manifest.permission.READ_CONTACTS},
                             MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL);
                 }
-            }
-            else{
+            } else {
                 SharedPreferences.Editor spEditor = sp.edit();
                 File dir = new File(FileBrowserActivity.FILES_DIRECTORY);
                 if (dir.mkdir()) {
                     Log.d("Created", dir.getAbsolutePath());
                     myCopy();
                 }
-                spEditor.putInt(APP_PREFERENCES_COPIED,1);
+                spEditor.putInt(APP_PREFERENCES_COPIED, 1);
                 spEditor.commit();
             }
         }
         myApp = Sampler.getSampler();
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
-       if ( mPatternFragmentsArray == null ) {
-           mPatternFragmentsArray = new ArrayList<>();
-       }
+        if (mPatternFragmentsArray == null) {
+            mPatternFragmentsArray = new ArrayList<>();
+        }
         bpmPicker = (NumberPicker) this.findViewById(R.id.numberPicker);
         bpmPicker.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         bpmPicker.setMaxValue(320);
@@ -112,134 +140,133 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
         Button addTrack = (Button) this.findViewById(R.id.addTrackButton);
         Button stop = (Button) this.findViewById(R.id.stopButton);
         Button pause = (Button) this.findViewById(R.id.pauseButton);
-           play = (Button) this.findViewById(R.id.playButton);
+        play = (Button) this.findViewById(R.id.playButton);
         Button nextPattern = (Button) this.findViewById(R.id.nextPatt);
         Button prevPattern = (Button) this.findViewById(R.id.prevPattern);
         Button savePresetBtn = (Button) findViewById(R.id.saveBtn);
         Button loadPresetBtn = (Button) findViewById(R.id.loadBtn);
-            patternNumber = (TextView) this.findViewById(R.id.numPattern);
-            patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
+        patternNumber = (TextView) this.findViewById(R.id.numPattern);
+        patternNumber.setText((mChosenPatternFragmentNumber + 1) + "");
         mixerButton = (ToggleButton) this.findViewById(R.id.mixerButton);
         presetName = (TextView) findViewById(R.id.presetName);
         presetName.setText(myApp.getActivePattern().getPatternName());
 
-           Log.d("OnCreate", "WOrked");
+        Log.d("OnCreate", "WOrked");
 
-           addTrack.setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View v) {
-                   Track curTr = myApp.getActivePattern().addTrack("Track: " + myApp.getActivePattern().getTrackCounter());
-                   TrackLayout tl = new TrackLayout(getApplicationContext());
-                   tl.getTrackName().setText(curTr.getTrackName());
-                   mPatternFragmentsArray.get(mChosenPatternFragmentNumber).addTrackLayout(tl);
-                   mPatternFragmentsArray.get(mChosenPatternFragmentNumber).addViewToFragment(tl);
-                   Toast.makeText(getApplicationContext(), "Добавлен трек " + (myApp.getActivePattern().getTrackCounter() - 1), Toast.LENGTH_SHORT).show();
-                   mPatternFragmentsArray.get(mChosenPatternFragmentNumber).remakeTracks();
-               }
-           });
+        addTrack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Track curTr = myApp.getActivePattern().addTrack("Track: " + myApp.getActivePattern().getTrackCounter());
+                TrackLayout tl = new TrackLayout(getApplicationContext());
+                tl.getTrackName().setText(curTr.getTrackName());
+                mPatternFragmentsArray.get(mChosenPatternFragmentNumber).addTrackLayout(tl);
+                mPatternFragmentsArray.get(mChosenPatternFragmentNumber).addViewToFragment(tl);
+                Toast.makeText(getApplicationContext(), "Добавлен трек " + (myApp.getActivePattern().getTrackCounter() - 1), Toast.LENGTH_SHORT).show();
+                mPatternFragmentsArray.get(mChosenPatternFragmentNumber).remakeTracks();
+            }
+        });
 
-           play.setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View v) {
-                   myApp.play();
-                   for (TrackLayout tl : mPatternFragmentsArray.get(mChosenPatternFragmentNumber).getTracksLayoutsArray()) {
-                       tl.getDeleteBtn().setEnabled(false);
-                   }
-                   play.setBackgroundResource(R.drawable.play_red);
-               }
-           });
-
-
-           stop.setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View v) {
-
-                   myApp.stop();
-                   for (TrackLayout tl : mPatternFragmentsArray.get(mChosenPatternFragmentNumber).getTracksLayoutsArray()) {
-                       tl.getDeleteBtn().setEnabled(true);
-                   }
-                   play.setBackgroundResource(R.drawable.play_white);
-               }
-           });
+        play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myApp.play();
+                for (TrackLayout tl : mPatternFragmentsArray.get(mChosenPatternFragmentNumber).getTracksLayoutsArray()) {
+                    tl.getDeleteBtn().setEnabled(false);
+                }
+                play.setBackgroundResource(R.drawable.play_red);
+            }
+        });
 
 
-           pause.setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View v) {
-                   myApp.pause();
-                   for (TrackLayout tl : mPatternFragmentsArray.get(mChosenPatternFragmentNumber).getTracksLayoutsArray()) {
-                       tl.getDeleteBtn().setEnabled(true);
-                   }
-                   play.setBackgroundResource(R.drawable.play_white);
-               }
-           });
+        stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-           nextPattern.setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View v) {
-                   boolean wasPlaying = false;
-                   if(myApp.isPlaying()) {
-                       wasPlaying = true;
-                       myApp.stop();
-                   }
-                   saveStateInDatabase();
-                   if (mChosenPatternFragmentNumber == (myApp.getSizeOfProgramm() - 1)) {
-                       initOnCreate();
-                       addPattern();
-                   } else {
-                       initOnCreate();
-                       mChosenPatternFragmentNumber++;
-                       myApp.setPatternActive(myApp.getPatternsList().get(mChosenPatternFragmentNumber));
-                      getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
-                   }
-                   patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
-                   presetName.setText(myApp.getActivePattern().getPatternName());
-                   myApp.setBPM(myApp.getActivePattern().getPatternBPM());
-                   bpmPicker.setValue(myApp.getBPM());
-                   if(wasPlaying){
-                       myApp.play();
-                       play.setBackgroundResource(R.drawable.play_red);
-                   }
-                   mixerButton.setChecked(false);
-               }
-           });
+                myApp.stop();
+                for (TrackLayout tl : mPatternFragmentsArray.get(mChosenPatternFragmentNumber).getTracksLayoutsArray()) {
+                    tl.getDeleteBtn().setEnabled(true);
+                }
+                play.setBackgroundResource(R.drawable.play_white);
+            }
+        });
 
-           prevPattern.setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View v) {
-                   boolean wasPlaying = false;
-                   if(myApp.isPlaying()) {
-                       wasPlaying = true;
-                       myApp.stop();
-                   }
-                   saveStateInDatabase();
-                   if (mChosenPatternFragmentNumber != 0) {
-                       initOnCreate();
-                       mChosenPatternFragmentNumber--;
-                       myApp.setPatternActive(myApp.getPatternsList().get(mChosenPatternFragmentNumber));
-                       getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
-                   }
-                   patternNumber.setText((mChosenPatternFragmentNumber+1)+"");
-                   presetName.setText(myApp.getActivePattern().getPatternName());
-                   myApp.setBPM(myApp.getActivePattern().getPatternBPM());
-                   bpmPicker.setValue(myApp.getBPM());
-                   if(wasPlaying){
-                       myApp.play();
-                       play.setBackgroundResource(R.drawable.play_red);
-                   }
-                   mixerButton.setChecked(false);
-               }
-           });
+
+        pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myApp.pause();
+                for (TrackLayout tl : mPatternFragmentsArray.get(mChosenPatternFragmentNumber).getTracksLayoutsArray()) {
+                    tl.getDeleteBtn().setEnabled(true);
+                }
+                play.setBackgroundResource(R.drawable.play_white);
+            }
+        });
+
+        nextPattern.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean wasPlaying = false;
+                if (myApp.isPlaying()) {
+                    wasPlaying = true;
+                    myApp.stop();
+                }
+                saveStateInDatabase();
+                if (mChosenPatternFragmentNumber == (myApp.getSizeOfProgramm() - 1)) {
+                    initOnCreate();
+                    addPattern();
+                } else {
+                    initOnCreate();
+                    mChosenPatternFragmentNumber++;
+                    myApp.setPatternActive(myApp.getPatternsList().get(mChosenPatternFragmentNumber));
+                    getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
+                }
+                patternNumber.setText((mChosenPatternFragmentNumber + 1) + "");
+                presetName.setText(myApp.getActivePattern().getPatternName());
+                myApp.setBPM(myApp.getActivePattern().getPatternBPM());
+                bpmPicker.setValue(myApp.getBPM());
+                if (wasPlaying) {
+                    myApp.play();
+                    play.setBackgroundResource(R.drawable.play_red);
+                }
+                mixerButton.setChecked(false);
+            }
+        });
+
+        prevPattern.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean wasPlaying = false;
+                if (myApp.isPlaying()) {
+                    wasPlaying = true;
+                    myApp.stop();
+                }
+                saveStateInDatabase();
+                if (mChosenPatternFragmentNumber != 0) {
+                    initOnCreate();
+                    mChosenPatternFragmentNumber--;
+                    myApp.setPatternActive(myApp.getPatternsList().get(mChosenPatternFragmentNumber));
+                    getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
+                }
+                patternNumber.setText((mChosenPatternFragmentNumber + 1) + "");
+                presetName.setText(myApp.getActivePattern().getPatternName());
+                myApp.setBPM(myApp.getActivePattern().getPatternBPM());
+                bpmPicker.setValue(myApp.getBPM());
+                if (wasPlaying) {
+                    myApp.play();
+                    play.setBackgroundResource(R.drawable.play_red);
+                }
+                mixerButton.setChecked(false);
+            }
+        });
 
 
         mixerButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
+                if (isChecked) {
                     MixerFragment mf = new MixerFragment();
                     getFragmentManager().beginTransaction().replace(R.id.fragment, mf).commit();
-                }
-                else{
+                } else {
                     getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
                 }
             }
@@ -277,27 +304,26 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                         });
 
                 alertDialog.show();
-        }
+            }
         });
 
         loadPresetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, FileBrowserActivity.class);
-                intent.putExtra("folder",1);
+                intent.putExtra("folder", 1);
                 startActivityForResult(intent, CHOOSE_SAMPLE);
             }
         });
-
 
 
         bpmPicker.setOnValueChangedListener(new bpmPickerHandler());
 
         stepPicker.setOnValueChangedListener(new stepsPickerHandler());
 
-           myApp.stepsBar = (ProgressBar) this.findViewById(R.id.progressBar);
-           myApp.stepsBar.setMax(16);
-           myApp.stepsBar.setProgress(0);
+        myApp.stepsBar = (ProgressBar) this.findViewById(R.id.progressBar);
+        myApp.stepsBar.setMax(16);
+        myApp.stepsBar.setProgress(0);
 
         bpmPicker.setValue(myApp.getActivePattern().getPatternBPM());
         stepPicker.setValue(myApp.getActivePattern().getPatternSteps());
@@ -315,7 +341,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
         }
     }
 
-    private void savePreset(String name){
+    private void savePreset(String name) {
         try {
             myApp.getActivePattern().setPatternName(name);
             Preset preset = new Preset();
@@ -333,10 +359,12 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
             oos.flush();
             oos.close();
             presetName.setText(name);
-        }catch (IOException exc){Log.d("EXCEPTION", exc.toString());}
+        } catch (IOException exc) {
+            Log.d("EXCEPTION", exc.toString());
+        }
     }
 
-    public void loadPreset(String Path){
+    public void loadPreset(String Path) {
         try {
             FileInputStream fis = new FileInputStream(Path);
             ObjectInputStream oin = new ObjectInputStream(fis);
@@ -350,29 +378,31 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
             patt.setPatternName(preset.getTitle());
             patt.setPatternBPM(preset.getBPM());
             patt.setPatternSteps(preset.getSteps());
-            for(int i=1;i<titles.length;i++){
+            for (int i = 1; i < titles.length; i++) {
                 Track track = patt.addTrack(titles[i]);
                 track.makeHitsActiveFromDescription(description[i]);
                 track.setTrackVolume(volumes[i]);
-                if(paths[i] != null) {
+                if (paths[i] != null) {
                     track.connectInstrument(this, paths[i]);
                 }
                 track.setHasConnectedInstrument(mark[i]);
                 Log.d("Active ", description[i]);
             }
-            myApp.getPatternsList().set(myApp.getPatternsList().indexOf(myApp.getActivePattern()),patt);
+            myApp.getPatternsList().set(myApp.getPatternsList().indexOf(myApp.getActivePattern()), patt);
             myApp.setPatternActive(patt);
             PatternFragment pf = new PatternFragment();
             pf.connectPattern(patt);
-            mPatternFragmentsArray.set(mChosenPatternFragmentNumber,pf);
+            mPatternFragmentsArray.set(mChosenPatternFragmentNumber, pf);
             getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
             presetName.setText(patt.getPatternName());
             stepPicker.setValue(patt.getPatternSteps());
             bpmPicker.setValue(patt.getPatternBPM());
-        }catch(IOException | ClassNotFoundException exc){Log.d("EXCEPTION", exc.toString());}
+        } catch (IOException | ClassNotFoundException exc) {
+            Log.d("EXCEPTION", exc.toString());
+        }
     }
 
-    private void addPattern(){
+    private void addPattern() {
         mChosenPatternFragmentNumber++;
         PatternFragment pf = new PatternFragment();
         mPatternFragmentsArray.add(pf);
@@ -380,17 +410,17 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
         bpmPicker.setValue(myApp.getActivePattern().getPatternBPM());
         stepPicker.setValue(myApp.getActivePattern().getPatternSteps());
         getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
-        Log.d("NEW FRAGMENT", pf.isAdded()+"");
+        Log.d("NEW FRAGMENT", pf.isAdded() + "");
     }
 
-    private void initOnCreate(){
+    private void initOnCreate() {
         mChosenPatternFragmentNumber = myApp.getLastActivePatternIndex();
         mDatabaseHelper = new DataBaseHelper(this, "mainbase.db", null, 1);
         SQLiteDatabase sdb;
         sdb = mDatabaseHelper.getReadableDatabase();
         Cursor patternCursor = sdb.query(mDatabaseHelper.DATABASE_TABLE_PATTERNS, new String[]{
                         DataBaseHelper._ID, DataBaseHelper.PATTERN_NAME_COLUMN, DataBaseHelper.PATTERN_BPM_COLUMN
-        , DataBaseHelper.PATTERN_STEP_COLUMN}, null,
+                        , DataBaseHelper.PATTERN_STEP_COLUMN}, null,
                 null,
                 null,
                 null,
@@ -415,54 +445,54 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
         patternCursor.close();
 
         Cursor trackCursor = sdb.query(mDatabaseHelper.DATABASE_TABLE_TRACKS, new String[]{
-                        DataBaseHelper._ID, DataBaseHelper.TRACK_TITLE_COLUMN,
-                        DataBaseHelper.TRACK_HITS_ARRAY_COLUMN, DataBaseHelper.TRACK_VOLUME_COLUMN,
-                        DataBaseHelper.TRACK_MUTE_COLUMN,
-                        DataBaseHelper.TRACK_PATH_TO_SAMPLE_COLUMN,
-                        DataBaseHelper.TRACK_PATTERN_ID_COLUMN,
-                        DataBaseHelper.TRACK_HAS_CONNECTED_SAMPLE}, null, null, null, null, null);
+                DataBaseHelper._ID, DataBaseHelper.TRACK_TITLE_COLUMN,
+                DataBaseHelper.TRACK_HITS_ARRAY_COLUMN, DataBaseHelper.TRACK_VOLUME_COLUMN,
+                DataBaseHelper.TRACK_MUTE_COLUMN,
+                DataBaseHelper.TRACK_PATH_TO_SAMPLE_COLUMN,
+                DataBaseHelper.TRACK_PATTERN_ID_COLUMN,
+                DataBaseHelper.TRACK_HAS_CONNECTED_SAMPLE}, null, null, null, null, null);
 
-        while(trackCursor.moveToNext()){
-                int trackID = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper._ID));
-                int pattID = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_PATTERN_ID_COLUMN));
-                String trackName = trackCursor.getString(trackCursor.getColumnIndex(DataBaseHelper.TRACK_TITLE_COLUMN));
-                Log.i("LOG_TAG", "TRACK " + trackID + " HAS NAME " + trackName);
-                String[] hitsString = trackCursor.getString(trackCursor.getColumnIndex(DataBaseHelper.TRACK_HITS_ARRAY_COLUMN)).split(" ");
-                int activeHitsArray[] = new int[hitsString.length];
-                for (int i = 0; i < hitsString.length; i++) {
-                        if(!hitsString[i].equals("")) {
-                            activeHitsArray[i] = Integer.parseInt(hitsString[i]);
-                        }
+        while (trackCursor.moveToNext()) {
+            int trackID = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper._ID));
+            int pattID = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_PATTERN_ID_COLUMN));
+            String trackName = trackCursor.getString(trackCursor.getColumnIndex(DataBaseHelper.TRACK_TITLE_COLUMN));
+            Log.i("LOG_TAG", "TRACK " + trackID + " HAS NAME " + trackName);
+            String[] hitsString = trackCursor.getString(trackCursor.getColumnIndex(DataBaseHelper.TRACK_HITS_ARRAY_COLUMN)).split(" ");
+            int activeHitsArray[] = new int[hitsString.length];
+            for (int i = 0; i < hitsString.length; i++) {
+                if (!hitsString[i].equals("")) {
+                    activeHitsArray[i] = Integer.parseInt(hitsString[i]);
                 }
-                int hasConnectedSample = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_HAS_CONNECTED_SAMPLE));
-                float volume = ((float)trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_VOLUME_COLUMN))/100);
-                int mute = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_MUTE_COLUMN));
-                String path = trackCursor.getString(trackCursor.getColumnIndex(DataBaseHelper.TRACK_PATH_TO_SAMPLE_COLUMN));
-                Pattern patt = myApp.getPattern(pattID);
-                    Log.d("FOUNDPATTERN FOR TRACK!", (pattID-1) + "");
-                    Track track = patt.addTrack(trackName);
-                     track.setTrackVolume(volume);
-                if(activeHitsArray[0] != 0) {
-                    track.makeHitActive(activeHitsArray);
-                }
+            }
+            int hasConnectedSample = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_HAS_CONNECTED_SAMPLE));
+            float volume = ((float) trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_VOLUME_COLUMN)) / 100);
+            int mute = trackCursor.getInt(trackCursor.getColumnIndex(DataBaseHelper.TRACK_MUTE_COLUMN));
+            String path = trackCursor.getString(trackCursor.getColumnIndex(DataBaseHelper.TRACK_PATH_TO_SAMPLE_COLUMN));
+            Pattern patt = myApp.getPattern(pattID);
+            Log.d("FOUNDPATTERN FOR TRACK!", (pattID - 1) + "");
+            Track track = patt.addTrack(trackName);
+            track.setTrackVolume(volume);
+            if (activeHitsArray[0] != 0) {
+                track.makeHitActive(activeHitsArray);
+            }
             if (hasConnectedSample == 1) {
                 track.connectInstrument(this, path);
             }
         }
         trackCursor.close();
 
-        Pattern temp = myApp.getPattern(mChosenPatternFragmentNumber+1);
+        Pattern temp = myApp.getPattern(mChosenPatternFragmentNumber + 1);
         myApp.setPatternActive(temp);
-        if(mChosenPatternFragmentNumber == -1){
+        if (mChosenPatternFragmentNumber == -1) {
             myApp.setPatternActive(myApp.getPattern(1));
         }
         myApp.setBPM(temp.getPatternBPM());
         myApp.setSteps(temp.getPatternSteps());
-        for(Pattern patt : myApp.getPatternsList()){
+        for (Pattern patt : myApp.getPatternsList()) {
             PatternFragment pf = new PatternFragment();
             pf.connectPattern(patt);
             mPatternFragmentsArray.add(pf);
-            if(mPatternFragmentsArray.indexOf(pf) == mChosenPatternFragmentNumber){
+            if (mPatternFragmentsArray.indexOf(pf) == mChosenPatternFragmentNumber) {
                 getFragmentManager().beginTransaction().replace(R.id.fragment, mPatternFragmentsArray.get(mChosenPatternFragmentNumber)).commit();
             }
 
@@ -471,31 +501,15 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
         sdb.close();
     }
 
-    class bpmPickerHandler implements NumberPicker.OnValueChangeListener {
-        @Override
-        public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-            myApp.setBPM(newVal);
-            myApp.getActivePattern().setPatternBPM(newVal);
-        }
-    }
-
-    class stepsPickerHandler implements NumberPicker.OnValueChangeListener{
-        @Override
-        public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-            myApp.setSteps(newVal);
-            myApp.getActivePattern().setPatternBPM(newVal);
-        }
-    }
-
     @Override
     protected void onPause() {
-       super.onPause();
+        super.onPause();
         saveStateInDatabase();
         Log.d("OnPause", "WORKED");
     }
 
-    private void saveStateInDatabase(){
-        if(myApp.getActivePattern()!=null) {
+    private void saveStateInDatabase() {
+        if (myApp.getActivePattern() != null) {
             myApp.stop();
             myApp.setLastPatternActiveIndex();
             myApp.setSizeOfProgramm();
@@ -529,7 +543,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                     ContentValues trackData = new ContentValues();
                     trackData.put(DataBaseHelper.TRACK_TITLE_COLUMN, track.getTrackName());
                     trackData.put(DataBaseHelper.TRACK_HITS_ARRAY_COLUMN, activeHits);
-                    int volume = (int) (track.getTrackVolume()*100);
+                    int volume = (int) (track.getTrackVolume() * 100);
                     trackData.put(DataBaseHelper.TRACK_VOLUME_COLUMN, volume);
                     trackData.put(DataBaseHelper.TRACK_MUTE_COLUMN, false);
                     trackData.put(DataBaseHelper.TRACK_PATH_TO_SAMPLE_COLUMN, track.getPathToInstrument());
@@ -551,29 +565,6 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
         }
     }
 
-    public static boolean setNumberPickerTextColor(NumberPicker numberPicker, int color)
-    {
-        final int count = numberPicker.getChildCount();
-        for(int i = 0; i < count; i++){
-            View child = numberPicker.getChildAt(i);
-            if(child instanceof EditText){
-                try{
-                    Field selectorWheelPaintField = numberPicker.getClass()
-                            .getDeclaredField("mSelectorWheelPaint");
-                    selectorWheelPaintField.setAccessible(true);
-                    ((Paint)selectorWheelPaintField.get(numberPicker)).setColor(color);
-                    ((EditText)child).setTextColor(color);
-                    numberPicker.invalidate();
-                    return true;
-                }
-                catch(NoSuchFieldException | IllegalAccessException e){
-                    Log.w("setNumberPickerTexColor", e);
-                }
-            }
-        }
-        return false;
-    }
-
     @Override
     public void putDataAboutTrack(int num, String path, String name) {
 
@@ -581,30 +572,30 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
         trackChosen = num;
         pathChosen = path;
         nameChosen = name;
-        myApp.getActivePattern().getTrack(num).connectInstrument(this,path);
+        myApp.getActivePattern().getTrack(num).connectInstrument(this, path);
         myApp.getActivePattern().getTrack(num).setTrackName(name);
     }
 
-    private void myCopy(){
+    private void myCopy() {
         AssetManager assetManager = this.getAssets();
         String assets[] = null;
         try {
             InputStream indexFile = assetManager.open("assets.index");
             String test = convertStreamToString(indexFile);
             assets = test.split("\\n");
-        }catch (IOException exc){Log.d("ERROR",exc.toString());}
-            for(String url : assets){
-                File file = new File(url);
-                if(file.getName().contains(".")) {
-                    copyFile(url);
-                }
-                else
-                {
-                    File dir = new File(FileBrowserActivity.FILES_DIRECTORY + url);
-                    boolean success = dir.mkdirs();
-                }
+        } catch (IOException exc) {
+            Log.d("ERROR", exc.toString());
+        }
+        for (String url : assets) {
+            File file = new File(url);
+            if (file.getName().contains(".")) {
+                copyFile(url);
+            } else {
+                File dir = new File(FileBrowserActivity.FILES_DIRECTORY + url);
+                boolean success = dir.mkdirs();
             }
         }
+    }
 
     private void copyFile(String filename) {
         AssetManager assetManager = this.getAssets();
@@ -612,10 +603,10 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
         OutputStream out;
         String newFileName = null;
         try {
-            Log.i("tag", "copyFile() "+filename);
+            Log.i("tag", "copyFile() " + filename);
             in = assetManager.open(filename);
             if (filename.endsWith(".jpg"))
-                newFileName = FileBrowserActivity.FILES_DIRECTORY + filename.substring(0, filename.length()-4);
+                newFileName = FileBrowserActivity.FILES_DIRECTORY + filename.substring(0, filename.length() - 4);
             else
                 newFileName = FileBrowserActivity.FILES_DIRECTORY + filename;
             out = new FileOutputStream(newFileName);
@@ -629,17 +620,10 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
             out.flush();
             out.close();
         } catch (Exception e) {
-            Log.e("tag", "Exception in copyFile() of "+newFileName);
-            Log.e("tag", "Exception in copyFile() "+e.toString());
+            Log.e("tag", "Exception in copyFile() of " + newFileName);
+            Log.e("tag", "Exception in copyFile() " + e.toString());
         }
 
-    }
-
-    static String convertStreamToString(java.io.InputStream is) {
-        Scanner scanner = new Scanner(is);
-        String text = scanner.useDelimiter("\\A").next();
-        scanner.close();
-        return text;
     }
 
     @Override
@@ -655,7 +639,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                         Log.d("Created", dir.getAbsolutePath());
                         myCopy();
                     }
-                    spEditor.putInt(APP_PREFERENCES_COPIED,1);
+                    spEditor.putInt(APP_PREFERENCES_COPIED, 1);
                     spEditor.commit();
                 }
             }
@@ -689,6 +673,22 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
         });
 
         quitDialog.show();
+    }
+
+    class bpmPickerHandler implements NumberPicker.OnValueChangeListener {
+        @Override
+        public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+            myApp.setBPM(newVal);
+            myApp.getActivePattern().setPatternBPM(newVal);
+        }
+    }
+
+    class stepsPickerHandler implements NumberPicker.OnValueChangeListener {
+        @Override
+        public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+            myApp.setSteps(newVal);
+            myApp.getActivePattern().setPatternBPM(newVal);
+        }
     }
 
 }

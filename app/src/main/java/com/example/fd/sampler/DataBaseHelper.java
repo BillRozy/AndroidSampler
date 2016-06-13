@@ -9,13 +9,10 @@ import android.util.Log;
 
 public class DataBaseHelper extends SQLiteOpenHelper implements BaseColumns {
 
-    private static final String DATABASE_NAME = "mainbase.db";
-    private static final int DATABASE_VERSION = 1;
     public static final String DATABASE_TABLE_PATTERNS = "patterns";
     public static final String PATTERN_BPM_COLUMN = "bpm";
     public static final String PATTERN_STEP_COLUMN = "steps";
     public static final String PATTERN_NAME_COLUMN = "title";
-
     public static final String DATABASE_TABLE_TRACKS = "tracks";
     public static final String TRACK_PATTERN_ID_COLUMN = "patt_id";
     public static final String TRACK_TITLE_COLUMN = "title";
@@ -24,7 +21,8 @@ public class DataBaseHelper extends SQLiteOpenHelper implements BaseColumns {
     public static final String TRACK_MUTE_COLUMN = "mute";
     public static final String TRACK_PATH_TO_SAMPLE_COLUMN = "instrument";
     public static final String TRACK_HAS_CONNECTED_SAMPLE = "has_sample";
-
+    private static final String DATABASE_NAME = "mainbase.db";
+    private static final int DATABASE_VERSION = 1;
     private static final String PATTERNS_CREATE_SCRIPT = "CREATE TABLE "
             + DATABASE_TABLE_PATTERNS + " (" + BaseColumns._ID
             + " integer primary key autoincrement, " + PATTERN_NAME_COLUMN

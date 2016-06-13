@@ -14,19 +14,20 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+
 import java.util.ArrayList;
 
 
 public class PatternFragment extends Fragment {
 
+    static final private int CHOOSE_SAMPLE = 0;
+    int currentStep;
     private ArrayList<TrackLayout> tracksArray = null;
     private LinearLayout verticalLayer;
     private int mChosenTrack;
-    static final private int CHOOSE_SAMPLE = 0;
     private Pattern mConnectedPattern;
     private Activity connectedActivity;
     private ViewGroup scrollViewFrame;
-    int currentStep;
 
 
     public PatternFragment() {
@@ -74,8 +75,7 @@ public class PatternFragment extends Fragment {
         while (Sampler.getSampler().getActivePattern().getTracksArray().size() - 1 > tracksArray.size()) {
             TrackLayout tl = new TrackLayout(context);
             tl.getTrackName().setText(Sampler.getSampler().getActivePattern().getTrack(tracksArray.size() + 1).getTrackName());
-            if(Sampler.getSampler().getActivePattern().getTrack(tracksArray.size() + 1).getHasConnectedInstrument())
-            {
+            if (Sampler.getSampler().getActivePattern().getTrack(tracksArray.size() + 1).getHasConnectedInstrument()) {
                 tl.getConnectInstrumentBtn().setBackgroundResource(R.drawable.connected_sample);
             }
             addTrackLayout(tl);
@@ -90,7 +90,7 @@ public class PatternFragment extends Fragment {
         for (final TrackLayout tl : tracksArray) {
             tl.getConnectInstrumentBtn().setOnClickListener(new InstrumentConnectionListener(tl));
 
-            tl.getTrackName().setOnClickListener(new TrackNameControlListener(tl, tracksArray,connectedActivity));
+            tl.getTrackName().setOnClickListener(new TrackNameControlListener(tl, tracksArray, connectedActivity));
 
             tl.getDeleteBtn().setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -162,8 +162,8 @@ public class PatternFragment extends Fragment {
             if (resultCode == -1) {
                 String chosenPath = data.getStringExtra(SampleListActivity.mSelectedSamplePath);
                 String chosenName = data.getStringExtra(SampleListActivity.mSelectedSampleName);
-               PatternFragmentInterface act = (PatternFragmentInterface) connectedActivity;
-                act.putDataAboutTrack(mChosenTrack, chosenPath,chosenName);
+                PatternFragmentInterface act = (PatternFragmentInterface) connectedActivity;
+                act.putDataAboutTrack(mChosenTrack, chosenPath, chosenName);
                 tracksArray.get(mChosenTrack - 1).getTrackName().setText(chosenName);
                 tracksArray.get(mChosenTrack - 1).getConnectInstrumentBtn().setBackgroundResource(R.drawable.connected_sample);
             }
@@ -194,6 +194,10 @@ public class PatternFragment extends Fragment {
     }
 
 
+    public interface PatternFragmentInterface {
+        void putDataAboutTrack(int num, String path, String name);
+    }
+
     class InstrumentConnectionListener implements View.OnClickListener {
 
         private TrackLayout tl;
@@ -206,27 +210,21 @@ public class PatternFragment extends Fragment {
         public void onClick(View v) {
             connectedActivity.findViewById(R.id.playButton).setBackgroundResource(R.drawable.play_white);
             Intent intent = new Intent(PatternFragment.this.getActivity(), FileBrowserActivity.class);
-            intent.putExtra("folder",0);
+            intent.putExtra("folder", 0);
             mChosenTrack = tracksArray.indexOf(tl) + 1;
             startActivityForResult(intent, CHOOSE_SAMPLE);
         }
 
     }
-
-
-
-    public interface PatternFragmentInterface{
-        void putDataAboutTrack(int num, String path, String name);
-    }
 }
 
-class MuteControllerListener implements CompoundButton.OnCheckedChangeListener{
+class MuteControllerListener implements CompoundButton.OnCheckedChangeListener {
 
     private MixerTrackLayout tl;
     private ArrayList tracksArray;
 
-    public MuteControllerListener(MixerTrackLayout tl, ArrayList array){
-        this.tl =  tl;
+    public MuteControllerListener(MixerTrackLayout tl, ArrayList array) {
+        this.tl = tl;
         tracksArray = array;
     }
 
@@ -240,13 +238,13 @@ class MuteControllerListener implements CompoundButton.OnCheckedChangeListener{
     }
 }
 
-class TrackNameControlListener implements View.OnClickListener{
+class TrackNameControlListener implements View.OnClickListener {
     private TrackInterface tl;
     private ArrayList tracksArray;
     private Activity act;
 
-    public TrackNameControlListener(TrackInterface tl, ArrayList array,Activity activity){
-        this.tl =  tl;
+    public TrackNameControlListener(TrackInterface tl, ArrayList array, Activity activity) {
+        this.tl = tl;
         tracksArray = array;
         act = activity;
     }
@@ -286,9 +284,6 @@ class TrackNameControlListener implements View.OnClickListener{
 
         alertDialog.show();
     }
-
-
-
 
 
 }

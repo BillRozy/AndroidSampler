@@ -2,7 +2,6 @@ package com.example.fd.sampler;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -28,7 +27,7 @@ public class VerticalSeekBar extends SeekBar {
 
     @Override
     public void onRestoreInstanceState(Parcelable state) {
-            super.onRestoreInstanceState(state);
+        super.onRestoreInstanceState(state);
 
     }
 
@@ -39,11 +38,11 @@ public class VerticalSeekBar extends SeekBar {
     }
 
     @Override
-    public synchronized void setProgress(int progress)
-    {
+    public synchronized void setProgress(int progress) {
         super.setProgress(progress);
         onSizeChanged(getWidth(), getHeight(), 0, 0);
     }
+
     @Override
     protected synchronized void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(heightMeasureSpec, widthMeasureSpec);
