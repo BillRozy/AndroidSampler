@@ -8,7 +8,7 @@ import android.media.SoundPool;
 import android.util.Log;
 import java.io.IOException;
 
-// CLASS Instrument keeper of wav sound, and have method to play it
+// CLASS Instrument keeper of wav sound, and has method to play it
 class Instrument{
     private float mVolume;
 
@@ -27,14 +27,11 @@ class Instrument{
     {
       try{
             long begin = System.currentTimeMillis();
-            this.pool.play(id,mVolume,mVolume,1,0,1); //Поехали!!!
+            this.pool.play(id,mVolume,mVolume,1,0,1);
             long end = System.currentTimeMillis();
           Log.d(Thread.currentThread().getName() + " Time delayed: ","" + (end-begin));
       }  catch (NullPointerException exc) {Log.d("Instrument isnt loaded!",exc.toString());}
-
-
     }
-
 
     private int loadSound(String fileName) {
         AssetFileDescriptor afd = null;
@@ -49,8 +46,6 @@ class Instrument{
         }
         return pool.load(afd, 1);
     }
-
-
 
     //PROPERTIES
     private int id;

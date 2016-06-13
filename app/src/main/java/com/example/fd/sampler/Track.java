@@ -5,24 +5,16 @@ import android.util.Log;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-/**
- * Created by FD on 28.04.2016.
- */
 //CLASS track, keeper of HITS, and performer of hits running
 class Track implements Serializable{
     //METHODS
-    //test
-    public Instrument getConnectedInstrument(){
-        return connectedInstrument;
-    }
-    //end test
+
     public Track(String n, Pattern parent){
         mTrackName = n;
         System.out.println("Новый поток: " + mTrackName) ;
         this.makeHits();
         this.parentPatt = parent;
         mTrackVolume = 0.7F;
-        //t.start();
     }
     public String getTrackName(){
         return this.mTrackName;
@@ -87,7 +79,6 @@ class Track implements Serializable{
                 if (!hitsString[i].equals("")) {
                     activeHitsArray[i] = Integer.parseInt(hitsString[i]);
                 }
-                // System.out.println(numArr[i]);
             }
             makeHitActive(activeHitsArray);
         }

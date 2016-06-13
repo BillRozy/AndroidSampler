@@ -1,8 +1,6 @@
 package com.example.fd.sampler;
 
-/**
- * Created by BDV on 14.05.2016.
- */
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.Image;

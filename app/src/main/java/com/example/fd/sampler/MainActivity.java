@@ -47,8 +47,6 @@ import java.util.Scanner;
 public class MainActivity extends Activity implements PatternFragment.PatternFragmentInterface {
     final private int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL = 1;
     final private int MY_PERMISSIONS_REQUEST_READ_EXTERNAL = 2;
-    static final String FILES_DIRECTORY_PRESETS = android.os.Environment.getExternalStorageDirectory()
-            .getAbsolutePath() + "/DrumSampler/Presets/";
     private Sampler myApp;
     private DataBaseHelper mDatabaseHelper;
     public Button play;
@@ -61,7 +59,6 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
     private SharedPreferences sp;
     public String pathChosen = "";
     public String nameChosen = "";
-    public String presetChosen = "";
     public int trackChosen = 0;
     private int mChosenPatternFragmentNumber = 0;
     public static final String APP_PREFERENCES = "mysettings";
@@ -103,7 +100,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
        }
         bpmPicker = (NumberPicker) this.findViewById(R.id.numberPicker);
         bpmPicker.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-        bpmPicker.setMaxValue(400);
+        bpmPicker.setMaxValue(320);
         bpmPicker.setMinValue(60);
         setNumberPickerTextColor(bpmPicker, Color.BLACK);
         stepPicker = (NumberPicker) findViewById(R.id.stepPicker);
@@ -144,7 +141,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
            play.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View v) {
-                   Sampler.getSampler().play();
+                   myApp.play();
                    for (TrackLayout tl : mPatternFragmentsArray.get(mChosenPatternFragmentNumber).getTracksLayoutsArray()) {
                        tl.getDeleteBtn().setEnabled(false);
                    }
@@ -157,7 +154,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                @Override
                public void onClick(View v) {
 
-                   Sampler.getSampler().stop();
+                   myApp.stop();
                    for (TrackLayout tl : mPatternFragmentsArray.get(mChosenPatternFragmentNumber).getTracksLayoutsArray()) {
                        tl.getDeleteBtn().setEnabled(true);
                    }
@@ -169,7 +166,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
            pause.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View v) {
-                   Sampler.getSampler().pause();
+                   myApp.pause();
                    for (TrackLayout tl : mPatternFragmentsArray.get(mChosenPatternFragmentNumber).getTracksLayoutsArray()) {
                        tl.getDeleteBtn().setEnabled(true);
                    }
@@ -287,6 +284,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, FileBrowserActivity.class);
+                intent.putExtra("folder",1);
                 startActivityForResult(intent, CHOOSE_SAMPLE);
             }
         });
@@ -297,9 +295,9 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
 
         stepPicker.setOnValueChangedListener(new stepsPickerHandler());
 
-           Sampler.getSampler().stepsBar = (ProgressBar) this.findViewById(R.id.progressBar);
-           Sampler.getSampler().stepsBar.setMax(16);
-           Sampler.getSampler().stepsBar.setProgress(0);
+           myApp.stepsBar = (ProgressBar) this.findViewById(R.id.progressBar);
+           myApp.stepsBar.setMax(16);
+           myApp.stepsBar.setProgress(0);
 
         bpmPicker.setValue(myApp.getActivePattern().getPatternBPM());
         stepPicker.setValue(myApp.getActivePattern().getPatternSteps());
@@ -321,7 +319,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
         try {
             myApp.getActivePattern().setPatternName(name);
             Preset preset = new Preset();
-            preset.setBPM(myApp.getActivePattern().getPatternSteps());
+            preset.setBPM(myApp.getActivePattern().getPatternBPM());
             preset.setTitle(name);
             preset.setSteps(myApp.getActivePattern().getPatternSteps());
             preset.setTrackTitles(myApp.getAllTracksNames());
@@ -329,7 +327,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
             preset.setPathsToSamples(myApp.getAllTracksPaths());
             preset.setHasSample(myApp.getExistenceOfSample());
             preset.setVolumesArray(myApp.getAllTracksVolumes());
-            FileOutputStream fos = new FileOutputStream(FILES_DIRECTORY_PRESETS + name + ".dmp");
+            FileOutputStream fos = new FileOutputStream(FileBrowserActivity.PRESETS_DIRECTORY + name + ".dmp");
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(preset);
             oos.flush();
@@ -372,15 +370,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
             stepPicker.setValue(patt.getPatternSteps());
             bpmPicker.setValue(patt.getPatternBPM());
         }catch(IOException | ClassNotFoundException exc){Log.d("EXCEPTION", exc.toString());}
-
     }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d("OnStart","Worked");
-    }
-
 
     private void addPattern(){
         mChosenPatternFragmentNumber++;
@@ -481,7 +471,6 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
         sdb.close();
     }
 
-
     class bpmPickerHandler implements NumberPicker.OnValueChangeListener {
         @Override
         public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
@@ -503,7 +492,6 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
        super.onPause();
         saveStateInDatabase();
         Log.d("OnPause", "WORKED");
-
     }
 
     private void saveStateInDatabase(){
@@ -557,10 +545,8 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
             }
             mSqLiteDatabase.close();
             myApp.clearPools();
-            // myApp.interruptAllThreads();
             myApp.clearPatternsList();
             myApp.clearActivePattern();
-            //myApp.getPatternsList().clear();
             mPatternFragmentsArray.clear();
         }
     }
@@ -628,7 +614,7 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
         try {
             Log.i("tag", "copyFile() "+filename);
             in = assetManager.open(filename);
-            if (filename.endsWith(".jpg")) // extension was added to avoid compression on APK file
+            if (filename.endsWith(".jpg"))
                 newFileName = FileBrowserActivity.FILES_DIRECTORY + filename.substring(0, filename.length()-4);
             else
                 newFileName = FileBrowserActivity.FILES_DIRECTORY + filename;
@@ -661,12 +647,8 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                                            @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL: {
-                // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
                     SharedPreferences.Editor spEditor = sp.edit();
                     File dir = new File(FileBrowserActivity.FILES_DIRECTORY);
                     if (dir.mkdir()) {
@@ -677,9 +659,36 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                     spEditor.commit();
                 }
             }
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // TODO Auto-generated method stub
+        openQuitDialog();
+    }
+
+    private void openQuitDialog() {
+        AlertDialog.Builder quitDialog = new AlertDialog.Builder(
+                MainActivity.this);
+        quitDialog.setTitle("Выход: Вы уверены?");
+
+        quitDialog.setPositiveButton("Да!", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO Auto-generated method stub
+                finish();
+            }
+        });
+
+        quitDialog.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO Auto-generated method stub
+            }
+        });
+
+        quitDialog.show();
     }
 
 }

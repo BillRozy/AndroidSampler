@@ -8,22 +8,7 @@ import android.graphics.Color;
 import android.util.AttributeSet;
 import android.widget.ImageButton;
 
-
-
 public class HitView extends ImageButton {
-    public HitView(Context context, boolean isActive){
-        super(context);
-        this.isActive = isActive;
-        int row_height = getResources().getDimensionPixelOffset(R.dimen.app_list_row_size);
-        this.setMaxHeight(row_height*2);
-        this.setMaxWidth(row_height);
-        //this.setMinimumHeight(70);
-        //this.setMinimumWidth(40);
-        this.setPadding(0,0,5,5);
-        this.setImageResource(R.drawable.selector);
-        this.setScaleType(ScaleType.CENTER_CROP);
-        this.setBackgroundColor(Color.TRANSPARENT);
-    }
     public HitView(Context context, AttributeSet attrs){
         super(context,attrs);
         TypedArray attributes = context.obtainStyledAttributes(attrs,R.styleable.HitView);
@@ -56,8 +41,6 @@ public class HitView extends ImageButton {
         super.setBackgroundColor(Color.TRANSPARENT);
 
     }
-
-
     private boolean isActive;
 
 }

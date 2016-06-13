@@ -21,8 +21,6 @@ public class MixerFragment extends Fragment {
         mixerTracksArray = new ArrayList<>(8);
     }
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,7 +89,6 @@ public class MixerFragment extends Fragment {
     }
 
     public void remakeTracks(MixerTrackLayout mtl) {
-         //   mtl.getVolumeSlider().setOnSeekBarChangeListener(new VolumeControllerListener(mtl,  mixerTracksArray));
 
             mtl.getMuteBtn().setOnCheckedChangeListener(new MuteControllerListener(mtl,  mixerTracksArray));
 

@@ -1,6 +1,5 @@
 package com.example.fd.sampler;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -17,7 +16,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -47,18 +45,13 @@ import java.util.zip.ZipInputStream;
 
 
 public class SiteParserActivity extends Activity {
-    /**
-     * Called when the activity is first created.
-     */
+
     public ListView listview;
     public List<String> refs;
     public String zipName;
     public final static String SITE_ADDRESS = "http://xbeat.ucoz.net/index.html";
-    // Progress Dialog
     private ProgressDialog pDialog;
-    //Диалог ожидания
     private ProgressDialog pd;
-    // Progress dialog type (0 - for Horizontal progress bar)
     public static final int progress_bar_type = 0;
     private TextView aboutSituationView;
     /**
@@ -79,7 +72,6 @@ public class SiteParserActivity extends Activity {
             public void onClick(View v) {
                 if (isOnline()) {
                     pd = ProgressDialog.show(SiteParserActivity.this, "Working...", "request to server", true, false);
-                    //Запускаем парсинг
                     new ParseSite().execute(SITE_ADDRESS);
                     Log.d("reconnect", "clicked");
                     lMain.removeView(aboutSituationView);
@@ -88,14 +80,12 @@ public class SiteParserActivity extends Activity {
         });
         if (isOnline()) {
             pd = ProgressDialog.show(SiteParserActivity.this, "Working...", "request to server", true, false);
-            //Запускаем парсинг
             new ParseSite().execute(SITE_ADDRESS);
         } else {
             aboutSituationView = new TextView(this);
             aboutSituationView.setText("It seems, that you haven't internet connection! Fix it please and push refresh.");
             LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            // lParams.gravity(Gravity.CENTER_HORIZONTAL);
             aboutSituationView.setGravity(Gravity.CENTER_HORIZONTAL);
             aboutSituationView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             aboutSituationView.setTextSize(18F);
@@ -150,7 +140,6 @@ public class SiteParserActivity extends Activity {
 
 
     private class ParseSite extends AsyncTask<String, Void, List<String>> {
-        //Фоновая операция
         protected List<String> doInBackground(String... arg) {
             List<String> output = new ArrayList<>();
             refs = new ArrayList<>();
@@ -169,13 +158,9 @@ public class SiteParserActivity extends Activity {
             return output;
         }
 
-        //Событие по окончанию парсинга
         protected void onPostExecute(final List<String> output) {
-            //Убираем диалог загрузки
             pd.dismiss();
-            //Находим ListView
             listview = (ListView) findViewById(R.id.listViewData);
-            //Загружаем в него результат работы doInBackground
             listview.setAdapter(new BrowseOnlineKitsAdapter(SiteParserActivity.this,
                     output));
 
@@ -204,14 +189,11 @@ public class SiteParserActivity extends Activity {
                 URL url = new URL(f_url[0]);
                 URLConnection conection = url.openConnection();
                 conection.connect();
-                // getting file length
                 conection.getContentType();
                 int lenghtOfFile = conection.getContentLength();
 
-                // input stream to read file - with 8k buffer
                 InputStream input = new BufferedInputStream(url.openStream(), 8192);
 
-                // Output stream to write file
                 OutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory() + "/" + zipName + ".zip");
 
                 byte data[] = new byte[1024];
@@ -220,18 +202,14 @@ public class SiteParserActivity extends Activity {
 
                 while ((count = input.read(data)) != -1) {
                     total += count;
-                    // publishing the progress....
-                    // After this onProgressUpdate will be called
+
                     publishProgress("" + (int) ((total * 100) / lenghtOfFile));
 
-                    // writing data to file
                     output.write(data, 0, count);
                 }
 
-                // flushing output
                 output.flush();
 
-                // closing streams
                 output.close();
                 input.close();
 
@@ -243,13 +221,11 @@ public class SiteParserActivity extends Activity {
         }
 
         protected void onProgressUpdate(String... progress) {
-            // setting progress percentage
             pDialog.setProgress(Integer.parseInt(progress[0]));
         }
 
         @Override
         protected void onPostExecute(String file_url) {
-            // dismiss the dialog after the file was downloaded
             File zip = new File(Environment.getExternalStorageDirectory() + "/" + zipName + ".zip");
             File target = new File(FileBrowserActivity.SAMPLES_DIRECTORY);
             try {
@@ -314,5 +290,10 @@ public class SiteParserActivity extends Activity {
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

@@ -30,7 +30,6 @@ public class HtmlHelper {
                 linkList.add(linkElements[i]);
             }
         }
-
         return linkList;
     }
 }

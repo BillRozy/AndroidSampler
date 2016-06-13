@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,13 +32,14 @@ public class BrowseOnlineKitsAdapter extends ArrayAdapter<String> {
         View rowView = inflater.inflate(R.layout.list_item_file, parent, false);
         TextView textView = (TextView) rowView.findViewById(R.id.file_description);
         ImageView imageView = (ImageView) rowView.findViewById(R.id.icon_file);
+        Button prePlayBtn = (Button) rowView.findViewById(R.id.prePlayBtn);
+        prePlayBtn.setVisibility(View.INVISIBLE);
+        prePlayBtn.setEnabled(false);
         textView.setText(values.get(position));
-        // Изменение иконки для Windows и iPhone
         String s = values.get(position);
         ArrayList<String> list = getListOfCurrentKits();
         if (list.contains(s)) {
             imageView.setBackgroundResource(R.drawable.galka);
-           // imageView.setImageResource(R.drawable.galka);
         } else {
             imageView.setVisibility(View.INVISIBLE);
         }

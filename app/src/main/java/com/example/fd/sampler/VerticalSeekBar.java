@@ -10,8 +10,6 @@ import android.widget.SeekBar;
 
 public class VerticalSeekBar extends SeekBar {
 
-    private int progressSave;
-
     public VerticalSeekBar(Context context) {
         super(context);
     }
@@ -41,7 +39,7 @@ public class VerticalSeekBar extends SeekBar {
     }
 
     @Override
-    public synchronized void setProgress(int progress)  // it is necessary for calling setProgress on click of a button
+    public synchronized void setProgress(int progress)
     {
         super.setProgress(progress);
         onSizeChanged(getWidth(), getHeight(), 0, 0);

@@ -32,12 +32,8 @@ public class SampleListActivity extends Activity {
             names[i] = tempSongList.get(i).getTitle() + "     " + tempSongList.get(i).getSize();
         }
         ListView lvMain = (ListView) findViewById(R.id.lvMain);
-
-        // создаем адаптер
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, names);
-
-        // присваиваем адаптер списку
         lvMain.setAdapter(adapter);
         lvMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
@@ -47,8 +43,6 @@ public class SampleListActivity extends Activity {
                 String path = tempSongList.get(position).getPath();
                 String name = tempSongList.get(position).getTitle();
                 Intent intent = new Intent(SampleListActivity.this, MainActivity.class);
-
-                // в ключ username пихаем текст из первого текстового поля
                 intent.putExtra(mSelectedSamplePath, path);
                 intent.putExtra(mSelectedSampleName, name);
                 setResult(RESULT_OK, intent);
@@ -64,14 +58,11 @@ public class SampleListActivity extends Activity {
     }
 
     public void getSongList() {
-        //retrieve song info
         tempSongList = new ArrayList<>();
         ContentResolver musicResolver = getApplicationContext().getContentResolver();
         Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
-        //iterate over results if valid
         if(musicCursor!=null && musicCursor.moveToFirst()){
-            //get columns
             int titleColumn = musicCursor.getColumnIndex
                     (android.provider.MediaStore.Audio.Media.TITLE);
             int idColumn = musicCursor.getColumnIndex
@@ -84,7 +75,6 @@ public class SampleListActivity extends Activity {
             int albumkey=musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_KEY);
             int size = musicCursor.getColumnIndex(MediaStore.Audio.Media.SIZE);
             int type = musicCursor.getColumnIndex(MediaStore.Audio.Media.MIME_TYPE);
-            //add songs to list
             do {
                 long thisId = musicCursor.getLong(idColumn);
                 String thisTitle = musicCursor.getString(titleColumn);

@@ -9,9 +9,7 @@ import android.util.Log;
 
 public class DataBaseHelper extends SQLiteOpenHelper implements BaseColumns {
 
-    // имя базы данных
     private static final String DATABASE_NAME = "mainbase.db";
-    // версия базы данных
     private static final int DATABASE_VERSION = 1;
     public static final String DATABASE_TABLE_PATTERNS = "patterns";
     public static final String PATTERN_BPM_COLUMN = "bpm";
@@ -40,8 +38,8 @@ public class DataBaseHelper extends SQLiteOpenHelper implements BaseColumns {
             + " integer, " + TRACK_MUTE_COLUMN + " numeric, " + TRACK_PATH_TO_SAMPLE_COLUMN + " text, "
             + TRACK_PATTERN_ID_COLUMN + " integer not null, " + TRACK_HAS_CONNECTED_SAMPLE + " numeric not null);";
     private static final String FIRST_INITIALIZATION_OF_PATTERNS = "INSERT INTO " + DATABASE_TABLE_PATTERNS
-            + " VALUES ('1', 'base_pattern', '16', '130'); ";
-    private static final String FIRST_INITIALIZATION_OF_TRACKS = "INSERT INTO " + DATABASE_TABLE_TRACKS + " VALUES ('1', 'Kick', '1 5 9 14', '70', '0', 'something', '1','0'),('2', 'Snare', '5 14', '70', '0', 'something', '1','0'),('3', 'Hi-Hat', '1 3 5 7 9 11 13 15', '70', '0', 'something', '1','0');";
+            + " VALUES ('1', 'default', '16', '130'); ";
+    private static final String FIRST_INITIALIZATION_OF_TRACKS = "INSERT INTO " + DATABASE_TABLE_TRACKS + " VALUES ('1', 'Kick', '1 5 9 13', '70', '0', 'something', '1','0'),('2', 'Snare', '5 13', '70', '0', 'something', '1','0'),('3', 'Hi-Hat', '1 3 5 7 9 11 13 15', '70', '0', 'something', '1','0');";
 
 
     public DataBaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory,
@@ -60,13 +58,9 @@ public class DataBaseHelper extends SQLiteOpenHelper implements BaseColumns {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Запишем в журнал
         Log.w("SQLite", "Обновляемся с версии " + oldVersion + " на версию " + newVersion);
-
-        // Удаляем старую таблицу и создаём новую
         db.execSQL("DROP TABLE IF IT EXISTS " + DATABASE_TABLE_PATTERNS);
         db.execSQL("DROP TABLE IF IT EXISTS " + DATABASE_TABLE_TRACKS);
-        // Создаём новую таблицу
         onCreate(db);
     }
 

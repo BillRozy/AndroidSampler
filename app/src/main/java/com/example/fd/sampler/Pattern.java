@@ -120,18 +120,11 @@ class Pattern implements Runnable{
             try {
                 while (keepRunning) {
                     if (isPaused) {
-                        // synchronized (this) {
-                        // System.out.println("Поступил запрос на стоп");
-                        // wait();
-                        //   isPaused = false;
                         keepRunning = false;
-
                     }
-                //}
                 else
-                    {//if(!Sampler.getSampler().askedToInterruptMuse)
+                    {
                         playPattern(Sampler.getSampler().getCurrentStep());
-                       // else{keepRunning = false;}
                     }
                 }
             } catch (Exception e) {
@@ -141,7 +134,6 @@ class Pattern implements Runnable{
        keepRunning = true;
         isPaused = false;
     }
-
 
     //PROPERTIES
     private ArrayList<Track> tracksArray;

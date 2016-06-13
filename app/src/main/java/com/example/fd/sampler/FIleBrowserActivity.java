@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,6 +19,7 @@ public class FileBrowserActivity extends Activity {
     static final String FILES_DIRECTORY = android.os.Environment.getExternalStorageDirectory()
             .getAbsolutePath() + "/DrumSampler/";
     static String SAMPLES_DIRECTORY = FILES_DIRECTORY + "Samples/";
+    static String PRESETS_DIRECTORY = FILES_DIRECTORY + "Presets/";
     BrowseFilesAdapter adapter;
     ListView fileListView;
     TextView pathTextView;
@@ -39,16 +39,26 @@ public class FileBrowserActivity extends Activity {
         super.onCreate(savedInstanceState);
         Log.d("OnCreateBrowser", "WORKED");
         setContentView(R.layout.file_browser_activity);
+        String directory;
+        Intent intent = getIntent();
+        intent.getIntExtra("folder",0);
+        if(intent.getIntExtra("folder",0)==0){
+            directory = SAMPLES_DIRECTORY;
+        }
+        else
+        {
+            directory = PRESETS_DIRECTORY;
+        }
         fileListView = (ListView) this.findViewById(R.id.fileListView);
         pathTextView = (TextView) this.findViewById(R.id.pathTextView);
-        pathTextView.setText(FILES_DIRECTORY);
+        pathTextView.setText(directory);
         backBtn = (Button) findViewById(R.id.backButton);
         parseSiteBtn = (Button) findViewById(R.id.parseSiteBtn);
 
-        selected = new File(FILES_DIRECTORY);
+        selected = new File(directory);
         if(!selected.exists()){
-            if(new File(FILES_DIRECTORY).mkdir()) {
-                selected = new File(FILES_DIRECTORY);
+            if(new File(directory).mkdir()) {
+                selected = new File(directory);
             }
         }
         if(selected.isDirectory()){
@@ -64,41 +74,6 @@ public class FileBrowserActivity extends Activity {
         }
 
         fileListView.setAdapter(adapter);
-        fileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                lastSelected.add(selected);
-                if(files[position].isFile()){
-                    pathToChosenFile = files[position].getAbsolutePath();
-                    String name = files[position].getName();
-                    Intent intent = new Intent(FileBrowserActivity.this, MainActivity.class);
-
-                    // в ключ username пихаем текст из первого текстового поля
-                    intent.putExtra(mSelectedSamplePath, pathToChosenFile);
-                    intent.putExtra(mSelectedSampleName, name);
-                    setResult(RESULT_OK, intent);
-                    finish();
-                }
-
-                else{
-
-                    selected = new File(files[position].getAbsolutePath());
-                    pathTextView.setText(selected.getAbsolutePath());
-                    files = new File[selected.listFiles().length];
-                    files = selected.listFiles();
-                    String[] titles = new String[files.length];
-                    String[] refsArray = new String[files.length];
-                    for(int i = 0; i < files.length; i++){
-                        titles[i] = files[i].getName();
-                        refsArray[i] = files[i].getAbsolutePath();
-                    }
-                    BrowseFilesAdapter secAdapter = new BrowseFilesAdapter(FileBrowserActivity.this, titles,refsArray);
-                    fileListView.setAdapter(secAdapter);
-                    Log.d("ENDED LISTENER"," pos");
-                }
-
-            }
-        });
 
         parseSiteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,10 +104,13 @@ public class FileBrowserActivity extends Activity {
                 }
             }
         });
-
-
-
-
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
 }

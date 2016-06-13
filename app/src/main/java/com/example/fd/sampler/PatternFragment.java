@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
 import java.util.ArrayList;
 
 
@@ -48,8 +47,6 @@ public class PatternFragment extends Fragment {
         super.onStart();
         Log.d("onStart Fragment", "WORKED");
     }
-
-
 
     public void makePatternForFragment(Context mCont) {
         mConnectedPattern = new Pattern(mCont);
@@ -134,7 +131,6 @@ public class PatternFragment extends Fragment {
         if (scrollViewFrame == null) {
             scrollViewFrame = (ViewGroup) inflater.inflate(R.layout.fragment_pattern, container, false);
         }
-        // verticalLayer = (LinearLayout) inflater.inflate(R.layout.fragment_pattern, container, false);}
         verticalLayer = (LinearLayout) scrollViewFrame.findViewById(R.id.verticalLayer);
         if (verticalLayer == null) {
             verticalLayer = new LinearLayout(connectedActivity);
@@ -157,7 +153,6 @@ public class PatternFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // makeTracks(connectedActivity);
         remakeTracks();
     }
 
@@ -211,6 +206,7 @@ public class PatternFragment extends Fragment {
         public void onClick(View v) {
             connectedActivity.findViewById(R.id.playButton).setBackgroundResource(R.drawable.play_white);
             Intent intent = new Intent(PatternFragment.this.getActivity(), FileBrowserActivity.class);
+            intent.putExtra("folder",0);
             mChosenTrack = tracksArray.indexOf(tl) + 1;
             startActivityForResult(intent, CHOOSE_SAMPLE);
         }

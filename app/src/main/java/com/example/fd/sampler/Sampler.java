@@ -28,7 +28,6 @@ class Sampler {
 
 
     public void play() {
-       // activePattern = lastActivePattern;
         System.out.println("Начинаю воспроизведение...");
         if(muse == null) {
             muse = new Thread(activePattern);
@@ -47,7 +46,6 @@ class Sampler {
 
     public void stop(){
         System.out.println("Trying to stop sampler!");
-       // lastActivePattern = activePattern;
         activePattern.pause();
         muse = null;
         askedToInterruptMuse = true;
@@ -58,6 +56,8 @@ class Sampler {
     public void pause(){
         System.out.println("Paused sampler!");
         activePattern.pause();
+        muse = null;
+        askedToInterruptMuse = true;
         currentStep+=1;
         setPlaying(false);
     }
@@ -145,8 +145,6 @@ class Sampler {
         }
     }
 
-
-
     public void setReplays(int q){
         replays = q;
     }
@@ -177,10 +175,6 @@ class Sampler {
 
     public int getSizeOfProgramm() {
         return sizeOfProgramm;
-    }
-
-    public Thread getMuse() {
-        return muse;
     }
 
     public void setMuseNull() {

@@ -172,7 +172,7 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.33">
+            android:layout_weight="0.4">
 
             <Button
                 android:id="@+id/playButton"
@@ -216,6 +216,18 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0.33"></LinearLayout>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="BPM"
+                android:id="@+id/textView2"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:layout_gravity="center_vertical"
+                android:textColor="#ffffff"
+                android:layout_marginRight="5dp" />
+
             <NumberPicker
                 android:layout_width="50dip"
                 android:layout_height="50dip"
@@ -234,7 +246,18 @@
                 android:minWidth="40dip"
                 android:background="@drawable/rounded_white"
                 android:gravity="center_vertical|center_horizontal"
-                />
+                android:layout_marginRight="5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="STEPS"
+                android:id="@+id/textView3"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:layout_gravity="center_vertical"
+                android:textColor="#ffffff" />
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -248,7 +271,7 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.33">
+            android:layout_weight="0.5">
 
             <LinearLayout
                 android:orientation="horizontal"
