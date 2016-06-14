@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -32,8 +33,6 @@ public class FileBrowserActivity extends Activity {
     Button parseSiteBtn;
 
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,12 +40,10 @@ public class FileBrowserActivity extends Activity {
         setContentView(R.layout.file_browser_activity);
         String directory;
         Intent intent = getIntent();
-        intent.getIntExtra("folder",0);
-        if(intent.getIntExtra("folder",0)==0){
+        intent.getIntExtra("folder", 0);
+        if (intent.getIntExtra("folder", 0) == 0) {
             directory = SAMPLES_DIRECTORY;
-        }
-        else
-        {
+        } else {
             directory = PRESETS_DIRECTORY;
         }
         fileListView = (ListView) this.findViewById(R.id.fileListView);
@@ -56,21 +53,21 @@ public class FileBrowserActivity extends Activity {
         parseSiteBtn = (Button) findViewById(R.id.parseSiteBtn);
 
         selected = new File(directory);
-        if(!selected.exists()){
-            if(new File(directory).mkdir()) {
+        if (!selected.exists()) {
+            if (new File(directory).mkdir()) {
                 selected = new File(directory);
             }
         }
-        if(selected.isDirectory()){
+        if (selected.isDirectory()) {
             files = new File[selected.listFiles().length];
             files = selected.listFiles();
             fileArray = new String[files.length];
             String[] refsArray = new String[files.length];
-            for(int i = 0; i < files.length; i++){
+            for (int i = 0; i < files.length; i++) {
                 fileArray[i] = files[i].getName();
                 refsArray[i] = files[i].getAbsolutePath();
             }
-            adapter = new BrowseFilesAdapter(this, fileArray,refsArray);
+            adapter = new BrowseFilesAdapter(this, fileArray, refsArray);
         }
 
         fileListView.setAdapter(adapter);
@@ -86,7 +83,7 @@ public class FileBrowserActivity extends Activity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(lastSelected.size() != 0) {
+                if (lastSelected.size() != 0) {
                     files = new File[lastSelected.get(lastSelected.size() - 1).listFiles().length];
                     files = lastSelected.get(lastSelected.size() - 1).listFiles();
                     String[] titles = new String[files.length];
@@ -95,7 +92,7 @@ public class FileBrowserActivity extends Activity {
                         titles[i] = files[i].getName();
                         refsArray[i] = files[i].getAbsolutePath();
                     }
-                    BrowseFilesAdapter secAdapter = new BrowseFilesAdapter(FileBrowserActivity.this, titles,refsArray);
+                    BrowseFilesAdapter secAdapter = new BrowseFilesAdapter(FileBrowserActivity.this, titles, refsArray);
                     fileListView.setAdapter(secAdapter);
                     Log.d("ENDED LISTENER", " pos");
                     selected = lastSelected.get(lastSelected.size() - 1);

@@ -79,9 +79,10 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
                     ((EditText) child).setTextColor(color);
                     numberPicker.invalidate();
                     return true;
-                } catch (NoSuchFieldException | IllegalAccessException e) {
+                } catch ( IllegalAccessException e) {
                     Log.w("setNumberPickerTexColor", e);
                 }
+                catch( NoSuchFieldException e){Log.w("setNumberPickerTexColor", e);}
             }
         }
         return false;
@@ -686,9 +687,9 @@ public class MainActivity extends Activity implements PatternFragment.PatternFra
     class stepsPickerHandler implements NumberPicker.OnValueChangeListener {
         @Override
         public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-            myApp.setSteps(newVal);
-            myApp.getActivePattern().setPatternBPM(newVal);
+                myApp.setSteps(oldVal);
+                myApp.getActivePattern().setPatternSteps(oldVal);
+            }
         }
-    }
 
 }
